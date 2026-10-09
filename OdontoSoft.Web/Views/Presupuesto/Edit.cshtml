@@ -1,0 +1,644 @@
+﻿@using OdontoSoft.Entities.ViewModels
+@model PresupuestoViewModel
+
+@{
+    ViewData["Title"] = "Presupuesto";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Presupuesto</h4>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Edit", "Presupuesto", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.Id)
+
+    <!-- DATOS GENERALES -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Datos del Presupuesto</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <label class="form-label">Paciente</label>
+                            @if (Model.Id != 0)
+                            {
+                                <input type="text" class="form-control" value="@Model.Paciente" disabled />
+                                <input type="hidden" id="PacienteId" name="PacienteId" value="@Model.PacienteId" />
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="inputPaciente"
+                                       placeholder="Ingrese nombre, apellido o DNI"
+                                       value="@(Model.PacienteId != 0 ? Model.Paciente : "")" />
+                                <input type="hidden" id="PacienteId" name="PacienteId" value="@Model.PacienteId" />
+                                <span id="mensajePaciente" class="text-danger small mt-1" style="display:none;"></span>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Profesional</label>
+                            @Html.DropDownList("ProfesionalId", (SelectList)ViewBag.Profesionales,
+                                "Seleccione Profesional",
+                                new { @class = "form-select" })
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha</label>
+                            @Html.TextBoxFor(x => x.Fecha, "{0:dd/MM/yyyy}",
+                                new { @class = "form-control datepicker" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-9">
+                            <label class="form-label">Observaciones</label>
+                            @Html.TextAreaFor(x => x.Observaciones,
+                                new { @class = "form-control", rows = "2" })
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Estado</label>
+                            <select name="Estado" class="form-select">
+                                <option value="Pendiente"  selected="@(Model.Estado == "Pendiente"  ? "selected" : null)">Pendiente</option>
+                                <option value="Aprobado"   selected="@(Model.Estado == "Aprobado"   ? "selected" : null)">Aprobado</option>
+                                <option value="Rechazado"  selected="@(Model.Estado == "Rechazado"  ? "selected" : null)">Rechazado</option>
+                                <option value="Pagado"     selected="@(Model.Estado == "Pagado"     ? "selected" : null)">Pagado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+                            <a class="btn text-muted btn-link fw-semibold"
+                               href="@Url.Action("Index", "Browser", new { code = "Presupuesto" })">
+                                <i class="mdi mdi-arrow-left"></i> Volver al listado
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Id != 0)
+{
+    <!-- RESUMEN FINANCIERO -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                    <h6 class="text-muted mb-1">Total Presupuesto</h6>
+                    <h4 class="mb-0 text-primary" id="lblTotal">$@Model.Total.ToString("N2")</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                    <h6 class="text-muted mb-1">Total Pagado</h6>
+                    <h4 class="mb-0 text-success" id="lblPagado">$@Model.SaldoPagado.ToString("N2")</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center py-3">
+                    <h6 class="text-muted mb-1">Saldo Pendiente</h6>
+                    <h4 class="mb-0 @(Model.SaldoPendiente > 0 ? "text-danger" : "text-success")"
+                        id="lblSaldo">$@Model.SaldoPendiente.ToString("N2")</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETALLE DE TRATAMIENTOS -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Detalle de Tratamientos</h5>
+                        <button type="button" class="btn btn-primary btn-sm"
+                                onclick="abrirModalDetalle()">
+                            <i class="mdi mdi-plus"></i> Agregar Tratamiento
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tratamiento</th>
+                                    <th>Pieza</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-end">Precio Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="detallesBody">
+                                @if (Model.Detalles != null && Model.Detalles.Any())
+                                {
+                                    foreach (var d in Model.Detalles)
+                                    {
+                                        <tr id="fila-detalle-@d.Id">
+                                            <td>@d.Tratamiento</td>
+                                            <td>@(d.NumeroPieza?.ToString() ?? "-")</td>
+                                            <td class="text-center">@d.Cantidad</td>
+                                            <td class="text-end">$@d.PrecioUnitario.ToString("N2")</td>
+                                            <td class="text-end">$@d.Subtotal.ToString("N2")</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        onclick="eliminarDetalle(@d.Id)">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr id="filaVaciaDetalle">
+                                        <td colspan="6" class="text-center text-muted">
+                                            No hay tratamientos agregados
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGOS -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Pagos</h5>
+                        <button type="button" class="btn btn-success btn-sm"
+                                onclick="abrirModalPago()"
+                                @(Model.SaldoPendiente <= 0 ? "disabled" : "")>
+                            <i class="mdi mdi-plus"></i> Registrar Pago
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Método</th>
+                                    <th class="text-end">Monto</th>
+                                    <th>Observaciones</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagosBody">
+                                @if (Model.Pagos != null && Model.Pagos.Any())
+                                {
+                                    foreach (var p in Model.Pagos)
+                                    {
+                                        <tr id="fila-pago-@p.Id">
+                                            <td>@p.Fecha.ToString("dd/MM/yyyy")</td>
+                                            <td>@p.MetodoPago</td>
+                                            <td class="text-end">$@p.Monto.ToString("N2")</td>
+                                            <td>@p.Observaciones</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        onclick="eliminarPago(@p.Id)">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr id="filaVaciaPago">
+                                        <td colspan="5" class="text-center text-muted">
+                                            No hay pagos registrados
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- MODAL DETALLE -->
+<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Tratamiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="detallePresupuestoId" value="@Model.Id" />
+                <div class="mb-3">
+                    <label class="form-label">Tratamiento</label>
+                    <select id="detalleTratamientoId" class="form-select"></select>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Pieza Dental</label>
+                        <input type="number" id="detalleNumeroPieza" class="form-control"
+                               min="11" max="48" placeholder="Ej: 21" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" id="detalleCantidad" class="form-control"
+                               min="1" value="1" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Precio Unitario</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" id="detallePrecioUnitario" class="form-control"
+                               min="0" step="0.01" placeholder="0.00"
+                               oninput="calcularSubtotal()" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Subtotal</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="text" id="detalleSubtotal" class="form-control"
+                               readonly value="0.00" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="guardarDetalle()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL PAGO -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pagoPresupuestoId" value="@Model.Id" />
+                <div class="mb-3">
+                    <label class="form-label">Fecha</label>
+                    <input type="text" id="pagoFecha" class="form-control datepicker" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Monto</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" id="pagoMonto" class="form-control"
+                               min="0" step="0.01" placeholder="0.00" />
+                    </div>
+                    <small class="text-muted">
+                        Saldo pendiente: $<span id="saldoDisponible">@Model.SaldoPendiente.ToString("N2")</span>
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Método de Pago</label>
+                    <select id="pagoMetodo" class="form-select">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Observaciones</label>
+                    <textarea id="pagoObservaciones" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success"
+                        onclick="guardarPago()">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({ dateFormat: 'dd/mm/yy' });
+
+        // Setear fecha de hoy en pago
+        var hoy = new Date();
+        var dd = String(hoy.getDate()).padStart(2, '0');
+        var mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        $('#pagoFecha').val(dd + '/' + mm + '/' + hoy.getFullYear());
+
+        cargarTratamientosParaDetalle();
+
+        // Autocomplete paciente solo en modo creación
+        if ($('#inputPaciente').length) {
+            initAutocompletePaciente();
+
+            var pacienteIdPreCargado = parseInt($('#PacienteId').val());
+            if (pacienteIdPreCargado && pacienteIdPreCargado !== 0) {
+                $.ajax({
+                    url: '@Url.Action("GetAllByNombreDni", "Paciente")',
+                    type: 'GET',
+                    data: { searchText: pacienteIdPreCargado },
+                    success: function (result) {
+                        if (result && result.length > 0) {
+                            var p = result[0];
+                            $('#inputPaciente').val(p.Apellido + ', ' + p.Nombre);
+                        }
+                    }
+                });
+            }
+        }
+
+        // Recalcular subtotal al cambiar cantidad
+        $('#detalleCantidad').on('input', function () { calcularSubtotal(); });
+    });
+
+    // ── AUTOCOMPLETE PACIENTE ─────────────────────────────────
+    function initAutocompletePaciente() {
+        $('#inputPaciente').autocomplete({
+            minLength: 1,
+            response: function (event, ui) {
+                if (ui.content.length === 0)
+                    $('#mensajePaciente').text('No se encontró ningún paciente registrado.').show();
+                else
+                    $('#mensajePaciente').hide();
+            },
+            select: function (event, ui) {
+                $('#inputPaciente').val(ui.item.label);
+                $('#PacienteId').val(ui.item.value);
+                return false;
+            },
+            change: function (event, ui) {
+                if (!ui.item) $('#PacienteId').val('');
+            },
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetAllByNombreDni", "Paciente")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { searchText: request.term },
+                    success: function (result) {
+                        if (!result || result.length === 0) { response([]); return; }
+                        $('#mensajePaciente').hide();
+                        response($.map(result, function (item) {
+                            return {
+                                label: item.Apellido + ', ' + item.Nombre,
+                                value: item.Id
+                            };
+                        }));
+                    },
+                    error: function () { response([]); }
+                });
+            },
+            focus: function (event, ui) {
+                event.preventDefault();
+                $('#inputPaciente').val(ui.item.label);
+            }
+        });
+    }
+
+    // ── DETALLE ───────────────────────────────────────────────
+    function cargarTratamientosParaDetalle() {
+        $.ajax({
+            url: '@Url.Action("GetTratamientosParaDetalle", "Presupuesto")',
+            type: 'GET',
+            success: function (result) {
+                var data = result.Data.tratamientos;
+                $('#detalleTratamientoId').empty()
+                    .append('<option value="">Seleccione tratamiento</option>');
+                if (data && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        $('#detalleTratamientoId').append(
+                            $('<option>', { value: item.Id, text: item.Nombre })
+                        );
+                    });
+                }
+            }
+        });
+    }
+
+    function calcularSubtotal() {
+        var cantidad = parseFloat($('#detalleCantidad').val()) || 0;
+        var precio = parseFloat($('#detallePrecioUnitario').val()) || 0;
+        $('#detalleSubtotal').val((cantidad * precio).toFixed(2));
+    }
+
+    function abrirModalDetalle() {
+        $('#detalleTratamientoId').val('');
+        $('#detalleNumeroPieza').val('');
+        $('#detalleCantidad').val('1');
+        $('#detallePrecioUnitario').val('');
+        $('#detalleSubtotal').val('0.00');
+        new bootstrap.Modal(document.getElementById('modalDetalle')).show();
+    }
+
+    function guardarDetalle() {
+        var tratamientoId = parseInt($('#detalleTratamientoId').val());
+        if (!tratamientoId) {
+            Swal.fire({ icon: 'warning', title: 'Atención', text: 'Seleccioná un tratamiento' });
+            return;
+        }
+        var cantidad = parseInt($('#detalleCantidad').val());
+        var precio = parseFloat($('#detallePrecioUnitario').val());
+        if (!cantidad || cantidad < 1) {
+            Swal.fire({ icon: 'warning', title: 'Atención', text: 'La cantidad debe ser mayor a 0' });
+            return;
+        }
+        if (!precio || precio <= 0) {
+            Swal.fire({ icon: 'warning', title: 'Atención', text: 'Ingresá un precio válido' });
+            return;
+        }
+
+        var data = {
+            Id: 0,
+            PresupuestoId: parseInt($('#detallePresupuestoId').val()),
+            TratamientoId: tratamientoId,
+            NumeroPieza: $('#detalleNumeroPieza').val() ? parseInt($('#detalleNumeroPieza').val()) : null,
+            Cantidad: cantidad,
+            PrecioUnitario: precio,
+            Subtotal: cantidad * precio
+        };
+
+        $.ajax({
+            url: '@Url.Action("GuardarDetalle", "Presupuesto")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.Head && result.Head.Ok) {
+                    var d = result.Data.detalle;
+                    $('#filaVaciaDetalle').remove();
+                    var fila = '<tr id="fila-detalle-' + d.Id + '">' +
+                        '<td>' + (d.Tratamiento || '') + '</td>' +
+                        '<td>' + (d.NumeroPieza || '-') + '</td>' +
+                        '<td class="text-center">' + data.Cantidad + '</td>' +
+                        '<td class="text-end">$' + d.PrecioUnitario + '</td>' +
+                        '<td class="text-end">$' + d.Subtotal + '</td>' +
+                        '<td><button type="button" class="btn btn-sm btn-outline-danger" ' +
+                        'onclick="eliminarDetalle(' + d.Id + ')">' +
+                        '<i class="mdi mdi-delete"></i></button></td></tr>';
+                    $('#detallesBody').append(fila);
+                    $('#lblTotal').text('$' + d.TotalPresupuesto);
+                    bootstrap.Modal.getInstance(document.getElementById('modalDetalle')).hide();
+                    Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.Head?.Msg || 'Error al guardar' });
+                }
+            },
+            error: function () {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión' });
+            }
+        });
+    }
+
+    function eliminarDetalle(id) {
+        Swal.fire({
+            title: '¿Eliminar tratamiento?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("EliminarDetalle", "Presupuesto")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (res) {
+                        if (res.Head && res.Head.Ok) {
+                            $('#fila-detalle-' + id).remove();
+                            $('#lblTotal').text('$' + res.Data.total);
+                            if ($('#detallesBody tr').length === 0)
+                                $('#detallesBody').append('<tr id="filaVaciaDetalle"><td colspan="6" class="text-center text-muted">No hay tratamientos agregados</td></tr>');
+                            Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    // ── PAGOS ─────────────────────────────────────────────────
+    function abrirModalPago() {
+        $('#pagoMonto').val('');
+        $('#pagoMetodo').val('Efectivo');
+        $('#pagoObservaciones').val('');
+        new bootstrap.Modal(document.getElementById('modalPago')).show();
+    }
+
+    function guardarPago() {
+        var monto = parseFloat($('#pagoMonto').val());
+        if (!monto || monto <= 0) {
+            Swal.fire({ icon: 'warning', title: 'Atención', text: 'Ingresá un monto válido' });
+            return;
+        }
+
+        var fechaStr = $('#pagoFecha').val();
+        var partes = fechaStr.split('/');
+        var fechaISO = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        var data = {
+            Id: 0,
+            PresupuestoId: parseInt($('#pagoPresupuestoId').val()),
+            Fecha: fechaISO,
+            Monto: monto,
+            MetodoPago: $('#pagoMetodo').val(),
+            Observaciones: $('#pagoObservaciones').val()
+        };
+
+        $.ajax({
+            url: '@Url.Action("GuardarPago", "Presupuesto")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.Head && result.Head.Ok) {
+                    var p = result.Data.pago;
+                    $('#filaVaciaPago').remove();
+                    var fila = '<tr id="fila-pago-' + p.Id + '">' +
+                        '<td>' + p.Fecha + '</td>' +
+                        '<td>' + p.MetodoPago + '</td>' +
+                        '<td class="text-end">$' + p.Monto + '</td>' +
+                        '<td>' + (p.Observaciones || '') + '</td>' +
+                        '<td><button type="button" class="btn btn-sm btn-outline-danger" ' +
+                        'onclick="eliminarPago(' + p.Id + ')">' +
+                        '<i class="mdi mdi-delete"></i></button></td></tr>';
+                    $('#pagosBody').append(fila);
+
+                    // Actualizar resumen financiero
+                    $('#lblPagado').text('$' + p.TotalPagado);
+                    $('#lblSaldo').text('$' + p.SaldoPendiente);
+                    $('#saldoDisponible').text(p.SaldoPendiente);
+
+                    if (parseFloat(p.SaldoPendiente) <= 0)
+                        $('button[onclick="abrirModalPago()"]').prop('disabled', true);
+
+                    bootstrap.Modal.getInstance(document.getElementById('modalPago')).hide();
+                    Swal.fire({ icon: 'success', title: 'Pago registrado', timer: 1200, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.Head?.Msg || 'Error al guardar' });
+                }
+            },
+            error: function () {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión' });
+            }
+        });
+    }
+
+    function eliminarPago(id) {
+        Swal.fire({
+            title: '¿Eliminar pago?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("EliminarPago", "Presupuesto")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (res) {
+                        if (res.Head && res.Head.Ok) {
+                            $('#fila-pago-' + id).remove();
+                            $('#lblPagado').text('$' + res.Data.saldo.TotalPagado);
+                            $('#lblSaldo').text('$' + res.Data.saldo.SaldoPendiente);
+                            $('#saldoDisponible').text(res.Data.saldo.SaldoPendiente);
+                            if (parseFloat(res.Data.saldo.SaldoPendiente) > 0)
+                                $('button[onclick="abrirModalPago()"]').prop('disabled', false);
+                            if ($('#pagosBody tr').length === 0)
+                                $('#pagosBody').append('<tr id="filaVaciaPago"><td colspan="5" class="text-center text-muted">No hay pagos registrados</td></tr>');
+                            Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false });
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}

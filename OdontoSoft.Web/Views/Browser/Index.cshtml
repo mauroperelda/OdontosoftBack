@@ -1,0 +1,509 @@
+﻿@using OdontoSoft.Data.Authentication
+@using OdontoSoft.Web.Browser
+@using Microsoft.AspNetCore.Html
+@inject IAuthenticatedUser AuthenticatedUser
+@model BrowserModel
+@{
+    //Layout = "_DevExtremeLayout";
+    ViewData["Title"] = Model.Settings.BrowserTitle;
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+@*            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Apps</a></li>
+                    <li class="breadcrumb-item active">File Manager</li>
+                </ol>
+            </div>*@
+
+            <h4 class="page-title">
+                @if (Model.Settings.CreateNew.Enabled && (String.IsNullOrEmpty(Model.Settings.CreateNew.PermissionCode) || AuthenticatedUser.HasPermission((Model.Settings.CreateNew.PermissionCode))))
+                {
+                <span class="">
+                    <a class="btn btn-primary" href="@Url.Action(Model.Settings.CreateNew.Action, Model.EntityType.Name)">
+                        <i class="mdi mdi-plus"></i>
+                        @Model.Settings.CreateNew.Caption
+                    </a>
+                </span>
+                }                
+            </h4>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="text-center" id="data-grid-browser">
+</div>
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        var browserCode = "@Model.Code";
+        var urlEditFormTemplate = "@Model.Settings.EditForm.GetUrl(new { Id = "_ID_" })";
+        var canEdit = @((Model.Settings.EditForm.Enabled && (String.IsNullOrEmpty(Model.Settings.EditForm.PermissionCode) || AuthenticatedUser.HasPermission((Model.Settings.EditForm.PermissionCode)))).ToString().ToLower());
+        var canDelete = @((Model.Settings.Delete.Enabled && (String.IsNullOrEmpty(Model.Settings.Delete.PermissionCode) || AuthenticatedUser.HasPermission((Model.Settings.Delete.PermissionCode)))).ToString().ToLower());
+        var hasActions = @((Model.Actions != null && Model.Actions.Count > 0).ToString().ToLower());
+
+
+
+        $(document).ready(function() {
+
+            var columns = [];
+
+        @foreach (var column in Model.Columns)
+        {
+            switch (column.DataType)
+            {
+                case BrowserColumnDataType.String:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left"
+                            });
+                    </text>
+                    break;
+                case BrowserColumnDataType.Integer:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left",
+                                dataType: "number",
+                                format: {
+                                    type: "fixedPoint",
+                                    precision: 0
+                                }
+                            });
+                    </text>
+                    break;
+                case BrowserColumnDataType.Decimal:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left",
+                                dataType: "number",
+                                format: {
+                                    type: "fixedPoint", //TODO Parametrizar (currency, percent, etc.)
+                                    precision: 2 //TODO Parametrizar
+                                }
+                            });
+                    </text>
+                    break;
+                case BrowserColumnDataType.Boolean:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left",
+                                dataType: "boolean"
+                            });
+                    </text>
+                    break;
+                case BrowserColumnDataType.DateTime:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left",
+                                dataType: "date",
+                                allowHeaderFiltering: false,
+                                format: {
+                                    type: "shortDate"
+                                }
+                            });
+                    </text>
+                    break;
+                case BrowserColumnDataType.Other:
+                    <text>
+                            columns.push({
+                                dataField: "@column.Name",
+                                caption: "@Html.Raw(column.Title)",
+                                alignment: "left",
+                                dataType: "object"
+                            });
+                    </text>
+                    break;
+            }
+        }
+
+
+
+                function getLoadParameters(loadOptions) {
+                    var parameters = {};
+
+                    parameters.BrowserCode = browserCode;
+                    parameters.Skip = loadOptions.skip;
+                    parameters.Take = loadOptions.take;
+
+                    parameters.Filter = getFilterOptions(loadOptions);
+                    parameters.Sort = getSortOptions(loadOptions);
+                    parameters.Group = getGroupOptions(loadOptions);
+                    parameters.Search = getSearchOptions(loadOptions);
+
+                    return parameters;
+                }
+
+
+            function getFilterOptions(loadOptions) {
+                var filterOptions = { Items: [] };
+                if (loadOptions.filter && loadOptions.filter.length > 0) {
+                    if (typeof loadOptions.filter[0] == "string") {
+                        filterOptions.Items.push({ Field: loadOptions.filter[0], Operation: loadOptions.filter[1], Value: loadOptions.filter[2] });
+                    }
+                    else if (Array.isArray(loadOptions.filter[0])) {
+                        filterOptions.Items = getFilterOptionItems(loadOptions.filter);
+                    }
+                }
+                return filterOptions;
+            }
+
+            function getFilterOptionItems(items) {
+                var filterOptionItems = []
+                for (itemIndex = 0; itemIndex < items.length; itemIndex++) {
+                    var item = items[itemIndex];
+                    if (typeof item == "string") {
+                        filterOptionItems.push({ Condition: item });
+                    }
+                    else if (Array.isArray(item) && typeof item[0] == "string") {
+                        filterOptionItems.push({ Field: item[0], Operation: item[1], Value: item[2] });
+                    }
+                    else {
+                        filterOptionItems.push({ Items: getFilterOptionItems(item) });
+                    }
+                }
+
+                return filterOptionItems;
+            }
+
+            function getSortOptions(loadOptions) {
+                var sortOptions = { Fields: [] };
+                if (loadOptions.sort && loadOptions.sort != null && loadOptions.sort.length > 0) {
+                    $(loadOptions.sort).each(function(index, item) {
+                        sortOptions.Fields.push({ Field: item.selector, Descending: item.desc });
+                    });
+                }
+                return sortOptions;
+            }
+
+            function getGroupOptions(loadOptions) {
+                var groupOptions = { DataField: loadOptions.dataField, Fields: [] };
+                if (loadOptions.group && loadOptions.group != null && loadOptions.group.length > 0) {
+                    $(loadOptions.group).each(function(index, item) {
+                        groupOptions.Fields.push({ Field: item.selector, IsExpanded: item.isExpanded });
+                    });
+                }
+                return groupOptions;
+            }
+
+            function getSearchOptions(loadOptions) {
+                return {
+                    Value: loadOptions.searchValue ? loadOptions.searchValue : null,
+                    Operation: loadOptions.searchOperation ? loadOptions.searchOperation : null,
+                    Expression: loadOptions.searchExpr ? loadOptions.searchExpr : null
+                };
+            }
+
+            var urlDeleteAjax = '@Model.Settings.Delete.GetUrl()';
+            function DeleteRecord(id, rowIndex) {
+                $("#data-grid-browser").dxDataGrid('instance').deleteRow(rowIndex);
+            }
+
+            function AjaxActionCall(url, id, confirmTitle, confirmMessage, successTitle, successMessage) {
+                Medve.Bootbox.confirm(
+                    confirmTitle,
+                    confirmMessage,
+                    "Aceptar",
+                    "Cancelar",
+                    function() {
+                        $('.global-loader').show();
+                        var conn = new Medve.Connector();
+
+                        conn.doRequest({
+                            url: url,
+                            type: 'GET',
+                            dataType: 'json',
+                            data: { id: id },
+                            success: function(result) {
+                                $('.global-loader').hide();
+                                Medve.Bootbox.alertSuccess(successTitle, successMessage, "Cerrar");
+                            },
+                            cancel: function(e) {
+                                $('.global-loader').hide();
+                                var errorMessage = "Ha ocurrido un error al contactarse con el servidor";
+                                if (e.Head && e.Head.Msg) {
+                                    errorMessage = e.Head.Msg;
+                                }
+                                if (typeof e == "string" && e != "") {
+                                    errorMessage = e;
+                                }
+                                Medve.Bootbox.alertDanger("Error", errorMessage, "Cerrar");
+                            }
+                        });
+                    });
+            }
+
+            var dataSource = new DevExpress.data.DataSource({
+                load: function(loadOptions) {
+                    var d = new $.Deferred();
+                    var parameters = getLoadParameters(loadOptions);
+                    $.getJSON('@Url.Action("GetBrowserDatasource", "Browser")', { parametersString: JSON.stringify(parameters) }).done(function(result) {
+                        d.resolve(result.Data.Data.Items, { totalCount: result.Data.Data.TotalCount });
+                    });
+                    return d.promise();
+                },
+                remove: function(key) {
+                    var d = new $.Deferred();
+                    var conn = new Medve.Connector();
+
+                    conn.doRequest({
+                        url: urlDeleteAjax,
+                        data: { id: key.Id },
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function(result) {
+                            //alert(11);
+                            d.resolve(true);
+                        },
+                        error: function(e) {
+                            var errorMessage = "Ha ocurrido un error al contactarse con el servidor";
+                            if (e.Head && e.Head.Msg) {
+                                errorMessage = e.Head.Msg;
+                            }
+                            if (typeof e == "string" && e != "") {
+                                errorMessage = e;
+                            }
+                            d.reject(errorMessage);
+                            Medve.Bootbox.alertDanger("Error", errorMessage, "Cerrar");
+                        }
+                    });
+                    return d.promise();
+                }
+            });
+
+            if (canEdit || canDelete || hasActions) {
+                columns.push({
+                    caption: "",
+                    alignment: "left",
+                    width: 140,
+
+
+                    cellTemplate: function(container, options) {
+
+
+                        /*{
+           id: "1_1",
+           name: "HD Video Player",
+           price: 220,
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/1.png"
+        }, {
+           id: "1_2",
+           name: "SuperHD Video Player",
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/2.png",
+           price: 270
+        }, {
+           id: "2_4",
+           name: "SuperLCD 55 (Not available)",
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/6.png",
+           price: 1350,
+           disabled: true
+        }, {
+           id: "2_5",
+           name: "SuperLCD 70",
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/9.png",
+           price: 4000
+        }, {
+           id: "4_1",
+           name: "Projector Plus",
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/14.png",
+           price: 550
+        }, {
+           id: "4_2",
+           name: "Projector PlusHD",
+           iconSrc: "https://js.devexpress.com/Demos/WidgetsGallery/JSDemos/images/products/15.png",
+           price: 750
+        }*/
+
+                        var menuData = [{
+                            id: "1",
+                            icon: "preferences",
+                            items: []
+                        }];
+
+
+        @foreach (BrowserAction browserAction in Model.Actions)
+        {
+
+            string url = Url.Action(browserAction.Action, browserAction.Controller);
+            //IHtmlString text = Html.Raw(browserAction.Text);
+            //IHtmlString icon = Html.Raw(string.IsNullOrEmpty(browserAction.IconCssClass) ? string.Empty : "<i class=\"" + browserAction.IconCssClass + "\"></i>");
+            if (browserAction.IsAjax)
+            {
+                //IHtmlString confirmTitle = Html.Raw(browserAction.ConfirmTitle);
+                //IHtmlString confirmMessage = Html.Raw(browserAction.ConfirmMessage);
+                //IHtmlString successTitle = Html.Raw(browserAction.SuccessTitle);
+                //IHtmlString successMessage = Html.Raw(browserAction.SuccessMessage);
+                //@:listElementString += '<li><a class="btn btn-sm" title="@text" onclick="AjaxActionCall(\'@url\', ' + cellInfo.data.Id + ', \'@confirmTitle\', \'@confirmMessage\', \'@successTitle\', \'@successMessage\')">@icon@text)</a></li>';
+
+                <text>
+                                                            var mnuAction@(browserAction.Action) = {
+                                    id: "action_@(browserAction.Action)_" + options.data.Id,
+                                        icon: "preferences",
+                                            name: "@browserAction.Text",
+                                                onItemClick: function (e) {
+                                                    AjaxActionCall('@url', options.data.Id, '@browserAction.ConfirmTitle', '@browserAction.ConfirmMessage', '@browserAction.SuccessTitle', '@browserAction.SuccessMessage');
+                                                },
+                                };
+                                menuData[0].items.push(mnuAction@(browserAction.Action));
+                </text>
+            }
+            else
+            {
+                url = Url.Action(browserAction.Action, browserAction.Controller, new { id = "_ID_" });
+                <text>
+                                                            var mnuAction@(browserAction.Action) = {
+                                    id: "action_@(browserAction.Action)_" + options.data.Id,
+                                        icon: "preferences",
+                                            name: "@browserAction.Text",
+                                                href: ("@url").replace("_ID_", options.data.Id)
+                                };
+                                menuData[0].items.push(mnuAction@(browserAction.Action));
+                </text>
+            }
+        }
+
+
+                                    if (canEdit) {
+                            var menuEdit = {
+                                id: "edit_" + options.data.Id,
+                                icon: "preferences",
+                                name: "Editar",
+                                href: urlEditFormTemplate.replace("_ID_", options.data.Id)
+                            };
+                            menuData[0].items.push(menuEdit);
+                        }
+
+                        if (canDelete) {
+                            var menuDelete = {
+                                id: "delete_" + options.data.Id,
+                                icon: "delete",
+                                name: "Eliminar",
+                                onItemClick: function(e) {
+                                    DeleteRecord(options.data.Id, options.rowIndex);
+                                },
+                            };
+                            menuData[0].items.push(menuDelete);
+
+                            //listElementString += '<li><a class="btn btn-sm btn-flat btn-delete" onclick="DeleteRecord(' + cellInfo.data.Id + ', ' + cellInfo.rowIndex + ')" id-entity="' + cellInfo.data.Id + '"><i class="fa fa-times"></i>Eliminar</a></li>';
+                        }
+
+
+                        $('<div>').appendTo(container).dxMenu({
+                            dataSource: menuData,
+                            hideSubmenuOnMouseLeave: false,
+                            displayExpr: "name",
+                            onItemRendered: function(e) {
+                                if (e.itemData.href === undefined || e.itemData.href === null) return;
+
+                                var link = $('<a>', { href: e.itemData.href });
+                                e.itemElement.wrap(link)
+                            },
+                            onItemClick: function(e) {
+                                if (e.itemData.onItemClick === undefined || e.itemData.onItemClick === null) return;
+
+                                e.itemData.onItemClick();
+
+                                //if (e.itemData.name)
+                                //    console.log(e.itemData.name + " item is clicked in the " + options.rowIndex + " row.");
+                            },
+                        }).dxMenu("instance");
+
+
+                        //$('<div>').appendTo(container).dxMenu({
+                        //    items: [{
+                        //        icon: "preferences",
+                        //        items: misitems
+                        //    }],
+                        //    showFirstSubmenuMode: 'onClick',
+                        //    hideSubmenuOnMouseLeave: true,
+                        //    itemTemplate: function (itemData, itemIndex, itemElement) {
+                        //       // debugger;
+                        //       //if (!itemData.ajax) { // Your Condition Goes Here...
+                        //       //  itemElement.append("<a href='https://codepen.io'>" + "sssss" + "</a>");
+                        //       //}
+                        //       //else {
+                        //         //itemElement.append(itemData.text);
+                        //       //}
+                        //           },
+                        //    onItemClick: function (e) {
+                        //        if (e.itemData.value)
+                        //            console.log(e.itemData.value + " item is clicked in the " + options.rowIndex + " row.");
+                        //    },
+                        //});
+                    }
+
+
+                    //cellTemplate: function (cellElement, cellInfo) {
+
+
+
+                    //    var buttonElement = $('<div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">xxx</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton"><a class="dropdown-item" href="#">Something else here</a></div></div>').appendTo(cellElement);
+                    //}
+                });
+            }
+
+            var dataGridBrowserOptions = {
+                columns: columns,
+                allowColumnReordering: false,
+                allowColumnResizing: true,
+                remoteOperations: {
+                    filtering: true,
+                    sorting: true,
+                    paging: true,
+                    grouping: true
+                },
+                paging: {
+                    enabled: true,
+                    pageSize: 20
+                },
+                pager: {
+                    showInfo: true
+                },
+                sorting: {
+                    enabled: true,
+                    mode: 'multiple'
+                },
+                searchPanel: {
+                    visible: true
+                },
+                headerFilter: {
+                    visible: true
+                },
+                filterRow: {
+                    visible: true
+                },
+                loadPanel: {
+                    enabled: true,
+                    showIndicator: true,
+                    showPane: true
+                },
+                dataSource: dataSource
+            };
+
+            $("#data-grid-browser").dxDataGrid(dataGridBrowserOptions);
+
+
+
+        });
+
+
+
+
+    </script>
+}

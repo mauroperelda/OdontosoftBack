@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CustomConstructors\" />
+    <Folder Include="Custom\" />
+    <Folder Include="Interface\" />
+  </ItemGroup>
+
+</Project>

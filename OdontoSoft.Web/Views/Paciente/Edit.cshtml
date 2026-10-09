@@ -1,0 +1,156 @@
+﻿@using OdontoSoft.Web.Helpers;
+@using OdontoSoft.Entities.ViewModels;
+@model PacienteViewModel
+
+@{
+    ViewBag.Title = "Formulario";
+}
+
+@using (Html.BeginForm("Edit", "Paciente", FormMethod.Post))
+{
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Formulario de Paciente</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                            @Html.HiddenFor(model => model.Id)
+                        </div>
+                    </div>
+                    <h5 class="card-title">DATOS DEL PACIENTE</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Nombre)
+                            @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Nombre)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Apellido)
+                            @Html.TextBoxFor(x => x.Apellido, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Apellido)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Dni)
+                            @Html.TextBoxFor(x => x.Dni, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Dni)
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.FechaNacimiento)
+                            @Html.TextBoxFor(x => x.FechaNacimiento, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker" })
+                            @Html.ValidationMessageFor(model => model.FechaNacimiento)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Celular)
+                            @Html.TextBoxFor(x => x.Celular, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Celular)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Email)
+                            @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.DomicilioCalle)
+                            @Html.TextBoxFor(x => x.DomicilioCalle, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.DomicilioCalle)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Provincia)
+                            @Html.DropDownList("ProvinciaId", (SelectList)ViewBag.Provincia, "Seleccione Provincia", new { @class = "form-select" } )
+                            @Html.ValidationMessageFor(model => model.ProvinciaId)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Localidad)
+                            <select id="LocalidadId" name="LocalidadId" class="form-select">
+                                <option value="">Seleccione Localidad</option>
+                                @foreach (var item in ViewBag.Localidad)
+                                {
+                                    if (Convert.ToInt32(item.Value) == Model.LocalidadId)
+                                    {
+                                        <option value="@item.Value" selected>@item.Text</option>
+                                    }
+                                    else{
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.LocalidadId)
+                        </div>
+                    </div>
+                </div> <!-- end card-body-->
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12 button-list">
+            <input type="submit" class="btn btn-primary" value="Guardar" />
+            <a class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Paciente", "Browser", new { code = Model.GetType().Name })"><i class="mdi mdi-arrow-left"></i>Volver al listado</a>
+        </div>
+    </div>
+
+}
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#ProvinciaId').change(function () {
+                var provinciaId = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("GetByProvincia", "Localidad")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { provinciaId: provinciaId },
+                    success: function (result) {
+                        var data = result.Data.localidades;
+                        $('#LocalidadId').empty();
+                        if (data && data.length > 0) {
+                            $.each(data, function (index, item) {
+                                $('#LocalidadId').append($('<option>', {
+                                    value: item.Id,
+                                    text: item.Descripcion
+                                }));
+                            });
+                        } else {
+                            $('#LocalidadId').append('<option value="">No hay localidades disponibles</option>');
+                        }
+
+                    },
+                    Error: function (e) {
+                        var errorMessage = 'Ha ocurrido un error de conexion';
+                        if (e.Head && e.Head.Msg) {
+                            errorMessage = e.Head.Msg;
+                        }
+                        if (typeof e == 'string' && e != '') {
+                            errorMessage = e;
+                        }
+                        swal({
+                            type: 'error',
+                            title: 'Error',
+                            html: errorMessage
+                        });
+                    }
+                })
+            })
+        });
+    </script>
+}

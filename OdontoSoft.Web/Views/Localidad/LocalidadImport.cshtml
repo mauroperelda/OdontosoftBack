@@ -1,0 +1,61 @@
+﻿@model OdontoSoft.Entities.Models.Localidad
+@using OdontoSoft.Web.Helpers
+
+@{
+    ViewBag.Title = "Sincronizar Localidades";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Sincronizar Localidades</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class=" card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-12 button-list">
+                        <input type="button" class="btn btn-primary" value="Sincronizar" onclick="SincronizarLocalidades()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // SincronizarLocalidades()
+        });
+
+        function SincronizarLocalidades(){
+            $.ajax({
+                url: '@Url.Action("SincronizarLocalidades", "Localidad")',
+                type: 'GET',
+                dataType: 'json',
+                success: function(result){
+
+                },
+                Error: function (e) {
+                    var errorMessage = 'Ha ocurrido un error de conexion';
+                    if (e.Head && e.Head.Msg) {
+                        errorMessage = e.Head.Msg;
+                    }
+                    if (typeof e == 'string' && e != '') {
+                        errorMessage = e;
+                    }
+                    swal({
+                        type: 'error',
+                        title: 'Error',
+                        html: errorMessage
+                    });
+                }
+            });
+        }
+    </script>
+}

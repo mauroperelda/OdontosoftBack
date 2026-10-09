@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Browser>
+  <Settings>
+    <Setting Name="Title" Value="Pago"/>
+    <Setting Name="BrowserTitle" Value="Administración de Pago"/>
+    <Setting Name="Icon" Value="uil-bookmark-full"/>
+    <Setting Name="PermissionCode" Value=""/>
+    <BrowserMainAction Name="CreateNew" Enabled="true" Action="EditForm" Controller="Pago" PermissionCode="" Caption="Agregar Pago"/>
+    <BrowserMainAction Name="EditForm" Enabled="true" Action="EditForm" Controller="Pago" PermissionCode=""/>
+    <BrowserMainAction Name="Delete" Enabled="true" Action="DeleteAjax" Controller="Pago" PermissionCode=""/>
+  </Settings>
+  <Columns>
+    <Column Name="PresupuestoId" Title="PresupuestoId" />
+    <Column Name="Presupuesto" Title="Presupuesto" />
+    <Column Name="Fecha" Title="Fecha" />
+    <Column Name="Monto" Title="Monto" />
+    <Column Name="MetodoPago" Title="MetodoPago" />
+    <Column Name="Observaciones" Title="Observaciones" />
+    <Column Name="CreatedUserId" Title="CreatedUserId" />
+    <Column Name="CreatedUserName" Title="CreatedUserName" />
+    <Column Name="CreatedDate" Title="CreatedDate" />
+    <Column Name="UpdatedUserId" Title="UpdatedUserId" />
+    <Column Name="UpdatedUserName" Title="UpdatedUserName" />
+    <Column Name="UpdatedDate" Title="UpdatedDate" />
+    <Column Name="Disabled" Title="Disabled" />
+  </Columns>
+  <Actions>
+    <!-- <Action Text="Reporte" IconCssClass="fa fa-file-excel-o" Action="DownloadReport" Controller="SomeController" /> -->
+  </Actions>
+</Browser>
+

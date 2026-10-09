@@ -1,0 +1,242 @@
+﻿@using OdontoSoft.Web.Helpers.Application;
+@inject IAppVersionService AppVersionService
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - OdontoSoft</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/OdontoSoft.Web.styles.css" asp-append-version="true" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="@Url.Content("~/images/favicon.ico")">
+
+    <!-- third party css -->
+    <link href="@Url.Content("~/css/vendor/jquery-jvectormap-1.2.2.css")" rel="stylesheet" type="text/css" />
+    <!-- third party css end -->
+
+    <!-- App css -->
+    <link href="@Url.Content("~/css/icons.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/css/app.css")" rel="stylesheet" type="text/css" id="app-style" />
+
+    <link href="@Url.Content("~/css/devextreme/dx.light.css")" rel="stylesheet" />
+
+    <style>
+        .overlay {
+            background-color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            opacity: 0.9;
+        }
+
+        .overlay-inside {
+            background-color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            opacity: 1;
+        }
+
+        .btn-grid {
+            line-height: 0.5;
+        }
+
+        .btn-sm-grid, .btn-group-sm > .btn {
+            padding: 0.1rem 0.3rem;
+            font-size: 0.7rem;
+            border-radius: 0.15rem;
+        }
+
+        .disabled-icon {
+            color: #e8e8e8;
+            cursor: not-allowed;
+        }
+
+        .loader-container {
+            width: 100%;
+            text-align: center;
+        }
+
+
+        .validation-summary-errors {
+            color: #ee5776;
+            background-color: rgba(250,92,124,.18);
+            border: 1px solid rgba(250,92,124,.25);
+            margin: 0;
+            padding: 10px;
+        }
+
+        span.validation-summary-errors {
+            border-bottom-color: rgba(250,92,124,.25);
+            display: block;
+        }
+
+        ul.validation-summary-errors {
+            margin: 0;
+            padding: 0;
+            border-top: none;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+
+        .table .action-icon-danger {
+            color: #ee5776;
+            font-size: 1.2rem;
+            display: inline-block;
+            padding: 0 3px;
+        }
+
+            .table .action-icon-danger:hover {
+                color: #a63c52;
+            }
+    </style>
+</head>
+<body class="loading" data-layout-color="light" data-leftbar-theme="dark" data-layout-mode="fluid" data-rightbar-onstart="false">
+    
+    <div class="wrapper">
+
+        <div id="LeftSideMenu" data-url="@Url.Action(action: "GetLeftSideMenu", controller: "Menu" )"></div>
+        @* <partial name="_LeftSideMenu.cshtml" /> *@
+
+        <div class="content-page">
+
+            <div class="content">
+
+                <partial name="NavbarCustom.cshtml" />
+
+                @*<main role="main" class="pb-3 pt-3">*@
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+                @*</main>*@
+
+                <div id="loader" class="overlay" style="height:100%;width:100%">
+                    <div class="overlay-inside">
+                        <button class="btn btn-primary" type="button" disabled>
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Espere unos instantes...
+                        </button>
+                    </div>
+                </div>
+                <!-- END content -->
+            </div>
+            <!-- END content-page -->
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            2022 - <script>document.write(new Date().getFullYear())</script> - Desarrollo <a href="#" target="_blank">Mauro Perelda</a> - Version @AppVersionService.Version
+
+                            @*<script>document.write(new Date().getFullYear())</script>2023 © Hyper - Coderthemes.com*@
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+@*     <script src="https://code.jquery.com/jquery-3.6.0.js"></script> *@
+
+    <script src="@Url.Content("~/js/vendor.min.js")"></script>
+    <script src="@Url.Content("~/js/app.min.js")"></script>
+
+
+    @* <script src="@Url.Content("~/js/vendor/fullcalendar.min.js")"></script> *@
+    @* <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script> *@
+
+
+    <script src="@Url.Content("~/js/devextreme/dx.all.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/aspnet/dx.aspnet.mvc.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/aspnet/dx.aspnet.data.js")"></script>
+
+    <script src="@Url.Content("~/js/devextreme/localization/dx.messages.es.js")"></script>
+
+    <script src="@Url.Content("~/js/npm/sweetalert2@11.js")"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/i18n/es.min.js"></script>
+
+    <script src="@Url.Content("~/js/medve/Backbone.Events.js")"></script>
+    <script src="@Url.Content("~/js/medve/MedveCommon.js")"></script>
+    <script src="@Url.Content("~/js/medve/MedveConnector.js")"></script>
+@*     <script src="@Url.Content("~/js/medve/MedveAutocomplete.js")"></script> *@
+
+
+    
+
+
+    @* <script src="@Url.Action("MedveApp", "Configuration")" type="text/javascript"></script> *@
+    
+    
+    <script>
+        DevExpress.localization.locale("es");
+
+        function ShowLoader() {
+
+            $("#loader").show();
+        }
+        function HideLoader() {
+
+            $("#loader").hide();
+        }
+
+        ; (function ($) {
+            $.fn.datepicker.dates['es'] = {
+                days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                today: "Hoy",
+                monthsTitle: "Meses",
+                clear: "Borrar",
+                weekStart: 1,
+                format: "dd/mm/yyyy"
+            };
+
+            $.fn.datepicker.defaults.language = 'es';
+            $.fn.datepicker.defaults.autoclose = true;
+            $.fn.datepicker.defaults.orientation = "bottom";
+
+        }(jQuery));
+
+        function ShowNotification(message) {
+            $.NotificationApp.send("Finalizado!", message, 'bottom-right', 'rgba(0,0,0,0.2)', 'success');
+        }
+
+        function ShowErrorMessage(error) {
+            if (error.Head != null) {
+                alert(error.Head.Msg);
+            }
+            else {
+                alert(error);
+            }
+        }
+
+        $(document).ready(function () {
+
+            $(".datepicker").datepicker();
+
+            debugger;
+            (function () {
+                HideLoader();
+                var url = $("#LeftSideMenu").data("url");
+                $("#LeftSideMenu").load(url);
+            })();
+        });
+    </script>
+@*     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> *@
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

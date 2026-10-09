@@ -1,0 +1,1 @@
+copy C:\medvecode\repos\medvesoft\medve_library_core\MedveCore\lib\*.* .

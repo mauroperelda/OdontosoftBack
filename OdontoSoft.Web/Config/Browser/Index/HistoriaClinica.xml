@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Browser>
+  <Settings>
+    <Setting Name="Title" Value="HistoriaClinica"/>
+    <Setting Name="BrowserTitle" Value="Administración de Historia Clinica"/>
+    <Setting Name="Icon" Value="uil-bookmark-full"/>
+    <Setting Name="PermissionCode" Value=""/>
+    <BrowserMainAction Name="CreateNew" Enabled="true" Action="Edit" Controller="HistoriaClinica" PermissionCode="" Caption="Agregar Historia Clinica"/>
+    <BrowserMainAction Name="EditForm" Enabled="true" Action="Edit" Controller="HistoriaClinica" PermissionCode=""/>
+    <BrowserMainAction Name="Delete" Enabled="true" Action="DeleteAjax" Controller="HistoriaClinica" PermissionCode=""/>
+  </Settings>
+  <Columns>
+    <Column Name="PacienteNombre" Title="Paciente" />
+    <Column Name="Alergias" Title="Alergias" />
+    <Column Name="Medicamentos" Title="Medicamentos" />
+    <Column Name="AntecedentesMedicos" Title="Antecedentes Medicos" />
+    <Column Name="Observaciones" Title="Observaciones" />
+    <!--<Column Name="FichasTratamiento" Title="Fichas Tratamiento" />
+    <Column Name="OdontogramaPiezas" Title="Odontograma Piezas" />-->
+    <Column Name="CreatedUserName" Title="Usuario Creacion" />
+    <Column Name="CreatedDate" Title="Fecha Creacion" />
+    <Column Name="Disabled" Title="Deshabilitado" />
+  </Columns>
+  <Actions>
+    <!-- <Action Text="Reporte" IconCssClass="fa fa-file-excel-o" Action="DownloadReport" Controller="SomeController" /> -->
+  </Actions>
+</Browser>
+

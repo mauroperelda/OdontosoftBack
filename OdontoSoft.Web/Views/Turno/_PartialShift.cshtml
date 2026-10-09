@@ -1,0 +1,55 @@
+﻿@using OdontoSoft.Entities.ViewModels;
+@model TurnoViewModel
+
+<form id="formTurno">
+  @Html.AntiForgeryToken()
+  @Html.ValidationSummary(true)
+  @Html.HiddenFor(model => model.Id)
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.Paciente)
+      <input class="form-control" id="inputPaciente" name="Paciente"
+             value="@Model.Paciente" placeholder="Ingrese Nombre, apellido o DNI" />
+      @Html.Hidden("PacienteId", Model.PacienteId)
+    </div>
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.Profesional)
+      <select id="ProfesionalId" name="ProfesionalId" class="form-select"></select>
+    </div>
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.Tratamientos)
+      <select id="TratamientoId" name="TratamientoId" class="form-select"></select>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.Fecha)
+      @Html.TextBoxFor(x => x.Fecha, "{0:dd/MM/yyyy}", new { @class = "form-control datepickerFecha" })
+    </div>
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.HoraInicio)
+      <input class="form-control" asp-for="HoraInicio" type="time" />
+    </div>
+    <div class="col-md-4">
+      @Html.LabelFor(x => x.HoraFin)
+      <input class="form-control" asp-for="HoraFin" type="time" />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label class="form-label">Estado</label>
+      <select id="EstadoTurnoId" name="EstadoTurnoId" class="form-select"></select>
+    </div>
+  </div>
+  <div class="form-floating mb-3">
+    <textarea class="form-control" asp-for="Observacion" style="height: 100px;"></textarea>
+    <label for="Observacion">Observación</label>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+  </div>
+</form>

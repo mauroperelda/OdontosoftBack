@@ -1,0 +1,224 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  
+	<PreserveCompilationContext>true</PreserveCompilationContext>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
+    <Version>$(VersionPrefix)1.6.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Medve\**" />
+    <Compile Remove="Views\_Partials\**" />
+    <Content Remove="Medve\**" />
+    <Content Remove="Views\_Partials\**" />
+    <EmbeddedResource Remove="Medve\**" />
+    <EmbeddedResource Remove="Views\_Partials\**" />
+    <None Remove="Medve\**" />
+    <None Remove="Views\_Partials\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="AutoMapper" Version="16.1.1" />
+	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+	  <PackageReference Include="DevExtreme.AspNet.Data" Version="5.1.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <!--<PackageReference Include="System.Runtime" Version="4.3.1" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Browser\Index.cshtml" />
+    <None Include="wwwroot\js\site.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.esm.min.js.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.js.map" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
+    <None Include="wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
+    <None Include="wwwroot\lib\bootstrap\LICENSE" />
+    <None Include="wwwroot\lib\fullcalendar\locales-all.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales-all.min.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\af.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-dz.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-kw.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-ly.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-ma.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-sa.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar-tn.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ar.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\az.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\bg.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\bs.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ca.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\cs.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\da.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\de.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\el.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\en-au.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\en-gb.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\en-nz.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\es-us.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\es.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\et.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\eu.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\fa.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\fi.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\fr-ca.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\fr-ch.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\fr.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\gl.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\he.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\hi.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\hr.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\hu.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\id.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\is.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\it.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ja.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ka.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\kk.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ko.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\lb.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\lt.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\lv.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\mk.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ms.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\nb.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ne.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\nl.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\nn.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\pl.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\pt-br.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\pt.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ro.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ru.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sk.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sl.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sq.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sr-cyrl.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sr.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\sv.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\th.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\tr.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\ug.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\uk.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\uz.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\vi.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\zh-cn.js" />
+    <None Include="wwwroot\lib\fullcalendar\locales\zh-tw.js" />
+    <None Include="wwwroot\lib\fullcalendar\main.js" />
+    <None Include="wwwroot\lib\fullcalendar\main.min.js" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+    <None Include="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
+    <None Include="wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
+    <None Include="wwwroot\lib\jquery-validation\LICENSE.md" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.js" />
+    <None Include="wwwroot\lib\jquery\dist\jquery.min.map" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<!--<Reference Include="Log2WebCoreLogger">
+			<HintPath>..\lib\Log2WebCoreLogger.dll</HintPath>
+		</Reference>-->
+		<Reference Include="MedveCore.Common">
+			<HintPath>..\lib\MedveCore.Common.dll</HintPath>
+		</Reference>
+		<!--<Reference Include="MedveCore.Entities">
+			<HintPath>..\lib\MedveCore.Entities.dll</HintPath>
+		</Reference>-->
+		<!--<Reference Include="MedveCore.MembershipProvider">
+			<HintPath>..\lib\MedveCore.MembershipProvider.dll</HintPath>
+		</Reference>-->
+		<Reference Include="Mauro.RepositoryPattern">
+			<HintPath>..\lib\Mauro.RepositoryPattern.dll</HintPath>
+		</Reference>
+		<Reference Include="Mauro.Entities">
+			<HintPath>..\lib\Mauro.Entities.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+    <ProjectReference Include="..\Odontosoft.Services\Odontosoft.Services.csproj" />
+  </ItemGroup>
+	
+	<ItemGroup>
+		<None Update="Config\Browser\Index\Paciente.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Config\Browser\Index\Localidad.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Config\Browser\Index\Provincia.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Config\Browser\Index\Profesional.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Config\Browser\Index\Turno.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Config\Browser\Index\Tratamiento.xml">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Mapper\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="appsettings.json" />
+		<Content Remove="appsettings.Development.json" />
+		<Content Remove="appsettings.Production.json" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<DefaultItemCondition>'$(Configuration)' != 'Package'</DefaultItemCondition>
+	</PropertyGroup>
+</Project>

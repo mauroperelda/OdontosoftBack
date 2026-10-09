@@ -1,0 +1,280 @@
+﻿@using OdontoSoft.Web.Helpers;
+@using OdontoSoft.Entities.ViewModels;
+@model TurnoViewModel
+
+@{
+  ViewData["Title"] = "Turno";
+}
+
+@using (Html.BeginForm("Edit", "Turno", FormMethod.Post))
+{
+
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <h4>Turno</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="modal-body">
+              <div class="row mb-3">
+                <div class="col-md-12">
+                  @Html.ValidationSummary(true)
+                  @Html.HiddenFor(model => model.Id)
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  @Html.LabelFor(x => x.Paciente)
+                  <input class="form-control" id="inputPaciente" name="Paciente" placeholder="Ingrese Nombre, apellido o DNI" />
+                  @Html.Hidden("PacienteId")
+                </div>
+                <div class="col-md-4">
+                  @Html.LabelFor(x => x.Profesional)
+                  <select id="ProfesionalId" name="ProfesionalId" class="form-select"></select>
+                  @Html.ValidationMessageFor(model => model.Profesional)
+                </div>
+                <div class="col-md-4">
+                  @Html.LabelFor(x => x.Tratamientos)
+                  <select id="TratamientoId" name="TratamientoId" class="form-select"></select>
+                  @Html.ValidationMessageFor(model => model.Tratamientos)
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  @Html.LabelFor(x => x.Fecha)
+                  @Html.TextBoxFor(x => x.Fecha, "{0:dd/MM/yyyy}", new { @class = "form-control datepickerFecha" })
+                  @Html.ValidationMessageFor(model => model.Fecha)
+                </div>
+                <div class="col-md-4">
+                  @Html.LabelFor(x => x.HoraInicio)
+                  <input class="form-control" asp-for="HoraInicio" type="time">
+                    @Html.ValidationMessageFor(model => model.HoraInicio)
+                  </div>
+                  <div class="col-md-4">
+                    @Html.LabelFor(x => x.HoraFin)
+                    <input class="form-control" asp-for="HoraFin" type="time">
+                      @Html.ValidationMessageFor(model => model.HoraFin)
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <textarea class="form-control form-control-sm" asp-for="Observacion" style="height: 100px;"></textarea>
+                    <label class="control-label" for="Observacion">Observacion</label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <a class="btn btn-danger text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Index", "Home")"><i></i>Cancelar</a>
+                  @* <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button> *@
+                  <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @section scripts {
+      <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+      <script>
+        $(document).ready(function () {
+        $('.datepickerFecha').datepicker({
+        dateFormat: 'dd/mm/yy',
+        // Otras opciones
+        });
+
+        GetTratamientos();
+        GetProfesionales();
+        initAutocompletePaciente();
+        $('#inputPaciente').autocomplete('instance');
+
+        // $('#formCalendario').submit(function (e) {
+        //     e.preventDefault();
+        //     ShowLoader();
+        //     $.ajax({
+        //         url: '@Url.Action("Edit", "Turno")',
+        //         type: 'POST',
+        //         data: $(this).serialize(),
+        //         success: function (result) {
+        //             if (result.success) {
+        //                 // Lógica para manejar el éxito (puede redirigir a otra página)
+        //                 window.location.href = '@Url.Action("Index", "Home")';
+        //             } else {
+        //                 // Mostrar SweetAlert con los errores
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Error',
+        //                     html: result.errors.join('<br>')
+        //                 });
+        //             }
+        //         },
+        //         error: function () {
+        //             // Manejar errores de la solicitud AJAX
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: 'Ha ocurrido un error de conexión'
+        //             });
+        //         }
+        //     });
+        // });
+        });
+
+        function initAutocompletePaciente() {
+        var columns = new Array();
+        columns.push({ name: 'Label', display: 'Label', style: { fontSize: "13px" } });
+
+        $('#inputPaciente').autocomplete({
+        //columns: columns,
+        noResultsText: "No se han encontrado resultados",
+        striped: false,
+        minLength: 1,
+        select: function (event, ui) {
+        debugger;
+        $("#inputPaciente").val(ui.item.label);
+        $("#PacienteId").val(ui.item.value);
+        return false;
+        },
+        change: function (event, ui) {
+        if (!ui.item) {
+        $("#PacienteId").val('');
+        }
+        },
+        source: function (request, response) {
+        $.ajax({
+        url: '@Url.Action("GetAllByNombreDni", "Paciente")',
+        type: 'GET',
+        dataType: 'json',
+        data: { searchText: request.term },
+        success: function (result) {
+        debugger;
+        var pacientes = result;
+        // console.log(pacientes);
+        if (!pacientes || pacientes.length === 0) { $("#PacienteId").val(-1); }
+        else {
+        $("#PacienteId").val(0);
+        for (let i = 0; i < pacientes.length; i++) {
+        let item = pacientes[i];
+        item.NombreCompleto = item.Nombre + " " + item.Apellido + " - " + item.Dni;
+        }
+        }
+        //response(result);
+        response($.map(pacientes, function (item) {
+        debugger;
+        return {
+        label: item.NombreCompleto,
+        value: item.Id
+        }
+        }))
+        },
+        error: function (e) {
+        var errorMessage = "Ha ocurrido un error de conexion";
+        if (e.Head && e.Head.Msg) {
+        errorMessage = e.Head.Msg;
+        }
+        if (typeof e == "string" && e != "") {
+        errorMessage = e;
+        }
+        console.error(errorMessage);
+        response([]);
+        //swal(
+        //    'Error',
+        //    errorMessage,
+        //    'error'
+        //);
+        }
+        });
+        },
+        focus: function (event, ui) {
+        event.preventDefault();
+        $(this).val(ui.item.NombreCompleto);
+        }
+        });
+        }
+
+        function GetProfesionales() {
+        debugger;
+        $.ajax({
+        url: '@Url.Action("GetProfesionales", "Profesional")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+        var data = result.Data.profesionales;
+        $('#ProfesionalId').empty();
+        $('#ProfesionalId').append('<option value="" disabled selected>Seleccione Profesional</option>');
+        if (data && data.length > 0) {
+        $.each(data, function (index, item) {
+        $('#ProfesionalId').append($('<option>', {
+        value: item.Id,
+        text: item.Nombre + ' ' + item.Apellido
+        }));
+        });
+        } else {
+        $('#ProfesionalId').empty();
+        $('#ProfesionalId').append('<option value="">No hay profesionales disponibles</option>');
+        }
+        },
+        Error: function (e) {
+        var errorMessage = 'Ha ocurrido un error de conexion';
+        if (e.Head && e.Head.Msg) {
+        errorMessage = e.Head.Msg;
+        }
+        if (typeof e == 'string' && e != '') {
+        errorMessage = e;
+        }
+        swal({
+        type: 'error',
+        title: 'Error',
+        html: errorMessage
+        });
+        }
+        })
+        }
+
+        function GetTratamientos() {
+        debugger;
+        $.ajax({
+        url: '@Url.Action("GetTratamientos", "Tratamiento")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+        var data = result.Data.tratamientos;
+        $('#TratamientoId').empty();
+        $('#TratamientoId').append('<option value="" disabled selected>Seleccione Tratamiento</option>');
+        if (data && data.length > 0) {
+        $.each(data, function (index, item) {
+        $('#TratamientoId').append($('<option>', {
+        value: item.Id,
+        text: item.Nombre
+        }));
+        });
+        } else {
+        $('#TratamientoId').empty();
+        $('#TratamientoId').append('<option value="">No hay tratamientos disponibles</option>');
+        }
+
+        },
+        Error: function (e) {
+        var errorMessage = 'Ha ocurrido un error de conexion';
+        if (e.Head && e.Head.Msg) {
+        errorMessage = e.Head.Msg;
+        }
+        if (typeof e == 'string' && e != '') {
+        errorMessage = e;
+        }
+        swal({
+        type: 'error',
+        title: 'Error',
+        html: errorMessage
+        });
+        }
+        })
+        }
+      </script>
+    }

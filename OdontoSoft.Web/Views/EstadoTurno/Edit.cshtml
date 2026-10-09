@@ -1,0 +1,143 @@
+﻿@using OdontoSoft.Entities.ViewModels
+@model EstadoTurnoViewModel
+
+@{
+    ViewData["Title"] = "Estado de Turno";
+}
+
+@using (Html.BeginForm("Edit", "EstadoTurno", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box">
+                <h4 class="page-title">Estado de Turno</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.Nombre, "Nombre")
+                        @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control",
+                            placeholder = "Ej: Pendiente, Confirmado, Cancelado..." })
+                        @Html.ValidationMessageFor(x => x.Nombre)
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Color</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Color picker nativo -->
+                            <input type="color" id="colorPicker"
+                                   value="@Model.ColorHex"
+                                   class="form-control form-control-color"
+                                   style="width:60px; height:40px; padding:2px;"
+                                   oninput="sincronizarColor(this.value)" />
+
+                            <!-- Input de texto con el hex -->
+                            @Html.TextBoxFor(x => x.ColorHex, new { @class = "form-control",
+                                id = "ColorHex", style = "max-width:120px;",
+                                placeholder = "#000000",
+                                oninput = "sincronizarPicker(this.value)" })
+
+                            <!-- Preview con el nombre -->
+                            <span id="previewEstado"
+                                  class="badge fs-6 px-3 py-2"
+                                  style="background-color:@Model.ColorHex; color:#fff;">
+                                @(string.IsNullOrEmpty(Model.Nombre) ? "Vista previa" : Model.Nombre)
+                            </span>
+                        </div>
+
+                        <!-- Colores predefinidos sugeridos -->
+                        <div class="mt-2 d-flex gap-2 flex-wrap">
+                            @{
+                                var coloresSugeridos = new[]
+                                {
+                                    ("#FFC107", "Pendiente"),
+                                    ("#28A745", "Confirmado"),
+                                    ("#DC3545", "Cancelado"),
+                                    ("#6C757D", "Ausente"),
+                                    ("#007BFF", "Realizado"),
+                                    ("#17A2B8", "En curso"),
+                                    ("#6F42C1", "Reprogramado"),
+                                };
+                            }
+                            @foreach (var (hex, nombre) in coloresSugeridos)
+                            {
+                                <button type="button"
+                                        class="btn btn-sm"
+                                        style="background-color:@hex; color:#fff; border:none;"
+                                        onclick="aplicarColor('@hex', '@nombre')"
+                                        title="@nombre">
+                                    @nombre
+                                </button>
+                            }
+                        </div>
+                        @Html.ValidationMessageFor(x => x.ColorHex)
+                    </div>
+
+                    <div class="button-list mt-4">
+                        <input type="submit" class="btn btn-primary" value="Guardar" />
+                        <a class="btn text-muted btn-link fw-semibold"
+                           href="@Url.Action("Index", "Browser", new { code = "EstadoTurno" })">
+                            <i class="mdi mdi-arrow-left"></i> Volver al listado
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts {
+<script>
+    // Sincronizar color picker → input texto → preview
+    function sincronizarColor(valor) {
+        $('#ColorHex').val(valor);
+        actualizarPreview(valor);
+    }
+
+    // Sincronizar input texto → color picker → preview
+    function sincronizarPicker(valor) {
+        // Solo actualizar si es un hex válido
+        if (/^#[0-9A-Fa-f]{6}$/.test(valor)) {
+            $('#colorPicker').val(valor);
+            actualizarPreview(valor);
+        }
+    }
+
+    // Aplicar color predefinido
+    function aplicarColor(hex, nombre) {
+        $('#colorPicker').val(hex);
+        $('#ColorHex').val(hex);
+        actualizarPreview(hex);
+        // Si el nombre está vacío, sugerir el nombre del estado
+        if (!$('#Nombre').val()) {
+            $('#Nombre').val(nombre);
+            actualizarTextoPreview(nombre);
+        }
+    }
+
+    function actualizarPreview(color) {
+        $('#previewEstado').css('background-color', color);
+    }
+
+    function actualizarTextoPreview(texto) {
+        $('#previewEstado').text(texto || 'Vista previa');
+    }
+
+    $(document).ready(function () {
+        // Actualizar preview cuando cambia el nombre
+        $('#Nombre').on('input', function () {
+            actualizarTextoPreview($(this).val());
+        });
+    });
+</script>
+}

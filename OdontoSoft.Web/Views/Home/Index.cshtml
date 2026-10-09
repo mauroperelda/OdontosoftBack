@@ -1,0 +1,487 @@
+﻿@using OdontoSoft.Web.Helpers;
+@using OdontoSoft.Entities.ViewModels;
+@model List<TurnoViewModel>
+
+@{
+  ViewData["Title"] = "Calendario";
+}
+
+<style>
+  /* 🎨 Estilo solo para la vista de lista (listMonth, listWeek, etc.) */
+  .fc-list-event {
+    background-color: #007bff !important; /* Azul */
+    color: white !important; /* Texto blanco */
+  }
+
+  /* Para resaltar el título */
+  .fc-list-event .fc-list-event-title {
+    font-weight: bold;
+  }
+
+  #modalTurno .ui-autocomplete {
+    z-index: 9999 !important;
+  }
+  .wrapper .content-page {
+    transition: margin-left 0.3s ease;
+    min-width: 0; /* ✅ evita que el calendario desborde */
+  }
+
+  #calendar {
+    min-width: 0;
+    overflow: hidden;
+  }
+</style>
+
+<!-- Modal de Turno -->
+<div class="modal fade" id="modalTurno" tabindex="-1" aria-labelledby="modalTurnoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTurnoLabel">Turno</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="modalTurnoBody">
+        <!-- El formulario se carga aquí dinámicamente -->
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title">
+        <h4 class="page-title">Calendario</h4>
+      </div>
+    </div>
+  </div>
+  <!-- end page title -->
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+
+            <div class="col-lg-12">
+              <div class="mt-4 mt-lg-0">
+                <div id="calendar"></div>
+              </div>
+            </div> <!-- end col -->
+          </div> <!-- end row -->
+        </div> <!-- end card body-->
+      </div> <!-- end card -->
+    </div>
+    <!-- end col-12 -->
+  </div> <!-- end row -->
+</div> <!-- container -->
+@section scripts {
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  @* <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/vendor/fullcalendar.min.css")" /> *@
+  <script src="~/lib/fullcalendar-6.1.10/dist/index.global.js"></script>
+  <script src="~/lib/fullcalendar-6.1.10/dist/index.global.min.js"></script>
+  <script src="@Url.Content("~/lib/fullcalendar/locales/es.js")"></script>
+  <script>
+    var calendar;
+    $(document).ready(function () {
+      debugger;
+      var calendarEl = document.getElementById('calendar');
+
+      calendar = new FullCalendar.Calendar(calendarEl, {
+        expandRows: true,
+        eventColor: '#378006',
+        eventBackgroundColor: 'black',
+        slotMinTime: '06:00',
+        slotMaxTime: '24:00',
+        locale: 'es',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+        },
+        initialDate: new Date().toISOString().split('T')[0],
+        initialView: 'dayGridMonth',
+        navLinks: true, // Permite hacer click en fechas para navegar
+        businessHours: true, //
+        editable: true, // Permite arrastrar y modificar eventos
+        selectable: true, // Permite seleccionar rangos de tiempo
+        buttonIcons: true,
+        dayMaxEvents: true, // Muestra un enlance "más" cuando hay muchos eventos
+        nowIndicator: false, // Muestra un indicador de la hora actual
+        eventDisplay:'block', // Muestra los eventos como bloque
+
+        dateClick: function (info) {
+          debugger;
+          //ShowLoader();
+          var fechaOriginal = info.dateStr;
+          var formattedDate = moment(fechaOriginal).format('DD/MM/YYYY');
+          abrirModalTurno(0, formattedDate, null);
+        },
+
+        eventClick: function (info) {
+          debugger;
+          var turnoData = {
+              id: info.event.id,
+              pacienteId: info.event.extendedProps.pacienteId,
+              paciente: info.event.title,
+              dni: info.event.extendedProps.dni,
+              observacion: info.event.extendedProps.observacion,
+              profesionalId: info.event.extendedProps.profesionalId,
+              tratamientoId: info.event.extendedProps.tratamientoId,
+              estadoTurnoId: info.event.extendedProps.estadoTurnoId 
+          };
+          abrirModalTurno(info.event.id, null, turnoData);
+        }
+      });
+
+      calendar.render();
+      listarTurnos();
+
+      // ✅ Opción 2: detecta cualquier cambio de tamaño del contenedor
+      var resizeObserver = new ResizeObserver(function () {
+        calendar.updateSize();
+      });
+      resizeObserver.observe(document.querySelector('.content-page'));
+    });
+
+    // Abre el modal y carga el formulario via AJAX
+    function abrirModalTurno(id, fecha, turnoData) {
+      // Mostrar spinner mientras carga
+      $('#modalTurnoBody').html(`
+        <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+        </div>
+        </div>
+      `);
+
+      var modal = new bootstrap.Modal(document.getElementById('modalTurno'));
+      modal.show();
+
+      var url = '@Url.Action("EditPartial", "Turno")?id=' + (id || 0);
+      if (fecha) url += '&fecha=' + encodeURIComponent(fecha);
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (html) {
+          $('#modalTurnoBody').html(html);
+          // Re-inicializar scripts del formulario cargado
+          setTimeout(function () {
+            inicializarFormulario(fecha, turnoData || null);
+          }, 50);
+        },
+        error: function () {
+          $('#modalTurnoBody').html('<p class="text-danger">Error al cargar el formulario.</p>');
+        }
+      });
+    }
+
+    // Inicializa los componentes del formulario cargado en el modal
+    function inicializarFormulario(fecha, turnoData) {
+      // Datepicker
+      $('.datepickerFecha').datepicker({
+        dateFormat: 'dd/mm/yy'
+      });
+
+      // Setear la fecha clickeada si es un turno nuevo
+      if (fecha) {
+        $('.datepickerFecha').val(fecha);
+        $('#Fecha').val(fecha);
+      }
+
+      GetTratamientos(turnoData ? turnoData.tratamientoId : null);
+      GetProfesionales(turnoData ? turnoData.profesionalId : null);
+      GetEstados(turnoData ? turnoData.estadoTurnoId : null);
+      // ✅ Setear paciente en el autocomplete
+      if (turnoData && turnoData.pacienteId) {
+        $('#inputPaciente').val(turnoData.paciente +" - "+ turnoData.dni);
+        $('#PacienteId').val(turnoData.pacienteId);
+      }
+      initAutocompletePaciente();
+
+      // Interceptar el submit para que guarde sin salir de la página
+      $('#formTurno').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+          url: '@Url.Action("Edit", "Turno")',
+          type: 'POST',
+          data: $(this).serialize(),
+          success: function (result) {
+            if (result.success) {
+              bootstrap.Modal.getInstance(document.getElementById('modalTurno')).hide();
+              calendar.refetchEvents();
+              // Opcional: mostrar toast de éxito
+              Swal.fire({ icon: 'success', title: 'Turno guardado', timer: 1500, showConfirmButton: false });
+            } else {
+              // Mostrar errores de validación dentro del modal
+              var errores = result.errors || ['Error al guardar el turno'];
+              Swal.fire({ icon: 'error', title: 'Error', html: errores.join('<br>') });
+            }
+          },
+          error: function () {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión al guardar el turno.' });
+          }
+        });
+      });
+    }
+
+    function GetEstados(selectedId) {
+      $.ajax({
+        url: '@Url.Action("GetEstados", "EstadoTurno")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+          var data = result.Data.estados;
+          $('#EstadoTurnoId').empty()
+            .append('<option value="" disabled selected>Seleccione Estado</option>');
+          if (data && data.length > 0) {
+            $.each(data, function (i, item) {
+              $('#EstadoTurnoId').append($('<option>', {
+                value: item.Id,
+                text: item.Nombre,
+                // ✅ guardamos el color como data attribute
+                'data-color': item.ColorHex
+              }));
+            });
+            if (selectedId) $('#EstadoTurnoId').val(selectedId);
+          }
+        }
+      });
+    }
+    function listarTurnos() {
+      ShowLoader();
+      $.ajax({
+        url: '@Url.Action("ListarTurnosCalendario", "Turno")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          if (response) {
+            let data = [];
+            response.map(function (result) {
+              data.push({
+                id: result.Id,
+                title: result.Paciente, //+" - "+ result.Observacion,
+                start: combinarFechaHora(result.Fecha, result.HoraInicio),
+                end: result.HoraFin ? combinarFechaHora(result.Fecha, result.HoraFin) : null,
+                descripcion: result.Observacion,
+                color: result.ColorEstado || '#007bff',       // Aplica a todas las vistas
+                textColor: 'white',      // Para contraste
+                extendedProps: {                        // ✅ datos extra del evento
+                  pacienteId: result.PacienteId,
+                  profesionalId: result.ProfesionalId,
+                  tratamientoId: result.TratamientoId,
+                  observacion: result.Observacion,
+                  dni: result.Dni,
+                  estadoTurnoId: result.EstadoTurnoId
+                }
+                //color: 'blue',
+                //backgroundColor: '#378006',
+                //textColor: 'black'
+              });
+            });
+            calendar.addEventSource(data);
+            calendar.refetchEvents();
+          }
+        },
+        error: function (e){
+          console.error(e);
+        },
+        complete: function (){
+          HideLoader();
+        }
+      });
+    }
+
+    function combinarFechaHora(fecha, hora) {
+      var f = moment(fecha).format('YYYY-MM-DD');  // toma solo la fecha
+      var h = moment(hora).format('HH:mm');        // toma solo la hora
+      return f + 'T' + h;
+    }
+    function obtenerHora(fechaCompleta) {
+      // Suponemos que la fechaCompleta está en un formato como "yyyy-MM-ddTHH:mm:ss"
+      var fecha = new Date(fechaCompleta);
+      var horas = fecha.getHours();
+      var minutos = fecha.getMinutes();
+
+      // Agregamos ceros a la izquierda si es necesario
+      horas = horas < 10 ? '0' + horas : horas;
+      minutos = minutos < 10 ? '0' + minutos : minutos;
+
+      // Devolvemos la hora en formato HH:mm
+      return horas + ':' + minutos;
+    }
+
+    function initAutocompletePaciente() {
+      var columns = new Array();
+      columns.push({ name: 'Label', display: 'Label', style: { fontSize: "13px" } });
+
+      $('#inputPaciente').autocomplete({
+        //columns: columns,
+        noResultsText: "No se han encontrado resultados",
+        striped: false,
+        appendTo: '#modalTurno',
+        minLength: 1,
+        select: function (event, ui) {
+          debugger;
+          $("#inputPaciente").val(ui.item.label);
+          $("#PacienteId").val(ui.item.value);
+          return false;
+        },
+        change: function (event, ui) {
+          if (!ui.item) {
+            $("#PacienteId").val('');
+          }
+        },
+        source: function (request, response) {
+          $.ajax({
+            url: '@Url.Action("GetAllByNombreDni", "Paciente")',
+            type: 'GET',
+            dataType: 'json',
+            data: { searchText: request.term },
+            success: function (result) {
+              debugger;
+              var pacientes = result;
+              // console.log(pacientes);
+              if (!pacientes || pacientes.length === 0) { $("#PacienteId").val(-1); }
+              else {
+                $("#PacienteId").val(0);
+                for (let i = 0; i < pacientes.length; i++) {
+                  let item = pacientes[i];
+                  item.NombreCompleto = item.Nombre + " " + item.Apellido + " - " + item.Dni;
+                }
+              }
+              //response(result);
+              response($.map(pacientes, function (item) {
+                debugger;
+                return {
+                  label: item.NombreCompleto,
+                  value: item.Id
+                }
+              }))
+            },
+            error: function (e) {
+              var errorMessage = "Ha ocurrido un error de conexion";
+              if (e.Head && e.Head.Msg) {
+                errorMessage = e.Head.Msg;
+              }
+              if (typeof e == "string" && e != "") {
+                errorMessage = e;
+              }
+              console.error(errorMessage);
+              response([]);
+              //swal(
+              //    'Error',
+              //    errorMessage,
+              //    'error'
+              //);
+            }
+          });
+        },
+        focus: function (event, ui) {
+          event.preventDefault();
+          $(this).val(ui.item.NombreCompleto);
+        }
+      });
+    }
+
+    function GetProfesionales(selectedId) {
+      debugger;
+      $.ajax({
+        url: '@Url.Action("GetProfesionales", "Profesional")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+          var data = result.Data.profesionales;
+          $('#ProfesionalId').empty();
+          $('#ProfesionalId').append('<option value="" disabled selected>Seleccione Profesional</option>');
+          if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+              $('#ProfesionalId').append($('<option>', {
+                value: item.Id,
+                text: item.Nombre + ' ' + item.Apellido
+              }));
+            });
+            // ✅ Setear el valor seleccionado si viene uno
+            if (selectedId) {
+              $('#ProfesionalId').val(selectedId);
+            }
+          } else {
+            $('#ProfesionalId').empty();
+            $('#ProfesionalId').append('<option value="">No hay profesionales disponibles</option>');
+          }
+        },
+        error: function (e) {
+          var errorMessage = 'Ha ocurrido un error de conexion';
+          if (e.Head && e.Head.Msg) {
+            errorMessage = e.Head.Msg;
+          }
+          if (typeof e == 'string' && e != '') {
+            errorMessage = e;
+          }
+          swal({
+            type: 'error',
+            title: 'Error',
+            html: errorMessage
+          });
+        }
+      })
+    }
+
+    function GetTratamientos(selectedId) {
+      debugger;
+      $.ajax({
+        url: '@Url.Action("GetTratamientos", "Tratamiento")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+          var data = result.Data.tratamientos;
+          $('#TratamientoId').empty();
+          $('#TratamientoId').append('<option value="" disabled selected>Seleccione Tratamiento</option>');
+          if (data && data.length > 0) {
+            $.each(data, function (index, item) {
+              $('#TratamientoId').append($('<option>', {
+                value: item.Id,
+                text: item.Nombre
+              }));
+            });
+            // ✅ Setear el valor seleccionado si viene uno
+            if (selectedId) {
+              $('#TratamientoId').val(selectedId);
+            }
+          } else {
+            $('#TratamientoId').empty();
+            $('#TratamientoId').append('<option value="">No hay tratamientos disponibles</option>');
+          }
+        },
+        error: function (e) {
+          var errorMessage = 'Ha ocurrido un error de conexion';
+          if (e.Head && e.Head.Msg) {
+            errorMessage = e.Head.Msg;
+          }
+          if (typeof e == 'string' && e != '') {
+            errorMessage = e;
+          }
+          swal({
+            type: 'error',
+            title: 'Error',
+            html: errorMessage
+          });
+        }
+      })
+    }
+  </script>
+
+}
+
+
+

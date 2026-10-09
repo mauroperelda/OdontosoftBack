@@ -1,0 +1,143 @@
+﻿@using OdontoSoft.Web.Helpers.Menu
+
+@model LeftSideMenu
+
+<div class="leftside-menu">
+
+    <!-- LOGO -->
+    <a href="@Url.Action("Index", "Home")" class="logo text-center logo-light">
+        <span class="logo-lg">
+            <img src="@Url.Content("~/images/logo-light.png")" alt="" height="30">
+        </span>
+        <span class="logo-sm">
+            <img src="@Url.Content("~/images/logo_sm_dark.png")" alt="" height="30">
+        </span>
+    </a>
+
+    <div class="h-100" id="leftside-menu-container" data-simplebar>
+
+        <!--- Sidemenu -->
+        <ul class="side-nav">
+            @if (Model.Modulo != null)
+            {
+                <li class="side-nav-title text-center" style="font-size:150%">@Model.Modulo.Name</li>
+
+                foreach (var category in Model.MenuCategories)
+                {
+                    <li class="side-nav-title side-nav-item">
+                        @if (category.Icon != "")
+                        {
+                            <i class="@category.Icon"></i>
+                        }
+                        <span>@category.Title</span>
+                        @*<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>*@
+
+                    </li>
+                    @if (category.Items != null)
+                    {
+                        foreach (var item in category.Items)
+                        {
+                            <li class="side-nav-item">
+                                @{
+                                    string link = "";
+                                    string target = "";
+
+                                    if (String.IsNullOrEmpty(item.Link))
+                                    {
+                                        link = Url.Action(item.Action, item.Controller);
+                                    }
+                                    else
+                                    {
+                                        link = item.Link;
+                                        target = "_blank";
+                                    }
+                                }
+
+                                <a href="@link" target="@target" class="side-nav-link" id=@item.Id>
+                                    @if (item.Icon != "")
+                                    {
+                                        <i class="@item.Icon"></i>
+                                    }
+                                    <span>@item.Title</span>
+                                </a>
+                            </li>
+                            @*@Html.MenuLink("GetView", "Menu", item.Title, "", item.Id, new { id = item.Id })*@
+                        }
+                    }
+                    @if (category.Submenus != null)
+                    {
+                        foreach (var submenu in category.Submenus)
+                        {
+                            <li class="side-nav-item">
+                                <a data-bs-toggle="collapse" href="#@submenu.CategoryCode" aria-expanded="false" aria-controls="@submenu.CategoryCode" class="side-nav-link">
+                                    @if (submenu.Icon != "")
+                                    {
+                                        <i class="@submenu.Icon"></i>
+                                    }
+                                    <span>@submenu.Title</span>
+                                    @*<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>*@
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="@submenu.CategoryCode">
+                                    <ul class="side-nav-second-level">
+                                        @if (submenu.Items != null)
+                                        {
+                                            foreach (var item in submenu.Items)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action(item.Action , item.Controller)" class="side-nav-link" id=@item.Id>
+                                                        @if (item.Icon != "")
+                                                        {
+                                                            <i class="@item.Icon"></i>
+                                                        }
+                                                        <span>@item.Title</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                    }
+
+
+                }
+            }
+            <!--
+            <li class="side-nav-title side-nav-item">Pacientes</li>
+            
+            <li class="side-nav-item">
+                <a data-bs-toggle="collapse" href="#sidebarDashboards" aria-expanded="false" aria-controls="sidebarDashboards" class="side-nav-link">
+                    <i class="uil-home-alt"></i>
+                    @* <span class="badge bg-success float-end">4</span> *@
+                    <span> Dashboards </span>
+                </a>
+                <div class="collapse" id="sidebarDashboards">
+                    <ul class="side-nav-second-level">
+                        <li>
+                            <a href="dashboard-analytics.html">Analytics</a>
+                        </li>
+                        <li>
+                            <a href="index.html">Ecommerce</a>
+                        </li>
+                        <li>
+                            <a href="dashboard-projects.html">Projects</a>
+                        </li>
+                        <li>
+                            <a href="dashboard-wallet.html">E-Wallet <span class="badge rounded bg-danger font-10 float-end">New</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            -->
+        </ul>
+
+        <!-- End Sidebar -->
+
+        <div class="clearfix"></div>
+
+    </div>
+</div>
+
+

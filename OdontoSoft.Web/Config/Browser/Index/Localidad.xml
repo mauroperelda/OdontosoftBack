@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Browser>
+  <Settings>
+    <Setting Name="Title" Value="Localidad"/>
+    <Setting Name="BrowserTitle" Value="Administración de Localidad"/>    
+    <Setting Name="Icon" Value="uil-bookmark-full"/>
+    <Setting Name="PermissionCode" Value=""/>  <!-- Use Value: "administrator" para rol administrador, "superuser" para rol superusuario o el codigo de permiso requerido, o deje en blanco si no aplica -->
+    <BrowserMainAction Name="CreateNew" Enabled="true" Action="EditForm" Controller="Localidad" PermissionCode="" Caption="Agregar Localidad"/>
+    <BrowserMainAction Name="EditForm" Enabled="true" Action="EditForm" Controller="Localidad" PermissionCode=""/>
+    <BrowserMainAction Name="Delete" Enabled="true" Action="DeleteAjax" Controller="Localidad" PermissionCode=""/>
+  </Settings>
+  <Columns>
+    <Column Name="Id" Title="Id" />
+    <Column Name="Descripcion" Title="Descripcion" />
+    <Column Name="Provincia.Descripcion" Title="Provincia" />
+    <Column Name="Disabled" Title="Disabled" />
+  </Columns>
+  <Actions>
+	<!-- Ejemplo: Descarga de reporte en formato excel -->
+    <!-- <Action Text="Reporte" IconCssClass="fa fa-file-excel-o" Action="DownloadReport" Controller="SomeController" /> -->
+	<!-- Ejemplo AJAX: Reiniciar contraseña en usuario -->
+    <!-- <Action Text="Reiniciar contraseña" IconCssClass="fa fa-refresh" Action="ResetPassword" Controller="User" IsAjax="true" ConfirmTitle="Reiniciar contraseña" ConfirmMessage="¿Está seguro que desea reiniciar la contraseña de este usuario?" SuccessTitle="Contraseña reiniciada" SuccessMessage="La contraseña ha sido reiniciada correctamente. El próximo login debería sugerirle un cambio de contraseña." /> -->
+  </Actions>
+</Browser>
+

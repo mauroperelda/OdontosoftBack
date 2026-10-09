@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Browser>
+	<Settings>
+		<Setting Name="Title" Value="Paciente"/>
+		<Setting Name="BrowserTitle" Value="Administración de Paciente"/>
+		<Setting Name="Icon" Value="uil-bookmark-full"/>
+		<Setting Name="PermissionCode" Value=""/>
+		<!-- Use Value: "administrator" para rol administrador, "superuser" para rol superusuario o el codigo de permiso requerido, o deje en blanco si no aplica -->
+		<BrowserMainAction Name="CreateNew" Enabled="true" Action="EditPartial" Controller="Paciente" PermissionCode="" Caption="Agregar Paciente"/>
+		<BrowserMainAction Name="EditForm" Enabled="true" Action="EditPartial" Controller="Paciente" PermissionCode=""/>
+		<BrowserMainAction Name="Delete" Enabled="true" Action="DeleteAjax" Controller="Paciente" PermissionCode=""/>
+	</Settings>
+	<Columns>
+		<Column Name="GetString" Title="Paciente" />
+		<!--<Column Name="Apellido" Title="Apellido" />-->
+		<Column Name="Dni" Title="Dni" />
+		<!--<Column Name="Telefono" Title="Telefono" />-->
+		<Column Name="Celular" Title="Celular" />
+		<Column Name="Email" Title="Email" />
+		<!--<Column Name="FechaNacimiento" Title="Fecha de Nacimiento" />
+		<Column Name="DomicilioCalle" Title="Domicilio" />-->
+		<!--<Column Name="DomicilioNumero" Title="DomicilioNumero" />-->
+		<!--<Column Name="Provincia.Descripcion" Title="Provincia" />
+		<Column Name="Localidad.Descripcion" Title="Localidad" />-->
+		<!--<Column Name="CreatedUserName" Title="CreatedUserName" />
+		<Column Name="CreatedDate" Title="CreatedDate" />
+		<Column Name="UpdatedUserName" Title="UpdatedUserName" />
+		<Column Name="UpdatedDate" Title="UpdatedDate" />-->
+		<!--<Column Name="Disabled" Title="Deshabilitado" />-->
+	</Columns>
+	<Actions>
+		<Actions><Action Text="Historia Clinica" IconCssClass="uis uis-file-medical-alt" Action="EditByPaciente" Controller="HistoriaClinica" />
+		</Actions>
+		<!-- Ejemplo: Descarga de reporte en formato excel -->
+		<!-- <Action Text="Reporte" IconCssClass="fa fa-file-excel-o" Action="DownloadReport" Controller="SomeController" /> -->
+		<!-- Ejemplo AJAX: Reiniciar contraseña en usuario -->
+		<!-- <Action Text="Reiniciar contraseña" IconCssClass="fa fa-refresh" Action="ResetPassword" Controller="User" IsAjax="true" ConfirmTitle="Reiniciar contraseña" ConfirmMessage="¿Está seguro que desea reiniciar la contraseña de este usuario?" SuccessTitle="Contraseña reiniciada" SuccessMessage="La contraseña ha sido reiniciada correctamente. El próximo login debería sugerirle un cambio de contraseña." /> -->
+	</Actions>
+</Browser>

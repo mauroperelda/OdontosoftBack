@@ -1,0 +1,103 @@
+@model OdontoSoft.Entities.Models.Presupuesto
+@using OdontoSoft.Web.Helpers
+
+@{
+    ViewBag.Title = "Formulario";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Formulario de Presupuesto</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                            @Html.HiddenFor(model => model.Id)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Paciente)
+                            @Html.DropDownList("PacienteId", (SelectList)ViewBag.Paciente, String.Empty, new Dictionary<string, object> { { "class", "form-select" } })
+                            @Html.ValidationMessageFor(model => model.Paciente)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Profesional)
+                            @Html.DropDownList("ProfesionalId", (SelectList)ViewBag.Profesional, String.Empty, new Dictionary<string, object> { { "class", "form-select" } })
+                            @Html.ValidationMessageFor(model => model.Profesional)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Fecha)
+                            @Html.TextBoxFor(x => x.Fecha, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker" })
+                            @Html.ValidationMessageFor(model => model.Fecha)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Observaciones)
+                            @Html.TextBoxFor(x => x.Observaciones, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Observaciones)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Total)
+                            @Html.TextBoxFor(x => x.Total, new Dictionary<string, object> { { "class", "form-control data-autonumeric-field" }, { "data-autonumeric-settings", AutoNumericHelper.DecimalSettings(2) } })
+                            @Html.ValidationMessageFor(model => model.Total)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Estado)
+                            @Html.TextBoxFor(x => x.Estado, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Estado)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Detalles)
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.PresupuestoDetalle] -*@ @Html.TextBoxFor(x => x.Detalles, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Detalles)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Pagos)
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.Pago] -*@ @Html.TextBoxFor(x => x.Pagos, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Pagos)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            Deshabilitado<br />
+                            @Html.CheckBoxFor(x => x.Disabled, new { @class = "form-check-input"})
+                            @Html.ValidationMessageFor(model => model.Disabled)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+                            <a class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Index", "Browser", new { code = Model.GetType().Name })"><i class="mdi mdi-arrow-left"></i>Volver al listado</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

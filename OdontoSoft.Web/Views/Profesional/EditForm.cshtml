@@ -1,0 +1,130 @@
+@model OdontoSoft.Entities.Models.Profesional
+@using OdontoSoft.Web.Helpers
+
+@{
+    ViewBag.Title = "Formulario";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            @*<div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                    <li class="breadcrumb-item active">Form Elements</li>
+                </ol>
+            </div>*@
+            <h4 class="page-title">Formulario de Profesional</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">  
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                            @Html.HiddenFor(model => model.Id)
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Nombre)
+                            @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Nombre)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Apellido)
+                            @Html.TextBoxFor(x => x.Apellido, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Apellido)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Dni)
+                            @Html.TextBoxFor(x => x.Dni, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Dni)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Celular)
+                            @Html.TextBoxFor(x => x.Celular, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Celular)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.FechaNacimiento)
+                            @Html.TextBoxFor(x => x.FechaNacimiento, "{0:dd/MM/yyyy}",  new { @class = "form-control datepicker" })
+                            @Html.ValidationMessageFor(model => model.FechaNacimiento)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Domicilio)
+                            @Html.TextBoxFor(x => x.Domicilio, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Domicilio)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Provincia)
+                            @Html.DropDownList("ProvinciaId", (SelectList)ViewBag.Provincia, String.Empty, new Dictionary<string, object> { { "class", "form-select" } })
+                            @Html.ValidationMessageFor(model => model.Provincia)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Localidad)
+                            @Html.DropDownList("LocalidadId", (SelectList)ViewBag.Localidad, String.Empty, new Dictionary<string, object> { { "class", "form-select" } })
+                            @Html.ValidationMessageFor(model => model.Localidad)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Email)
+                            @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Cuit)
+                            @Html.TextBoxFor(x => x.Cuit, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Cuit)
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            Deshabilitado<br />
+                            @Html.CheckBoxFor(x => x.Disabled, new { @class = "form-check-input"})
+                            @Html.ValidationMessageFor(model => model.Disabled)
+                        </div>
+                    </div>
+                                        
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+							<a class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Index", "Browser", new { code = Model.GetType().Name })"><i class="mdi mdi-arrow-left"></i>Volver al listado</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,81 @@
+@model OdontoSoft.Entities.Models.Localidad
+@using OdontoSoft.Web.Helpers
+
+@{
+    ViewBag.Title = "Formulario";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            @*<div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                    <li class="breadcrumb-item active">Form Elements</li>
+                </ol>
+            </div>*@
+            <h4 class="page-title">Formulario de Localidad</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">  
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                            @Html.HiddenFor(model => model.Id)
+                        </div>
+                    </div>
+
+@*                     <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Id)
+                            @Html.TextBoxFor(x => x.Id, new Dictionary<string, object> { { "class", "form-control  data-autonumeric-field" }, { "data-autonumeric-settings", AutoNumericHelper.IntegerSettings() } })
+                            @Html.ValidationMessageFor(model => model.Id)
+                        </div>
+                    </div> *@
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Descripcion)
+                            @Html.TextBoxFor(x => x.Descripcion, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Descripcion)
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.Provincia)
+                            @Html.DropDownList("ProvinciaId", (SelectList)ViewBag.Provincia, String.Empty, new Dictionary<string, object> { { "class", "form-select" } })
+                            @Html.ValidationMessageFor(model => model.Provincia)
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            Deshabilitado<br />
+                            @Html.CheckBoxFor(x => x.Disabled, new { @class = "form-check-input"})
+                            @Html.ValidationMessageFor(model => model.Disabled)
+                        </div>
+                    </div>
+                                        
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+							<a class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Index", "Browser", new { code = Model.GetType().Name })"><i class="mdi mdi-arrow-left"></i>Volver al listado</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

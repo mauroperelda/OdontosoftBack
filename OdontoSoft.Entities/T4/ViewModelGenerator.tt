@@ -1,0 +1,1060 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ assembly name="D:\Softwares\Odontosoft\OdontoSoft.Entities\bin\Debug\net9.0\OdontoSoft.Entities.dll" #>
+<#@ output extension=".txt" #>
+   
+<#
+    string baseDir = @"D:\Softwares\Odontosoft";
+
+	var list = new List<Type>();
+	//
+	foreach (Type type in System.Reflection.Assembly.GetAssembly(typeof(OdontoSoft.Entities.Models.Paciente)).GetTypes().Where(x=>x.Namespace == "OdontoSoft.Entities.Models").ToList())
+    {
+        if (type.Name.StartsWith("<>")) continue;
+	    if (type.IsAbstract) continue;	// only generate JS viewmodels for non-abstract classes
+		list.Add(type);
+    }
+#>
+<#
+
+    Generate(list);
+    SaveFile(baseDir + @"\OdontoSoft.Data\DAL\Generated\", "OdontosoftContext.cs", GenerationEnvironment.ToString());
+    GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Data\Repository\Interfaces\";
+        string fileName = "I" + type.Name + "Repository.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateIRepo(type);    
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Data\Repository\Generated\";
+        string fileName = type.Name + "Repository.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateRepo(type);
+                
+        SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Data\Repository\";
+        string fileName = type.Name + "Repository.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateRepoCustom(type);
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+    GenerateIUnitOfWork(list);
+    SaveFile(baseDir + @"\OdontoSoft.Data\Repository\UOW\Generated\", "IUnitOfWork.cs", GenerationEnvironment.ToString());
+    GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+
+
+
+    GenerateUnitOfWork(list);
+    SaveFile(baseDir + @"\OdontoSoft.Data\Repository\UOW\Generated\", "UnitOfWork.cs", GenerationEnvironment.ToString());
+    GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Services\Interface\";
+        string fileName = "I" + type.Name + "Services.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateServiceInterface(type);
+                
+        if (!File.Exists(fullPath))                
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+    
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Services\CustomConstructors\";
+        string fileName = type.Name + "Services.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateService(type);
+                
+        if (!File.Exists(fullPath))                
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+    
+    foreach (var type in list)
+    {
+        string folder = baseDir + @"\OdontoSoft.Services\Custom\";
+        string fileName = type.Name + "Services.cs";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateCustomService(type);
+
+        if (!File.Exists(fullPath))                
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+    foreach (var type in list)
+    {
+    
+        string folder = baseDir + @"\OdontoSoft.Web\Config\Browser\Index\";
+        string fileName = type.Name + ".xml";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateBrowserXml(type);
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+
+    foreach (var type in list)
+    {
+    
+        string folder = baseDir + @"\OdontoSoft.Web\Views\" + type.Name;
+        string fileName = "EditForm.cshtml";
+        string fullPath = Path.Combine(folder, fileName);
+        GenerateEditForm(type);
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+
+    //GenerateBrowsers(list);
+    //SaveFile(baseDir + @"\OdontoSoft.Web\Controllers\Generated\", "BrowserController.cs", GenerationEnvironment.ToString());
+    //GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+
+    GenerateBrowsers(list);
+    SaveFile(baseDir + @"\OdontoSoft.Web\Browser\Generated\", "BrowserCacheHelper.cs", GenerationEnvironment.ToString());
+    GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+
+    #region Generated Controllers
+    foreach (var type in list)
+    {
+    
+        string folder = baseDir + @"\OdontoSoft.Web\Controllers\Generated\";
+        string fileName = type.Name + "Controller" + ".cs";
+        string fullPath = Path.Combine(folder, fileName);        
+        GenerateGeneratedController(type);
+        
+        SaveFile(folder, fileName, GenerationEnvironment.ToString());
+
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+    #endregion
+
+    #region Custom Controllers
+    foreach (var type in list)
+    {
+    
+        string folder = baseDir + @"\OdontoSoft.Web\Controllers\Custom\";
+        string fileName = type.Name + "Controller" + ".cs";
+        string fullPath = Path.Combine(folder, fileName);        
+        GenerateCustomController(type);
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+    #endregion
+
+    #region Custom Controllers Constructors
+    foreach (var type in list)
+    {
+    
+        string folder = baseDir + @"\OdontoSoft.Web\Controllers\CustomConstructors\";
+        string fileName = type.Name + "Controller" + ".cs";
+        string fullPath = Path.Combine(folder, fileName);        
+        GenerateCustomControllerConstructor(type);
+        
+        if (!File.Exists(fullPath))
+        {
+            SaveFile(folder, fileName, GenerationEnvironment.ToString());
+        }
+        GenerationEnvironment.Remove(0, GenerationEnvironment.Length);        
+    }
+    #endregion
+
+    #region Service injection
+    GenerateServiceInjection(list);
+    SaveFile(baseDir + @"\OdontoSoft.Web\Startup\", "RegisterServices.cs", GenerationEnvironment.ToString());
+    GenerationEnvironment.Remove(0, GenerationEnvironment.Length);
+    #endregion
+#>
+
+<#+
+	void SaveFile(string folder, string fileName, string content)
+    {
+        bool exists = System.IO.Directory.Exists(folder);
+
+        if(!exists)
+            System.IO.Directory.CreateDirectory(folder);
+
+        using (FileStream fs = new FileStream(Path.Combine(folder, fileName), FileMode.Create))
+        {  
+            using (StreamWriter str = new StreamWriter(fs))
+            {
+            str.WriteLine(content);
+            str.Flush();
+            }
+        }
+    }
+#>
+
+<# 
+public void Generate(List<Type> inputList)
+{
+#>
+using OdontoSoft.Entities.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace OdontoSoft.Data.DAL
+{
+    public partial class OdontosoftContext
+    {
+<#+
+    foreach (var type in inputList)
+    {
+#>
+        public virtual DbSet<<#=type.Name#>> <#=type.Name#> { get; set; }	
+<#+
+    }
+#>
+    }
+}
+<#
+}
+#>
+
+<# 
+public void GenerateBrowsers(List<Type> inputList)
+{
+#>
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Entities.Models;
+using OdontoSoft.Web.Controllers;
+using Microsoft.Extensions.Caching.Memory;
+using OdontoSoft.Web.Browser;
+
+namespace OdontoSoft.Web.Browser
+{
+    public partial class BrowserCacheHelper 
+    {     
+
+        private readonly ILogger _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
+        private readonly LinkGenerator _generator;
+        private readonly IHostEnvironment _hostEnvironment;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IAuthenticatedUser _authenticatedUser;
+
+        public BrowserCacheHelper(ILogger logger, IUnitOfWork unitOfWork
+            , IHttpContextAccessor accessor, LinkGenerator generator
+            , IHostEnvironment hostEnvironment, IMemoryCache memoryCache
+            , IAuthenticatedUser authenticatedUser)
+        {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+            _accessor = accessor;
+            _generator = generator;
+            _hostEnvironment = hostEnvironment;
+            _memoryCache = memoryCache;
+            _authenticatedUser = authenticatedUser;
+        }
+
+        public void AddBrowsers()
+        {
+<#+
+    foreach (var type in inputList)
+    {
+#>
+            _memoryCache.Set("BROWSER_<#=type.Name#>".ToUpper(), new Browser<<#=type.Name#>>(_accessor, _generator, _hostEnvironment, _authenticatedUser));
+<#+
+    }
+#>
+        }
+
+        public IBrowser GetBrowser(string code)
+        {
+            IBrowser b;
+
+            code = ("BROWSER_" + code).ToUpper();
+
+            if (!this._memoryCache.TryGetValue(code, out b))
+            {
+                AddBrowsers();
+            }
+
+            if (!this._memoryCache.TryGetValue(code, out b))
+            {
+                throw new Exception("BROWSER_" + code.ToUpper() + ". Browser is not registered. Please regenerate Browser Registration file.");
+            }
+
+            if (b == null)
+            {
+                throw new Exception("BROWSER_" + code.ToUpper() + ". Browser is not registered. Please regenerate Browser Registration file.");
+            }
+
+            return b;
+        }
+
+    }
+}
+<#
+}
+#>
+
+<# 
+public void GenerateIUnitOfWork(List<Type> inputList)
+{
+#>
+using OdontoSoft.Data.Repository.Interfaces;
+using Mauro.Entities.Base;
+
+namespace OdontoSoft.Data.Repository.UOW
+{
+    public partial interface IUnitOfWork
+    {
+<#+
+    foreach (var type in inputList)
+    {
+#>
+        I<#=type.Name#>Repository <#=type.Name#>Repository { get; }
+<#+
+    }
+#>     
+    }
+}
+
+<#
+}
+#>
+
+<# 
+public void GenerateUnitOfWork(List<Type> inputList)
+{
+#>
+using OdontoSoft.Data.Repository.Interfaces;
+
+namespace OdontoSoft.Data.Repository.UOW
+{
+    public partial class UnitOfWork 
+    {
+<#+
+    foreach (var type in inputList)
+    {
+#>
+        public I<#=type.Name#>Repository <#=type.Name#>Repository { get; private set; }
+<#+
+    }
+#>
+        private void InstanceRepos()
+        {
+<#
+    foreach (var type in inputList)
+    {
+#>
+            <#=type.Name#>Repository = new <#=type.Name#>Repository(_context, _logger, _authenticatedUser);
+<#+
+    }
+#>
+        }
+    }
+}
+<#
+}
+#>
+
+<# 
+public void GenerateServiceInjection(List<Type> inputList)
+{
+#>
+using OdontoSoft.Services;
+
+namespace OdontoSoft.Web.Startup
+{
+    public class RegisterServices
+    {
+        public static void Register(IServiceCollection services)
+        {
+<#+
+    foreach (var type in inputList)
+    {
+#>
+            services.AddTransient<I<#=type.Name#>Services, <#=type.Name#>Services>();
+<#+
+    }
+#>  
+        }
+    }
+}
+<#
+}
+#>
+
+<# 
+public void GenerateIRepo(Type type)
+{
+#>
+using OdontoSoft.Entities.Models;
+
+namespace OdontoSoft.Data.Repository.Interfaces
+{
+    public interface I<#=type.Name#>Repository : IGenericRepository<<#=type.Name#>>
+    {
+		/*Ejemplo de nuevos métodos - Estos métodos se implementan en <#=type.Name#>Repository*/
+
+		//Ejemplo custom de getBy con un solo resultado
+		//<#=type.Name#> GetByMiCampo(int miCampoId);
+
+		//Ejemplo custom de getBy con una lista de resultado
+        //IQueryable<<#=type.Name#>> GetByMiOtroCampo(int miOtroCampoId);
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateRepo(Type type)
+{
+#>
+using OdontoSoft.Data.DAL;
+using OdontoSoft.Data.Repository.Interfaces;
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Entities.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace OdontoSoft.Data.Repository
+{
+    public partial class <#=type.Name#>Repository : GenericRepository<<#=type.Name#>>, I<#=type.Name#>Repository
+    {
+        public <#=type.Name#>Repository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
+        {
+
+        }
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateService(Type type)
+{
+#>
+using Microsoft.Extensions.Logging;
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Repository.UOW;
+using Odontosoft.Services;
+
+namespace OdontoSoft.Services
+{
+    public partial class <#=type.Name#>Services : BaseServices, I<#=type.Name#>Services
+    {
+        public <#=type.Name#>Services(ILogger<<#=type.Name#>Services> logger, IUnitOfWork unitOfWork, IAuthenticatedUser authenticatedUser) : base (logger, unitOfWork, authenticatedUser)
+        {
+        }
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateCustomService(Type type)
+{
+#>
+using Microsoft.Extensions.Logging;
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Repository.UOW;
+using Odontosoft.Services;
+
+namespace OdontoSoft.Services
+{
+    public partial class <#=type.Name#>Services : BaseServices, I<#=type.Name#>Services
+    {        
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateServiceInterface(Type type)
+{
+#>
+using Microsoft.Extensions.Logging;
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Repository.UOW;
+using Odontosoft.Services
+
+namespace OdontoSoft.Services
+{
+    public interface I<#=type.Name#>Services
+    {        
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateRepoCustom(Type type)
+{
+#>
+using OdontoSoft.Data.DAL;
+using OdontoSoft.Data.Repository.Interfaces;
+using OdontoSoft.Entities.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace OdontoSoft.Data.Repository
+{
+    public partial class <#=type.Name#>Repository : GenericRepository<<#=type.Name#>>, I<#=type.Name#>Repository
+    {
+		/*Ejemplo de reemplazo de métodos existentes*/
+	
+		//public override <#=type.Name#> GetById(int id)
+        //{
+        //    return All()
+        //        .Include(x => x.ProvinciaId)
+        //        .FirstOrDefault(x=>x.Id == id);
+        //}
+		
+		//Ejemplo para modificar la lista que llena el browser
+		//public override IQueryable<<#=type.Name#>> AllForBrowser()
+        //{
+        //    return base.AllForBrowser()
+        //        .Include(x => x.Provincia)
+        //        .OrderBy(x=>x.Descripcion);
+        //}
+		
+		
+		/*Ejemplo de nuevos métodos - Recuerde ademas modificar la interfaz I<#=type.Name#>Repository*/
+	
+		//Ejemplo custom de getBy con un solo resultado
+		//public <#=type.Name#> GetByMiCampo(int miCampoId)
+        //{
+        //    return All().FirstOrDefault(x => x.MicampoId == miCampoId);
+        //}
+
+		//Ejemplo custom de getBy con una lista de resultado
+        //public IQueryable<<#=type.Name#>> GetByMiOtroCampo(int miOtroCampoId)
+        //{
+        //    return All().Where(x => x.MiOtroCampoId == miOtroCampoId);
+        //}
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateBrowserXml(Type type)
+{
+#>
+<?xml version="1.0" encoding="utf-8" ?>
+<Browser>
+  <Settings>
+    <Setting Name="Title" Value="<#=type.Name#>"/>
+    <Setting Name="BrowserTitle" Value="Administraci n de <#=type.Name#>"/>    
+    <Setting Name="Icon" Value="uil-bookmark-full"/>
+    <Setting Name="PermissionCode" Value=""/>  <!-- Use Value: "administrator" para rol administrador, "superuser" para rol superusuario o el codigo de permiso requerido, o deje en blanco si no aplica -->
+    <BrowserMainAction Name="CreateNew" Enabled="true" Action="EditForm" Controller="<#=type.Name#>" PermissionCode="" Caption="Agregar <#=type.Name#>"/>
+    <BrowserMainAction Name="EditForm" Enabled="true" Action="EditForm" Controller="<#=type.Name#>" PermissionCode=""/>
+    <BrowserMainAction Name="Delete" Enabled="true" Action="DeleteAjax" Controller="<#=type.Name#>" PermissionCode=""/>
+  </Settings>
+  <Columns>
+<#+ foreach (var prop in type.GetProperties()) { 
+    if (prop.Name != "Id" && prop.Name != "EntityName" && prop.Name != "GetString" && prop.Name != "ObjectState") {#>
+    <Column Name="<#=prop.Name#>" Title="<#=prop.Name#>" />
+<#+ }
+} #>
+  </Columns>
+  <Actions>
+	<!-- Ejemplo: Descarga de reporte en formato excel -->
+    <!-- <Action Text="Reporte" IconCssClass="fa fa-file-excel-o" Action="DownloadReport" Controller="SomeController" /> -->
+	<!-- Ejemplo AJAX: Reiniciar contrase a en usuario -->
+    <!-- <Action Text="Reiniciar contrase a" IconCssClass="fa fa-refresh" Action="ResetPassword" Controller="User" IsAjax="true" ConfirmTitle="Reiniciar contrase a" ConfirmMessage=" Est  seguro que desea reiniciar la contrase a de este usuario?" SuccessTitle="Contrase a reiniciada" SuccessMessage="La contrase a ha sido reiniciada correctamente. El pr ximo login deber a sugerirle un cambio de contrase a." /> -->
+  </Actions>
+</Browser>
+<#+
+}
+#>
+
+<# 
+public void GenerateEditForm(Type type)
+{
+#>
+@model <#=type#>
+@using OdontoSoft.Web.Helpers
+
+@{
+    ViewBag.Title = "Formulario";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            @*<div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Hyper</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+                    <li class="breadcrumb-item active">Form Elements</li>
+                </ol>
+            </div>*@
+            <h4 class="page-title">Formulario de <#=type.Name #></h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">  
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.ValidationSummary(true)
+                            @Html.HiddenFor(model => model.Id)
+                        </div>
+                    </div>
+
+<#+ foreach (var props in type.GetProperties()) { #>
+<# if (AplicaProp(props) && !EsPropFK(props)) { #>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            @Html.LabelFor(x => x.<#=props.Name#>)
+                            <#=GetFieldHtml(props)#>
+                            @Html.ValidationMessageFor(model => model.<#=props.Name#>)
+                        </div>
+                    </div>
+<#+ } #>
+<# } #>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            Deshabilitado<br />
+                            @Html.CheckBoxFor(x => x.Disabled, new { @class = "form-check-input"})
+                            @Html.ValidationMessageFor(model => model.Disabled)
+                        </div>
+                    </div>
+                                        
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+							<a class="btn text-muted d-none d-sm-inline-block btn-link fw-semibold" href="@Url.Action("Index", "Browser", new { code = Model.GetType().Name })"><i class="mdi mdi-arrow-left"></i>Volver al listado</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<#+
+}
+#>
+
+<# 
+public void GenerateGeneratedController(Type type)
+{
+#>
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Entities.Models;
+using OdontoSoft.Web.Helpers.Authentication;
+using OdontoSoft.Web.Browser;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace OdontoSoft.Web.Controllers
+{
+    public partial class <#=type.Name#>Controller : AppBaseBrowserController
+    {
+
+        private int _entityId;
+
+        public ActionResult EditForm(int id = 0)
+        {
+            if (!AllowAction(id)) return Unauthorized();
+
+            <#=type.Name#> entity;
+
+            if (id != 0)
+            {                
+                entity = _unitOfWork.<#=type.Name#>Repository.GetById(id);
+            }
+            else
+            {
+                entity = new <#=type.Name#>();                
+            }
+            PrepareEntityBeforeLoadForm(entity);
+            base.LoadViewBag(PrepareViewBag(entity));
+            return View(entity);
+        }
+
+        [HttpPost]
+        public ActionResult EditForm(<#=type.Name#> entity, Microsoft.AspNetCore.Http.IFormCollection formCollection)
+        {
+            if (!AllowAction(entity.Id)) return Unauthorized();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    <#=type.Name#> currentModel = null;
+
+                    if (entity.Id != 0)
+                    {
+                        currentModel = _unitOfWork.<#=type.Name#>Repository.GetById(entity.Id);
+                        TryUpdateModelAsync(currentModel);
+                    }
+                    else
+                    {
+                        currentModel = entity;
+                    }
+
+                    PrepareEntityFromFormData(currentModel, formCollection);
+                    ActionsBeforeSave(currentModel, formCollection);
+
+                    if (entity.Id != 0)
+                    {
+                        _unitOfWork.<#=type.Name#>Repository.Upsert(currentModel);
+                    }
+                    else
+                    {
+                        _unitOfWork.<#=type.Name#>Repository.Add(currentModel);
+                    }
+
+                    _unitOfWork.Save();
+                    _entityId = currentModel.Id;
+                    ModelState.SetModelValue("Id", new ValueProviderResult(currentModel.Id.ToString()));    //If ActionsAfterSave throws exception, we need the new Id to return to the view
+                    entity = _unitOfWork.<#=type.Name#>Repository.GetById(_entityId);
+                    ActionsAfterSave(currentModel, formCollection);
+                    return RedirectToBrowser(formCollection);                        
+                }
+                //catch (MedveValidationException ex)
+                //{
+                //    this.AddModelErrors(ModelState, ex);
+                //}
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null)
+                        if (ex.InnerException.InnerException != null)
+                            ModelState.AddModelError(string.Empty, ex.InnerException.InnerException.Message);
+                        else
+                            ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    else
+                        ModelState.AddModelError(string.Empty, ex.Message);
+
+                }
+            }
+
+            PrepareEntityFromFormData(entity, formCollection);
+            base.LoadViewBag(PrepareViewBag(entity));
+            return View(entity);
+        }
+
+        public JsonResult DeleteAjax(int id)
+        {
+            try
+            {
+                //ActionsBeforeDelete(id);
+                _unitOfWork.<#=type.Name#>Repository.Delete(id);
+                _unitOfWork.Save();
+
+                return JsonOk();
+            }
+            //catch (MedveValidationException ex)
+            //{
+            //    return JsonError("Se ha producido un error al eliminar el registro. Verfique que el mismo no tenga relaciones asociadas.");
+            //}
+            catch (Exception ex)
+            {
+                return JsonError(ex.Message);
+                //return JsonError("Se ha producido un error al eliminar el registro. Verfique que el mismo no tenga relaciones asociadas.");
+            }
+        }
+
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateCustomController(Type type)
+{
+#>
+using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Entities.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace OdontoSoft.Web.Controllers
+{
+    public partial class <#=type.Name#>Controller : AppBaseBrowserController
+    {
+
+        private Dictionary<string, object> PrepareViewBag(<#=type.Name#> entity)
+        {            
+            Dictionary<string, object> viewBagData = new Dictionary<string, object>();
+            //viewBagData.Add("myKey", "myValue");
+            
+<#+
+foreach (var props in type.GetProperties()) 
+{
+#>
+<#
+    if (IsDropDownListInt(props)) 
+    {
+        string realPropName = FirstCharacterToLower(props.Name.Replace("Id", "").Replace("Parent", ""));
+        string listName = realPropName + "List";
+
+        if (Nullable.GetUnderlyingType(props.PropertyType) != null) 
+        {
+#>
+            SelectList <#=listName#> = new SelectList(_unitOfWork.<#=GetPropertyTypeBasedOnIdField(type, props.Name)#>Repository.GetAllEnabled(entity.<#=props.Name#> ?? 0).ToList(), "Id", "GetString", entity.<#=props.Name#> ?? 0);
+<#+
+        }
+        else
+        {
+#>
+            SelectList <#=FirstCharacterToLower(props.Name.Replace("Id", "").Replace("Parent", ""))#>List = new SelectList(_unitOfWork.<#=GetPropertyTypeBasedOnIdField(type, props.Name)#>Repository.GetAllEnabled(entity.<#=props.Name#>).ToList(), "Id", "GetString", entity.<#=props.Name#>);                        
+<#+
+        }
+#>
+            viewBagData.Add("<#=realPropName#>", <#=listName#>);
+
+<#+
+    }
+}
+#>
+            return viewBagData;
+        }
+
+               
+        private void PrepareEntityFromFormData(<#=type.Name#> entity, Microsoft.AspNetCore.Http.IFormCollection formCollection)
+        {      
+            //Implement here any functionallity to update the entity from specific data in formCollection.
+            //Sample: https://medve.atlassian.net/wiki/spaces/mdv/pages/5636097/Ejemplo+de+uso+de+PrepareEntityFromFormData
+        }
+
+        private void PrepareEntityBeforeLoadForm(<#=type.Name#> entity)
+        {
+            //Implement here any functionallity to update the entity before EditForm shows.
+            //Sample: https://medve.atlassian.net/wiki/spaces/mdv/pages/10747905/Ejemplo+de+uso+de+PrepareEntityBeforeLoadForm
+        }
+
+        private void ActionsBeforeSave(<#=type.Name#> entity, Microsoft.AspNetCore.Http.IFormCollection formCollection)
+        {
+            //Implement here any functionallity to execute any action before unitofworks.Save
+        }
+
+        private void ActionsAfterSave(<#=type.Name#> entity, Microsoft.AspNetCore.Http.IFormCollection formCollection)
+        {
+            //Implement here any functionallity to execute any action after unitofworks.Save
+        }
+    }
+}
+<#+
+}
+#>
+
+<# 
+public void GenerateCustomControllerConstructor(Type type)
+{
+#>
+/* ************************************************************************************************************************************* */
+/* En este archivo solo se debe modificar el constructor en caso de ser necesario. No se debe agregar ninguna otra funcionalidad */
+/* ************************************************************************************************************************************* */
+using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Entities.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using OdontoSoft.Data.Authentication;
+using OdontoSoft.Web.Browser;
+
+namespace OdontoSoft.Web.Controllers
+{
+    public partial class <#=type.Name#>Controller : AppBaseBrowserController
+    {
+
+        private readonly ILogger<<#=type.Name#>Controller> _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _accessor;
+        private readonly LinkGenerator _generator;
+        private readonly IHostEnvironment _hostEnvironment;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IAuthenticatedUser _authenticatedUser;
+
+        public <#=type.Name#>Controller(ILogger<<#=type.Name#>Controller> logger, IUnitOfWork unitOfWork, 
+            IHttpContextAccessor accessor, LinkGenerator generator, 
+            IHostEnvironment hostEnvironment, IMemoryCache memoryCache,
+            IAuthenticatedUser authenticatedUser) : base("<#=type.Name#>")
+        {
+            _logger = logger;
+            _unitOfWork = unitOfWork;
+            _accessor = accessor;
+            _generator = generator;
+            _hostEnvironment = hostEnvironment;
+            _memoryCache = memoryCache;
+            _authenticatedUser = authenticatedUser;
+            _browserCacheHelper = new BrowserCacheHelper(_logger, _unitOfWork, _accessor, _generator, _hostEnvironment, _memoryCache, _authenticatedUser);
+        }
+    }
+}
+<#+
+}
+#>
+
+<#
+private Boolean IsDropDownListInt(System.Reflection.PropertyInfo prop)
+{    
+    if ((prop.PropertyType.Name == "Int32" || prop.PropertyType.Name.Contains("Nullable")) && prop.Name.EndsWith("Id") && AplicaProp(prop))
+    {
+        return true;
+    }
+    return false;
+}
+
+private bool AplicaProp(System.Reflection.PropertyInfo prop)
+{
+    if (prop.PropertyType.Name.StartsWith("System.Collections.Generic.List")) return false;
+    if (prop.Name == "Disabled") return false;
+    if (prop.Name == "ObjectState") return false;
+    if (prop.Name == "EntityName") return false;
+    if (prop.Name == "GetString") return false;
+    if (prop.Name == "CreatedUserId") return false;
+    if (prop.Name == "CreatedUserName") return false;
+    if (prop.Name == "CreatedDate") return false;
+    if (prop.Name == "UpdatedUserId") return false;
+    if (prop.Name == "UpdatedUserName") return false;
+    if (prop.Name == "UpdatedDate") return false;
+    if (prop.Name == "Id") return false;
+    if (prop.PropertyType.Name.EndsWith("Id")) return false;
+    return true;
+}
+
+private bool EsPropFK(System.Reflection.PropertyInfo prop)
+{   
+    if (prop.Name.EndsWith("Id")) return true;
+    return false;
+}
+
+private string FirstCharacterToLower(string str)
+{
+    if (String.IsNullOrEmpty(str) || Char.IsLower(str, 0))
+        return str;
+
+    return Char.ToLowerInvariant(str[0]) + str.Substring(1);
+}
+
+
+private string GetPropertyTypeBasedOnIdField(Type type, string idPropName)
+{
+    string propName = idPropName;
+    
+    if (propName.EndsWith("Id"))
+        propName = propName.Remove(propName.Length-2);
+
+    //propName = propName.Replace("Parent", "");
+
+    foreach (var props in type.GetProperties()) 
+    {
+        if (props.Name == propName)
+        {
+            return props.PropertyType.Name;
+        }
+    }
+    throw new Exception("No se encontró la propiedad: " + propName + " en " + type.Name);
+}
+
+private string GetFieldHtml(System.Reflection.PropertyInfo prop)
+{
+
+    if (prop.PropertyType.Name == "String")
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new { @class = \"form-control\" })";
+
+    if (prop.PropertyType.Name == "Decimal")
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.DecimalSettings(2) } })";
+
+    if (prop.PropertyType == typeof(Decimal?) && !prop.Name.EndsWith("Id"))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.NullableDecimalSettings(2) } })";
+
+    if (prop.PropertyType.Name == "Int32" && !prop.Name.EndsWith("Id"))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.IntegerSettings() } })";
+
+    if (prop.PropertyType == typeof(Int32?) && !prop.Name.EndsWith("Id"))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.NullableIntegerSettings() } })";
+
+    if (prop.PropertyType.Name == "Int64" && !prop.Name.EndsWith("Id"))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.IntegerSettings() } })";
+
+    if (prop.PropertyType == typeof(Int64?) && !prop.Name.EndsWith("Id"))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", new Dictionary<string, object> { { \"class\", \"form-control  data-autonumeric-field\" }, { \"data-autonumeric-settings\", AutoNumericHelper.NullableIntegerSettings() } })";
+
+    if (prop.PropertyType.Name == "DateTime" || prop.PropertyType == typeof(DateTime?))
+        return "@Html.TextBoxFor(x => x." + prop.Name + ", \"{0:dd/MM/yyyy}\",  new { @class = \"form-control datepicker\" })";
+
+    if (prop.PropertyType.Name == "Boolean")
+        return "@Html.CheckBoxFor(x => x." + prop.Name + ", new { @class = \"form-check-input\"})";
+    
+    if (prop.PropertyType.BaseType != null)
+    {
+        if (prop.PropertyType.BaseType.Name.StartsWith("AuditedEntity") || prop.PropertyType.BaseType.Name.StartsWith("Entity"))
+        {
+            return "@Html.DropDownList(\"" + prop.Name + "Id\", (SelectList)ViewBag." + prop.Name + ", String.Empty, new Dictionary<string, object> { { \"class\", \"form-select\" } })";        
+        }
+    }
+
+        
+    return "@*TIPO NO DEFINIDO - " + prop.PropertyType + " -*@ @Html.TextBoxFor(x => x." + prop.Name + ", new { @class = \"form-control\" })";
+}
+#>

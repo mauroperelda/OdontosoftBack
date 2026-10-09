@@ -1,0 +1,600 @@
+﻿@using OdontoSoft.Entities.ViewModels
+@model HistoriaClinicaViewModel
+
+@{
+    ViewData["Title"] = "Historia Clínica";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Historia Clínica</h4>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Edit", "HistoriaClinica", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.Id)
+
+    <!-- DATOS GENERALES -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Datos Generales</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.PacienteId, "Paciente")
+                            @if (Model.Id != 0)
+                            {
+                                <!-- ✅ Al editar: solo mostrar el nombre, no se puede cambiar -->
+                                <input type="text" class="form-control" value="@Model.Paciente" disabled />
+                                <input type="hidden" id="PacienteId" name="PacienteId" value="@Model.PacienteId" />
+                            }
+                            else
+                            {
+                                <!-- ✅ Al crear: autocomplete -->
+                                <input type="text" class="form-control" id="inputPaciente" 
+                                       placeholder="Ingrese nombre, apellido o DNI"
+                                       value="@(Model.PacienteId != 0 ? Model.Paciente : "")" />
+                                <input type="hidden" id="PacienteId" name="PacienteId" value="@Model.PacienteId" />
+                                <span id="mensajePaciente" class="text-danger small mt-1" style="display:none;"></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Alergias, "Alergias")
+                            @Html.TextAreaFor(x => x.Alergias,
+                                new { @class = "form-control", rows = "3" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Medicamentos, "Medicamentos")
+                            @Html.TextAreaFor(x => x.Medicamentos,
+                                new { @class = "form-control", rows = "3" })
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.AntecedentesMedicos, "Antecedentes Médicos")
+                            @Html.TextAreaFor(x => x.AntecedentesMedicos,
+                                new { @class = "form-control", rows = "3" })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            @Html.LabelFor(x => x.Observaciones, "Observaciones")
+                            @Html.TextAreaFor(x => x.Observaciones,
+                                new { @class = "form-control", rows = "2" })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12 button-list">
+                            <input type="submit" class="btn btn-primary" value="Guardar" />
+                            <a class="btn text-muted btn-link fw-semibold"
+                               href="@Url.Action("Index", "Browser", new { code = "HistoriaClinica" })">
+                                <i class="mdi mdi-arrow-left"></i> Volver al listado
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.Id != 0)
+{
+    <!-- ODONTOGRAMA -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Odontograma</h5>
+                    <p class="text-muted">Hacé click en una pieza para registrar su estado.</p>
+
+                    <style>
+                        .odontograma { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+                        .cuadrante { display: flex; gap: 4px; }
+                        .pieza {
+                            width: 42px; height: 42px; border: 2px solid #dee2e6;
+                            border-radius: 6px; display: flex; align-items: center;
+                            justify-content: center; font-size: 11px; font-weight: 600;
+                            cursor: pointer; transition: all .2s; background: #fff;
+                            flex-direction: column; gap: 1px;
+                        }
+                        .pieza:hover { border-color: #0d6efd; transform: scale(1.05); }
+                        .pieza .num { font-size: 10px; color: #6c757d; }
+                        .pieza.Sano { background: #d1e7dd; border-color: #0f5132; }
+                        .pieza.Caries { background: #fff3cd; border-color: #856404; }
+                        .pieza.Extraccion { background: #f8d7da; border-color: #842029; }
+                        .pieza.Corona { background: #cfe2ff; border-color: #084298; }
+                        .pieza.Tratado { background: #e2d9f3; border-color: #432874; }
+                        .fila-label { font-size: 11px; color: #6c757d; text-align: center; margin: 2px 0; }
+                        .separador { width: 100%; border-top: 1px dashed #dee2e6; margin: 6px 0; }
+                    </style>
+
+                    @{
+                        // Numeración FDI — cuadrante superior derecho e izquierdo, inferior derecho e izquierdo
+                        var supDer = new[] { 18, 17, 16, 15, 14, 13, 12, 11 };
+                        var supIzq = new[] { 21, 22, 23, 24, 25, 26, 27, 28 };
+                        var infDer = new[] { 48, 47, 46, 45, 44, 43, 42, 41 };
+                        var infIzq = new[] { 31, 32, 33, 34, 35, 36, 37, 38 };
+
+                        var estadoPiezas = Model.Piezas?
+                            .ToDictionary(p => p.NumeroPieza, p => p.Estado)
+                            ?? new Dictionary<int, string>();
+
+                        string IconoPieza(string estado) => estado switch
+                        {
+                            "Sano"      => "✓",
+                            "Caries"    => "C",
+                            "Extraccion"=> "X",
+                            "Corona"    => "♦",
+                            "Tratado"   => "T",
+                            _           => ""
+                        };
+                    }
+
+                    <div class="odontograma">
+                        <div class="fila-label">SUPERIOR</div>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <div class="cuadrante flex-row-reverse">
+                                @foreach (var n in supDer)
+                                {
+                                    var est = estadoPiezas.ContainsKey(n) ? estadoPiezas[n] : "";
+                                    <div class="pieza @est"
+                                         onclick="abrirModalPieza(@n, '@est')"
+                                         id="pieza-@n" title="Pieza @n - @(est == "" ? "Sin registro" : est)">
+                                        <span>@IconoPieza(est)</span>
+                                        <span class="num">@n</span>
+                                    </div>
+                                }
+                            </div>
+                            <div style="width:2px;background:#dee2e6;border-radius:2px;"></div>
+                            <div class="cuadrante">
+                                @foreach (var n in supIzq)
+                                {
+                                    var est = estadoPiezas.ContainsKey(n) ? estadoPiezas[n] : "";
+                                    <div class="pieza @est"
+                                         onclick="abrirModalPieza(@n, '@est')"
+                                         id="pieza-@n" title="Pieza @n - @(est == "" ? "Sin registro" : est)">
+                                        <span>@IconoPieza(est)</span>
+                                        <span class="num">@n</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="separador"></div>
+
+                        <div class="d-flex gap-2 justify-content-center">
+                            <div class="cuadrante flex-row-reverse">
+                                @foreach (var n in infDer)
+                                {
+                                    var est = estadoPiezas.ContainsKey(n) ? estadoPiezas[n] : "";
+                                    <div class="pieza @est"
+                                         onclick="abrirModalPieza(@n, '@est')"
+                                         id="pieza-@n" title="Pieza @n - @(est == "" ? "Sin registro" : est)">
+                                        <span>@IconoPieza(est)</span>
+                                        <span class="num">@n</span>
+                                    </div>
+                                }
+                            </div>
+                            <div style="width:2px;background:#dee2e6;border-radius:2px;"></div>
+                            <div class="cuadrante">
+                                @foreach (var n in infIzq)
+                                {
+                                    var est = estadoPiezas.ContainsKey(n) ? estadoPiezas[n] : "";
+                                    <div class="pieza @est"
+                                         onclick="abrirModalPieza(@n, '@est')"
+                                         id="pieza-@n" title="Pieza @n - @(est == "" ? "Sin registro" : est)">
+                                        <span>@IconoPieza(est)</span>
+                                        <span class="num">@n</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="fila-label">INFERIOR</div>
+
+                        <!-- Leyenda -->
+                        <div class="d-flex gap-3 mt-2 flex-wrap justify-content-center">
+                            <span class="badge" style="background:#d1e7dd;color:#0f5132;">✓ Sano</span>
+                            <span class="badge" style="background:#fff3cd;color:#856404;">C Caries</span>
+                            <span class="badge" style="background:#f8d7da;color:#842029;">X Extracción</span>
+                            <span class="badge" style="background:#cfe2ff;color:#084298;">♦ Corona</span>
+                            <span class="badge" style="background:#e2d9f3;color:#432874;">T Tratado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FICHAS DE TRATAMIENTO -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Fichas de Tratamiento</h5>
+                        <button type="button" class="btn btn-primary btn-sm"
+                                onclick="abrirModalFicha(0)">
+                            <i class="mdi mdi-plus"></i> Nueva Ficha
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="tablaFichas">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tratamiento</th>
+                                    <th>Pieza</th>
+                                    <th>Descripción</th>
+                                    <th>Observaciones</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="fichasBody">
+                                @if (Model.Fichas != null && Model.Fichas.Any())
+                                {
+                                    foreach (var f in Model.Fichas)
+                                    {
+                                        <tr id="fila-ficha-@f.Id">
+                                            <td>@f.FechaRealizacion.ToString("dd/MM/yyyy")</td>
+                                            <td>@f.Tratamiento</td>
+                                            <td>@(f.NumeroPieza?.ToString() ?? "-")</td>
+                                            <td>@f.Descripcion</td>
+                                            <td>@f.Observaciones</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        onclick="eliminarFicha(@f.Id)">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr id="filaVacia">
+                                        <td colspan="6" class="text-center text-muted">
+                                            No hay fichas registradas
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- MODAL ODONTOGRAMA -->
+<div class="modal fade" id="modalPieza" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pieza <span id="modalPiezaNumero"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="piezaHistoriaClinicaId" value="@Model.Id" />
+                <input type="hidden" id="piezaNumero" />
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select id="piezaEstado" class="form-select">
+                        <option value="">Sin registro</option>
+                        <option value="Sano">Sano</option>
+                        <option value="Caries">Caries</option>
+                        <option value="Extraccion">Extracción</option>
+                        <option value="Corona">Corona</option>
+                        <option value="Tratado">Tratado</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Observación</label>
+                    <textarea id="piezaObservacion" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="guardarPieza()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FICHA DE TRATAMIENTO -->
+<div class="modal fade" id="modalFicha" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ficha de Tratamiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="fichaId" value="0" />
+                <input type="hidden" id="fichaHistoriaClinicaId" value="@Model.Id" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Tratamiento</label>
+                        <select id="fichaTratamientoId" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Pieza Dental</label>
+                        <input type="number" id="fichaNumeroPieza" class="form-control"
+                               min="11" max="48" placeholder="Ej: 21" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha</label>
+                        <input type="text" id="fichaFecha" class="form-control datepicker" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Descripción</label>
+                        <textarea id="fichaDescripcion" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Observaciones</label>
+                        <textarea id="fichaObservaciones" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary"
+                        onclick="guardarFicha()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+    // ── ODONTOGRAMA ──────────────────────────────────────────
+    function abrirModalPieza(numero, estadoActual) {
+        $('#modalPiezaNumero').text(numero);
+        $('#piezaNumero').val(numero);
+        $('#piezaEstado').val(estadoActual || '');
+        $('#piezaObservacion').val('');
+        new bootstrap.Modal(document.getElementById('modalPieza')).show();
+    }
+
+    function guardarPieza() {
+        var data = {
+            HistoriaClinicaId: parseInt($('#piezaHistoriaClinicaId').val()),
+            NumeroPieza: parseInt($('#piezaNumero').val()),
+            Estado: $('#piezaEstado').val(),
+            Observacion: $('#piezaObservacion').val()
+        };
+        debugger;
+        $.ajax({
+            url: '@Url.Action("GuardarPieza", "HistoriaClinica")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.Head && result.Head.Ok) {
+                    var num = data.NumeroPieza;
+                    var estado = data.Estado;
+                    var iconos = { Sano:'✓', Caries:'C', Extraccion:'X', Corona:'♦', Tratado:'T' };
+                    var icono = iconos[estado] || '';
+
+                    var $pieza = $('#pieza-' + num);
+                    $pieza.attr('class', 'pieza ' + estado);
+                    $pieza.html('<span>' + icono + '</span><span class="num">' + num + '</span>');
+                    $pieza.attr('title', 'Pieza ' + num + ' - ' + (estado || 'Sin registro'));
+                    $pieza.attr('onclick', 'abrirModalPieza(' + num + ', \'' + estado + '\')');
+
+                    bootstrap.Modal.getInstance(document.getElementById('modalPieza')).hide();
+                    Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.Head?.Msg || 'Error al guardar' });
+                }
+            },
+            error: function () {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión' });
+            }
+        });
+    }
+
+    // ── FICHAS DE TRATAMIENTO ────────────────────────────────
+    $(document).ready(function () {
+        cargarTratamientosParaFicha();
+        $('#fichaFecha').datepicker({ dateFormat: 'dd/mm/yy' });
+        // setear fecha de hoy por defecto
+        var hoy = new Date();
+        var dd = String(hoy.getDate()).padStart(2,'0');
+        var mm = String(hoy.getMonth()+1).padStart(2,'0');
+        $('#fichaFecha').val(dd + '/' + mm + '/' + hoy.getFullYear());
+
+        // Solo inicializar si el input existe (modo creación)
+        if ($('#inputPaciente').length) {
+            initAutocompletePaciente();
+
+            // ✅ Si viene con PacienteId pre-cargado (desde browser de pacientes),
+            //    buscar el nombre y mostrarlo
+            var pacienteIdPreCargado = parseInt($('#PacienteId').val());
+            if (pacienteIdPreCargado && pacienteIdPreCargado !== 0) {
+                $.ajax({
+                    url: '@Url.Action("GetNombreById", "Paciente")',
+                    type: 'GET',
+                    data: { id: pacienteIdPreCargado },
+                    success: function (result) {
+                        if (result) {
+                            $('#inputPaciente').val(result.NombreCompleto);
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    function initAutocompletePaciente() {
+        $('#inputPaciente').autocomplete({
+            appendTo: '#modalTurno',
+            minLength: 1,
+            select: function (event, ui) {
+                $('#inputPaciente').val(ui.item.label);
+                $('#PacienteId').val(ui.item.value);
+                return false;
+            },
+            change: function (event, ui) {
+                if (!ui.item) $('#PacienteId').val('');
+            },
+            response: function (event, ui) {
+              if (ui.content.length === 0) {
+                  $('#mensajePaciente').text('No se encontró ningún paciente registrado.').show();
+              } else {
+                  $('#mensajePaciente').hide();
+              }
+            },
+            source: function (request, response) {
+                $.ajax({
+                    url: '@Url.Action("GetAllByNombreDni", "Paciente")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { searchText: request.term },
+                    success: function (result) {
+                        if (!result || result.length === 0) {
+                            response([]);
+                            return;
+                        }
+                        response($.map(result, function (item) {
+                            return {
+                                label: item.Apellido + ', ' + item.Nombre,
+                                value: item.Id
+                            };
+                        }));
+                    },
+                    error: function () { response([]); }
+                });
+            },
+            focus: function (event, ui) {
+                event.preventDefault();
+                $('#inputPaciente').val(ui.item.label);
+            }
+        });
+    }
+    function cargarTratamientosParaFicha() {
+        $.ajax({
+            url: '@Url.Action("GetTratamientosParaFicha", "HistoriaClinica")',
+            type: 'GET',
+            success: function (result) {
+                var data = result.Data.tratamientos;
+                $('#fichaTratamientoId').empty()
+                    .append('<option value="">Seleccione tratamiento</option>');
+                if (data && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        $('#fichaTratamientoId').append(
+                            $('<option>', { value: item.Id, text: item.Nombre })
+                        );
+                    });
+                }
+            }
+        });
+    }
+
+    function abrirModalFicha(id) {
+        $('#fichaId').val(id || 0);
+        $('#fichaTratamientoId').val('');
+        $('#fichaNumeroPieza').val('');
+        $('#fichaDescripcion').val('');
+        $('#fichaObservaciones').val('');
+        new bootstrap.Modal(document.getElementById('modalFicha')).show();
+    }
+
+    function guardarFicha() {
+        var tratamientoId = parseInt($('#fichaTratamientoId').val());
+        if (!tratamientoId) {
+            Swal.fire({ icon: 'warning', title: 'Atención', text: 'Seleccioná un tratamiento' });
+            return;
+        }
+
+        var fechaStr = $('#fichaFecha').val();
+        var partes = fechaStr.split('/');
+        var fechaISO = partes[2] + '-' + partes[1] + '-' + partes[0];
+
+        var data = {
+            Id: parseInt($('#fichaId').val()),
+            HistoriaClinicaId: parseInt($('#fichaHistoriaClinicaId').val()),
+            TratamientoId: tratamientoId,
+            NumeroPieza: $('#fichaNumeroPieza').val() ? parseInt($('#fichaNumeroPieza').val()) : null,
+            Descripcion: $('#fichaDescripcion').val(),
+            Observaciones: $('#fichaObservaciones').val(),
+            FechaRealizacion: fechaISO
+        };
+
+        $.ajax({
+            url: '@Url.Action("GuardarFicha", "HistoriaClinica")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                if (result.Head && result.Head.Ok) {
+                    var f = result.Data.ficha;
+                    $('#filaVacia').remove();
+                    var fila = '<tr id="fila-ficha-' + f.Id + '">' +
+                        '<td>' + f.FechaRealizacion + '</td>' +
+                        '<td>' + (f.Tratamiento || '') + '</td>' +
+                        '<td>' + (f.NumeroPieza || '-') + '</td>' +
+                        '<td>' + (f.Descripcion || '') + '</td>' +
+                        '<td>' + (data.Observaciones || '') + '</td>' +
+                        '<td><button type="button" class="btn btn-sm btn-outline-danger" ' +
+                        'onclick="eliminarFicha(' + f.Id + ')">' +
+                        '<i class="mdi mdi-delete"></i></button></td></tr>';
+                    $('#fichasBody').append(fila);
+
+                    bootstrap.Modal.getInstance(document.getElementById('modalFicha')).hide();
+                    Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: result.Head?.Msg || 'Error al guardar' });
+                }
+            },
+            error: function () {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión' });
+            }
+        });
+    }
+
+    function eliminarFicha(id) {
+        Swal.fire({
+            title: '¿Eliminar ficha?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("EliminarFicha", "HistoriaClinica")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (res) {
+                        if (res.Head && res.Head.Ok) {
+                            $('#fila-ficha-' + id).remove();
+                            if ($('#fichasBody tr').length === 0) {
+                                $('#fichasBody').append(
+                                    '<tr id="filaVacia"><td colspan="6" class="text-center text-muted">' +
+                                    'No hay fichas registradas</td></tr>');
+                            }
+                            Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false });
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+}
