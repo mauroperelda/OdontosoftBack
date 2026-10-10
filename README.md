@@ -4,7 +4,7 @@
 
 > **Repos relacionados**
 >
-> - **Frontend (este sistema):** [`odontosoft-front`](https://github.com/mauroperelda/odontosoft-front) — SPA React + Vite que consume la `OdontoSoft.API` vía JWT.
+> - **Frontend (este sistema):** [`odontosoft-front`](https://github.com/mauroperelda/odontosoft) — SPA React + Vite que consume la `OdontoSoft.API` vía JWT.
 > - **API de identidad (sister-repo):** [`ApiGetToken`](https://github.com/mauroperelda/ApiGetToken) — emite y valida los tokens JWT con BCrypt + RBAC.
 >
 > Las dos APIs del backend (`OdontoSoft.API` y `ApiGetToken`) comparten la misma `Jwt:Key` / `Jwt:Issuer` / `Jwt:Audience`, por lo que un token emitido por la API de identidad es aceptado por la API de negocio sin re-login.
