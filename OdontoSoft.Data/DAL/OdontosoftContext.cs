@@ -30,11 +30,20 @@ namespace OdontoSoft.Data.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // NOTA: UseSnakeCaseNamingConvention() se aplica en AddDbContext (sobre el
+            // DbContextOptionsBuilder) en Program.cs. No se puede llamar desde OnModelCreating
+            // porque opera sobre el Model ANTES de que se construya.
+
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
-            modelBuilder.RemovePluralizingTableNameConvention();
+            // ANTES había: modelBuilder.RemovePluralizingTableNameConvention();
+            // Esa extension hace SetTableName(entity.DisplayName()) que escribe el nombre en
+            // PascalCase y PISA la convención snake_case. Con Npgsql queremos snake_case
+            // (PostgreSQL es case-insensitive por default, lo que rompe la consistencia
+            // con los FKs generados). Si en el futuro hace falta, escribir una versión
+            // snake_case-aware: SetTableName(SnakeCase(entity.DisplayName())).
             modelBuilder.Seed();
             base.OnModelCreating(modelBuilder);
         }

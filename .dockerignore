@@ -1,0 +1,28 @@
+# Lo que Docker ignora al armar el contexto de build.
+# Reduce el tiempo de build y deja la imagen limpia.
+
+# Outputs de compilación (en cada proyecto)
+**/bin/
+**/obj/
+
+# Visual Studio / Rider
+**/.vs/
+**/*.user
+**/*.suo
+**/.idea/
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Archivos locales con secretos (no se commitean pero por las dudas)
+appsettings.Development.json
+appsettings.Production.json
+*.user.json
+
+# Misceláneos
+README.md
+**/*.md
+LICENSE
+deletebin.cmd

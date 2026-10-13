@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace OdontoSoft.API.Helpers
 {
@@ -55,7 +56,7 @@ namespace OdontoSoft.API.Helpers
         /// <summary>
         /// Traduce una excepción capturada en un controller a un IActionResult
         /// con mensaje legible. Cubre las excepciones más comunes de EF Core /
-        /// SQL Server que el usuario no debería ver crudas.
+        /// PostgreSQL que el usuario no debería ver crudas.
         /// </summary>
         public static IActionResult FromException(Exception ex, string? entityName = null)
         {
@@ -89,25 +90,25 @@ namespace OdontoSoft.API.Helpers
 
         private static IActionResult FromDbUpdateException(DbUpdateException ex, string? entityName)
         {
-            // SQL Server expone SqlException con códigos específicos:
-            //  2627 / 2601 → unique constraint violation (DNI duplicado, etc.)
-            //  547         → foreign key violation (no se puede borrar, tiene FKs)
-            //  515         → cannot insert NULL
-            //  50000       → RAISERROR desde un trigger
-            var sql = FindSqlException(ex);
-            if (sql is null)
+            // PostgreSQL expone PostgresException con SQLSTATE codes:
+            //  23505 → unique violation (DNI duplicado, etc.)
+            //  23503 → foreign key violation (no se puede borrar, tiene FKs)
+            //  23502 → not null violation
+            //  23514 → check violation
+            var pg = FindPostgresException(ex);
+            if (pg is null)
             {
                 return BadRequest("No se pudo guardar los datos. Revisá que no falte información obligatoria.");
             }
 
-            switch (sql.Number)
+            switch (pg.SqlState)
             {
-                case 2627:
-                case 2601:
+                case "23505":
                 {
                     // Extraer el nombre del índice para inferir el campo.
-                    // El mensaje viene como: "Violation of UNIQUE KEY constraint 'IX_Paciente_Dni'..."
-                    var field = ExtractFieldFromUniqueKeyMessage(sql.Message, entityName);
+                    // El mensaje viene como: 'duplicate key value violates unique constraint "IX_paciente_dni"'
+                    // Después del snake_case: "IX_paciente_dni" → "Dni" (último segmento, PascalCase)
+                    var field = ExtractFieldFromUniqueConstraint(pg, entityName);
                     var msg = field is null
                         ? "Ya existe un registro con esos datos."
                         : $"Ya existe un registro con ese {field}.";
@@ -118,24 +119,20 @@ namespace OdontoSoft.API.Helpers
                               [field] = new[] { "Este valor ya está registrado." }
                           });
                 }
-                case 547:
+                case "23503":
                 {
                     // Foreign key: la fila tiene dependencias (turnos, pagos, etc.)
-                    // o referencia una fila inexistente.
-                    var isDeleteReference = sql.Message.Contains("REFERENCE", StringComparison.OrdinalIgnoreCase)
-                                         || sql.Message.Contains("DELETE", StringComparison.OrdinalIgnoreCase);
-                    if (isDeleteReference)
-                    {
-                        return BadRequest(
-                            "No se puede eliminar el registro porque tiene datos asociados.");
-                    }
+                    // o referencia una fila inexistente. PG no distingue tan
+                    // limpio como SQL Server entre insert/update vs delete, así
+                    // que mostramos un mensaje genérico que cubre ambos casos.
                     return BadRequest(
-                        "El registro referencia datos que no existen o ya fueron eliminados.");
+                        "No se puede completar la operación porque el registro tiene datos asociados "
+                        + "o referencia datos inexistentes.");
                 }
-                case 515:
+                case "23502":
                 {
-                    // Cannot insert the value NULL into column 'X'
-                    var field = ExtractFieldFromNullMessage(sql.Message);
+                    // null value in column "x" of relation "y" violates not-null constraint
+                    var field = ExtractFieldFromNotNull(pg);
                     var msg = field is null
                         ? "Faltan datos obligatorios."
                         : $"El campo {field} es obligatorio.";
@@ -146,48 +143,77 @@ namespace OdontoSoft.API.Helpers
                               [field] = new[] { "Este campo es obligatorio." }
                           });
                 }
+                case "23514":
+                    return BadRequest("Los datos no cumplen las validaciones de la base de datos.");
                 default:
                     return BadRequest("No se pudo guardar los datos. Revisá la información enviada.");
             }
         }
 
-        private static SqlException? FindSqlException(Exception? ex)
+        private static PostgresException? FindPostgresException(Exception? ex)
         {
             while (ex is not null)
             {
-                if (ex is SqlException sql) return sql;
+                if (ex is PostgresException pg) return pg;
                 ex = ex.InnerException;
             }
             return null;
         }
 
-        // "Violation of UNIQUE KEY constraint 'IX_Paciente_Dni'. ...
-        //  The duplicate key value is (12345678)."
-        private static string? ExtractFieldFromUniqueKeyMessage(string message, string? entityName)
+        // "duplicate key value violates unique constraint \"IX_paciente_dni\""
+        //  → constraint name "IX_paciente_dni" → field "Dni" (PascalCase)
+        private static string? ExtractFieldFromUniqueConstraint(PostgresException pg, string? entityName)
         {
-            // Heurística: tomar lo que venga después del último '_' en el
-            // nombre del índice, pasarlo a camelCase para el front.
-            // "IX_Paciente_Dni" → "Dni"
-            // "UQ_Paciente_Dni" → "Dni"
-            var match = System.Text.RegularExpressions.Regex.Match(
-                message, @"'(IX|UQ|AK)_[^']+'", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            if (!match.Success) return null;
+            // PostgresException.ConstraintName es la fuente más confiable cuando está
+            // disponible (Npgsql 6+ lo popula). Si no, parseamos el mensaje.
+            var constraintName = pg.ConstraintName;
+            if (string.IsNullOrEmpty(constraintName))
+            {
+                var match = Regex.Match(
+                    pg.MessageText,
+                    @"unique constraint\s+""([^""]+)""",
+                    RegexOptions.IgnoreCase);
+                if (match.Success) constraintName = match.Groups[1].Value;
+            }
+            if (string.IsNullOrEmpty(constraintName)) return null;
 
-            var indexName = match.Value.Trim('\'');
-            var lastUnderscore = indexName.LastIndexOf('_');
-            if (lastUnderscore < 0 || lastUnderscore == indexName.Length - 1) return null;
-            var tail = indexName[(lastUnderscore + 1)..];
+            // Convención de nombres: "IX_<tabla>_<columna>" o "UQ_<tabla>_<columna>".
+            // Después de snake_case: "IX_paciente_dni" → última parte = "dni" → "Dni".
+            var lastUnderscore = constraintName.LastIndexOf('_');
+            if (lastUnderscore < 0 || lastUnderscore == constraintName.Length - 1) return null;
+            var tail = constraintName[(lastUnderscore + 1)..];
 
-            // El front espera PascalCase (DomicilioNumero), devolvemos tal cual.
-            return tail;
+            return SnakeToPascal(tail);
         }
 
-        // "Cannot insert the value NULL into column 'DomicilioNumero', table '...'"
-        private static string? ExtractFieldFromNullMessage(string message)
+        // "null value in column \"nombre\" of relation \"paciente\" violates not-null constraint"
+        //  → column "nombre" → field "Nombre"
+        private static string? ExtractFieldFromNotNull(PostgresException pg)
         {
-            var match = System.Text.RegularExpressions.Regex.Match(
-                message, @"column '(\w+)'", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-            return match.Success ? match.Groups[1].Value : null;
+            var columnName = pg.ColumnName;
+            if (string.IsNullOrEmpty(columnName))
+            {
+                var match = Regex.Match(
+                    pg.MessageText,
+                    @"column\s+""([^""]+)""",
+                    RegexOptions.IgnoreCase);
+                if (match.Success) columnName = match.Groups[1].Value;
+            }
+            if (string.IsNullOrEmpty(columnName)) return null;
+            return SnakeToPascal(columnName);
+        }
+
+        // "dni" → "Dni", "created_user_id" → "CreatedUserId"
+        // El front espera PascalCase para matchear los nombres de las propiedades del C# model.
+        private static string SnakeToPascal(string snake)
+        {
+            var parts = snake.Split('_', StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (parts[i].Length == 0) continue;
+                parts[i] = char.ToUpperInvariant(parts[i][0]) + parts[i][1..];
+            }
+            return string.Concat(parts);
         }
     }
 }

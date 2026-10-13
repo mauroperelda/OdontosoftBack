@@ -26,11 +26,21 @@ using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository.UOW;
 using OdontoSoft.Web.Startup;
 
+// Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
+// con Kind=Utc/Unspecified/Local en columnas "timestamp without time zone" sin
+// lanzar excepción. Debe setearse ANTES de cualquier llamada a Npgsql.
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<OdontosoftContext>(options => options.UseSqlServer(connString, b => b.MigrationsAssembly("OdontoSoft.Web")));
+builder.Services.AddDbContext<OdontosoftContext>(options =>
+{
+    // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
+    options.UseSnakeCaseNamingConvention();
+    options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
+});
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 

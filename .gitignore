@@ -232,4 +232,12 @@ project.lock.json
 #####
 ForecastMedve.App/Form1.cs.bak
 
+# Configuración con secrets (connection strings, JWT keys) — por entorno
+appsettings.Development.json
+appsettings.Production.json
+*.user.json
+
+# Archivo de rotación de JWT key (lo generamos al rotar, contiene la key en claro)
+ROTACION_JWT_KEY.md
+
 

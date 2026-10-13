@@ -12,12 +12,27 @@ using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository.UOW;
 using OdontoSoft.Services;
 
+// Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
+// con Kind=Utc/Unspecified/Local en columnas "timestamp without time zone" sin
+// lanzar excepción. Sin esto, los SaveChanges que usan DateTime.UtcNow (auditoría)
+// fallan al hacer INSERT contra columnas de tipo timestamp. Debe setearse ANTES
+// de cualquier llamada a Npgsql.
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Base de Datos ─────────────────────────────────────────────────────────────
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<OdontosoftContext>(options =>
-    options.UseSqlServer(connString, b => b.MigrationsAssembly("OdontoSoft.Web")));
+{
+    // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
+    // PostgreSQL es case-sensitive con identifiers quoted; snake_case lowercase es idiomático
+    // y nos ahorra quoted identifiers en queries raw.
+    options.UseSnakeCaseNamingConvention();
+    // Las migrations viven en OdontoSoft.Data (no en OdontoSoft.Web) para que
+    // el data project sea self-contained y no dependa del host legacy.
+    options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
+});
 
 // ── Repositorio / UnitOfWork ───────────────────────────────────────────────────
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -144,6 +159,24 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthenticatedUser, AuthenticatedUser>();
 
 var app = builder.Build();
+
+// ── EF Migrations automáticas al iniciar ─────────────────────────────────────
+// Aplica las migrations pendientes en cada startup. Idempotente: si no hay
+// nada nuevo, no hace nada. Si falla (DB no accesible, migration corrupta),
+// la API no arranca — Render detecta el crash y deja el deploy viejo
+// sirviendo en lugar del nuevo.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OdontosoftContext>();
+    var pending = db.Database.GetPendingMigrations().ToList();
+    if (pending.Count > 0)
+    {
+        app.Logger.LogInformation(
+            "Aplicando {Count} migrations pendientes: {Names}",
+            pending.Count, string.Join(", ", pending));
+        db.Database.Migrate();
+    }
+}
 
 // ── Pipeline HTTP ─────────────────────────────────────────────────────────────
 app.UseSwagger();

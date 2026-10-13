@@ -2,6 +2,7 @@
 //using OdontoSoft.Data.Helpers;
 using OdontoSoft.Data.Repository.Interfaces;
 //using OdontoSoft.Entities.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,40 @@ namespace OdontoSoft.Data.Repository.StoredProcedure
 
         public IList<PacienteViewModel> GetPacienteForTurno(string searchText)
         {
-            IList<PacienteViewModel> r = _context.LoadStoredProc("SP_GetPacientesForTurno")
-                                .WithSqlParam("@busqueda", searchText)
-                                .ExecuteStoredProc<PacienteViewModel>();
-            return r.ToList();
+            // Antes: stored procedure SQL Server `SP_GetPacientesForTurno` ejecutada
+            // con un helper custom (LoadStoredProc / WithSqlParam / ExecuteStoredProc).
+            // Ahora: LINQ directo contra `paciente` (tabla snake_case). Npgsql traduce
+            // el Contains/ToLower a ILIKE en el SQL, y la projection a PacienteViewModel
+            // se hace client-side con `Select`.
+            //
+            // La PL/pgSQL function `get_pacientes_for_turno` igual existe (ver migration
+            // CreateGetPacientesForTurnoFunction) por si en el futuro queremos exponerla
+            // a otros clientes (psql, un ETL, el front directo). No la usamos desde acá
+            // porque EF Core 9 no soporta `Database.SqlQueryRaw<T>` para tipos complejos
+            // (eso es EF Core 10).
+            var query = _context.Paciente.AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                var like = searchText.Trim().ToLower();
+                query = query.Where(p =>
+                    p.Nombre.ToLower().Contains(like)
+                    || p.Apellido.ToLower().Contains(like)
+                    || p.Dni.Contains(searchText.Trim()));
+            }
+
+            return query
+                .Where(p => !p.Disabled)
+                .OrderBy(p => p.Apellido).ThenBy(p => p.Nombre)
+                .Take(50)
+                .Select(p => new PacienteViewModel
+                {
+                    Id = p.Id,
+                    Nombre = p.Nombre,
+                    Apellido = p.Apellido,
+                    Dni = p.Dni
+                })
+                .ToList();
         }
 
         //public IList<ServicioItemReferenciaViewModel> ReferenciaCodigoValorListByCodigo(string storedProcedureName, string codigoReferencia, string searchText)
