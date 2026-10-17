@@ -1,12 +1,12 @@
 /* ************************************************************************************************************************************* */
 /* En este archivo solo se debe modificar el constructor en caso de ser necesario. No se debe agregar ninguna otra funcionalidad */
 /* ************************************************************************************************************************************* */
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using OdontoSoft.Web.Browser;
 using OdontoSoft.Web.Controllers;
 

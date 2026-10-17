@@ -1,11 +1,11 @@
-//using OdontoSoft.Data.Authentication;
+//using OdontoSoft.Infrastructure.Data.Authentication;
 //using ExtraCore.Data.Repository.UOW;
 //using ExtraCore.Web.Helpers.Constants;
 using OdontoSoft.Web.Helpers.Menu;
 //using ExtraCore.Web.Medve.Browser;
 using Microsoft.Extensions.Caching.Memory;
-using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using OdontoSoft.Web.Browser;
 using OdontoSoft.Web.Helpers.Constants;
 

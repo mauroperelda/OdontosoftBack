@@ -15,12 +15,12 @@ public class SolutionCompilesTests
   {
     // Si los ProjectReference están rotos, este test no compila.
     var apiAssembly = typeof(OdontoSoft.API.Controllers.PacienteController).Assembly;
-    var dataAssembly = typeof(OdontoSoft.Data.DAL.OdontosoftContext).Assembly;
+    var dataAssembly = typeof(OdontoSoft.Infrastructure.Data.DAL.OdontosoftContext).Assembly;
 
     apiAssembly.Should().NotBeNull();
     dataAssembly.Should().NotBeNull();
     apiAssembly.GetName().Name.Should().Be("OdontoSoft.API");
-    dataAssembly.GetName().Name.Should().Be("OdontoSoft.Data");
+    dataAssembly.GetName().Name.Should().Be("OdontoSoft.Infrastructure.Data");
   }
 
   [Fact]

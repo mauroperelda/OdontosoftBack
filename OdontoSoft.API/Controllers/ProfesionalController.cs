@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 

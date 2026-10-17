@@ -2,9 +2,9 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using OdontoSoft.Data.Authentication;
-using OdontoSoft.Data.DAL;
-using OdontoSoft.Data.Repository;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.Data.Repository;
 using OdontoSoft.Domain.Models;
 using Xunit;
 

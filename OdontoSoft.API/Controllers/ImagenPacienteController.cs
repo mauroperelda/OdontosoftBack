@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 

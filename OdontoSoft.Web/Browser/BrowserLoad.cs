@@ -1,5 +1,5 @@
-using OdontoSoft.Data.Repository;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using MedveCore.Common.Helpers;
 using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;

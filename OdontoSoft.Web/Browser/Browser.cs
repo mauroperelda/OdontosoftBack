@@ -1,4 +1,4 @@
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;
 using Microsoft.AspNetCore.Mvc;

@@ -20,7 +20,7 @@
 	-->
 	<ItemGroup>
 		<ProjectReference Include="..\..\OdontoSoft.API\OdontoSoft.API.csproj" />
-		<ProjectReference Include="..\..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Domain\OdontoSoft.Domain.csproj">
 			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
 			<OutputItemType>DoNotCopyToOutput</OutputItemType>

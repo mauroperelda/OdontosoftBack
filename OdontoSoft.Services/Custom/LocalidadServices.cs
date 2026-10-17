@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using OdontoSoft.Data.Authentication;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using Odontosoft.Services;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.Contracts.Dtos;

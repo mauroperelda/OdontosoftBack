@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
 using Odontosoft.Services;
-using OdontoSoft.Data.Authentication;
-using OdontoSoft.Data.Repository.Interfaces;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 
 namespace OdontoSoft.Services
 {

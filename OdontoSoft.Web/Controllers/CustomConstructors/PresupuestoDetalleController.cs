@@ -1,9 +1,9 @@
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using OdontoSoft.Web.Browser;
 
 namespace OdontoSoft.Web.Controllers

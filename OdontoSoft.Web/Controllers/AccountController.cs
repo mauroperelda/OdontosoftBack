@@ -13,8 +13,8 @@ using System.Reflection.Metadata;
 using System.Security.Claims;
 using OdontoSoft.Web.Helpers.Authentication.DTO;
 using Microsoft.AspNetCore.Authorization;
-using OdontoSoft.Data.Authentication;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 
 namespace ExtraCore.Web.Controllers
 {

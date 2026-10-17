@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Mauro.RepositoryPattern.Infrastructure;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Services;
 using OdontoSoft.Contracts.Dtos;

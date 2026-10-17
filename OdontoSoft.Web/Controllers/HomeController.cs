@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Globalization;
-using OdontoSoft.Data.DAL;
+using OdontoSoft.Infrastructure.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using OdontoSoft.Domain.Models;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Contracts.Dtos;
 
 namespace OdontoSoft.Web.Controllers

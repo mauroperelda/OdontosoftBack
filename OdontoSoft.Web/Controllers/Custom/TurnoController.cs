@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OdontoSoft.Domain.Models;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Contracts.Dtos;
 using OdontoSoft.Domain.Base;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

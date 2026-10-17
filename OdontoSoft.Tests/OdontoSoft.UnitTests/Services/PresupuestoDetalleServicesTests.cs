@@ -2,8 +2,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using OdontoSoft.Data.Authentication;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Services;
 using Xunit;
 

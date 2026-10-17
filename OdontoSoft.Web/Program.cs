@@ -18,11 +18,11 @@ using Newtonsoft.Json.Serialization;
 using System.Globalization;
 using System.Net;
 using System.Reflection;
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using OdontoSoft.Web.IServices;
 using OdontoSoft.Web.Services;
-using OdontoSoft.Data.DAL;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Web.Startup;
 
 // Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime

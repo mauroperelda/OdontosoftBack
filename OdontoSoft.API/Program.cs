@@ -11,13 +11,13 @@ using OdontoSoft.API.Filters;
 using OdontoSoft.API.Helpers;
 using OdontoSoft.API.Mapper;
 using OdontoSoft.API.Validators;
-using OdontoSoft.Data.Authentication;
+using OdontoSoft.Infrastructure.Data.Authentication;
 using Serilog;
 using Serilog.Formatting.Compact;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
-using OdontoSoft.Data.DAL;
-using OdontoSoft.Data.Repository.UOW;
+using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.Data.Repository.UOW;
 using OdontoSoft.Services;
 
 // Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
