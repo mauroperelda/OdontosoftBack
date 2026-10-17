@@ -1,9 +1,10 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
+using OdontoSoft.Infrastructure.Middleware;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Middleware;
@@ -29,8 +30,8 @@ public class JsonExceptionMiddlewareTests
   {
     // Arrange: deserializar un JSON malformado dispara una JsonException real,
     // con `Path` populado por el JsonReader.
-    // El campo está como "" pero DomicilioNumero es int? — LenientNullableJsonConverter
-    // lo convierte a null. Para forzar un error real, usamos un valor no-numérico.
+    // El campo estÃ¡ como "" pero DomicilioNumero es int? â€” LenientNullableJsonConverter
+    // lo convierte a null. Para forzar un error real, usamos un valor no-numÃ©rico.
     var json = "{\"DomicilioNumero\":\"no-es-numero\"}";
 
     JsonException? captured = null;
@@ -43,7 +44,7 @@ public class JsonExceptionMiddlewareTests
       captured = ex;
     }
 
-    captured.Should().NotBeNull("queremos una JsonException real para que Path esté populado.");
+    captured.Should().NotBeNull("queremos una JsonException real para que Path estÃ© populado.");
     captured!.Path.Should().NotBeNullOrEmpty("Path lo popula el JsonReader durante el parse.");
 
     var badHttp = new BadHttpRequestException("Bad Request", captured);
@@ -126,7 +127,7 @@ public class JsonExceptionMiddlewareTests
     using var doc = await JsonDocument.ParseAsync(ctx.Response.Body);
     var root = doc.RootElement;
 
-    // Sin field en el path → la key es "_general"
+    // Sin field en el path â†’ la key es "_general"
     root.GetProperty("errors").GetProperty("_general").ValueKind.Should().Be(JsonValueKind.Array);
   }
 
@@ -150,17 +151,17 @@ public class JsonExceptionMiddlewareTests
   }
 
   [Theory]
-  [InlineData("Int32", "número entero")]
-  [InlineData("Int64", "número entero")]
-  [InlineData("Decimal", "número decimal")]
+  [InlineData("Int32", "nÃºmero entero")]
+  [InlineData("Int64", "nÃºmero entero")]
+  [InlineData("Decimal", "nÃºmero decimal")]
   [InlineData("DateTime", "fecha")]
   [InlineData("Guid", "identificador")]
   [InlineData("Boolean", "valor verdadero/falso")]
   [InlineData("AlgoRaro", "valor de tipo AlgoRaro")]
   public void TranslateTypeToFriendlyMessage_MapsCorrectly(string type, string expected)
   {
-    // Reflection al método estático privado (no está expuesto, pero está
-    // documentado en el JsonExceptionMiddleware.cs línea 135).
+    // Reflection al mÃ©todo estÃ¡tico privado (no estÃ¡ expuesto, pero estÃ¡
+    // documentado en el JsonExceptionMiddleware.cs lÃ­nea 135).
     var method = typeof(JsonExceptionMiddleware).GetMethod(
       "TypeToFriendlyMessage",
       System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);

@@ -1,14 +1,15 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
+using OdontoSoft.Infrastructure.Middleware;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Middleware;
 
 /// <summary>
-/// Tests del GlobalExceptionMiddleware — verifica que cualquier excepción
+/// Tests del GlobalExceptionMiddleware â€” verifica que cualquier excepciÃ³n
 /// no controlada en los controllers (sin try/catch) se traduce a la shape
 /// uniforme { error, errors } que el front espera.
 /// </summary>
@@ -57,7 +58,7 @@ public class GlobalExceptionMiddlewareTests
     var root = doc.RootElement;
 
     var error = root.GetProperty("error").GetString();
-    error.Should().Be("Ocurrió un error al procesar la solicitud.");
+    error.Should().Be("OcurriÃ³ un error al procesar la solicitud.");
     error.Should().NotContain("sensibles", "el middleware no debe filtrar mensajes crudos.");
   }
 
@@ -79,6 +80,6 @@ public class GlobalExceptionMiddlewareTests
     await middleware.InvokeAsync(ctx);
 
     called.Should().BeTrue();
-    ctx.Response.StatusCode.Should().Be(200, "sin excepción, la respuesta queda como está.");
+    ctx.Response.StatusCode.Should().Be(200, "sin excepciÃ³n, la respuesta queda como estÃ¡.");
   }
 }

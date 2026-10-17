@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
@@ -70,3 +70,4 @@ namespace OdontoSoft.API.Controllers
     }
   }
 }
+

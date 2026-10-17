@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.Web.Models;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System.Globalization;
-using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.DAL;
 using Microsoft.EntityFrameworkCore;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Application.Abstractions.Persistence;

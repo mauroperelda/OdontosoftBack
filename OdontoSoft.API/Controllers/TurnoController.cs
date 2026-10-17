@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+ï»¿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
@@ -48,7 +48,7 @@ namespace OdontoSoft.API.Controllers
 
     // GET api/turno/GetCalendario
     // Devuelve los turnos del mes con datos expandidos. No pagina porque se usa
-    // para pintar el calendario; si la cantidad crece, mover a paginación server-side.
+    // para pintar el calendario; si la cantidad crece, mover a paginaciÃ³n server-side.
     [HttpGet("GetCalendario")]
     public ActionResult<IEnumerable<TurnoDto>> GetCalendario()
     {
@@ -84,8 +84,8 @@ namespace OdontoSoft.API.Controllers
     }
 
     // POST api/turno/Create
-    // Validación de shape delegada a TurnoDtoValidator.
-    // Validación de conflicto de horario delegada a ITurnoServices.
+    // ValidaciÃ³n de shape delegada a TurnoDtoValidator.
+    // ValidaciÃ³n de conflicto de horario delegada a ITurnoServices.
     [HttpPost("Create")]
     public ActionResult<Turno> Create([FromBody] TurnoDto vm)
     {
@@ -128,3 +128,4 @@ namespace OdontoSoft.API.Controllers
     }
   }
 }
+

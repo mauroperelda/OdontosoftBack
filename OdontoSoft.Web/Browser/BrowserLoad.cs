@@ -1,4 +1,4 @@
-using OdontoSoft.Infrastructure.Data.Repository;
+﻿using OdontoSoft.Infrastructure.Repository;
 using OdontoSoft.Application.Abstractions.Persistence;
 using MedveCore.Common.Helpers;
 using Mauro.Entities.Base;
@@ -13,8 +13,8 @@ namespace OdontoSoft.Web.Browser
 
     private IQueryable<dynamic> GetData(HttpContext h)
     {
-      var u = (OdontoSoft.Infrastructure.Data.Repository.UOW.IUnitOfWork)h.RequestServices.GetService(typeof(OdontoSoft.Infrastructure.Data.Repository.UOW.IUnitOfWork));
-      IQueryable<dynamic> queryable = ((OdontoSoft.Infrastructure.Data.Repository.UOW.IUnitOfWork)u).GetAll(typeof(TEntity));
+      var u = (OdontoSoft.Infrastructure.Repository.UOW.IUnitOfWork)h.RequestServices.GetService(typeof(OdontoSoft.Infrastructure.Repository.UOW.IUnitOfWork));
+      IQueryable<dynamic> queryable = ((OdontoSoft.Infrastructure.Repository.UOW.IUnitOfWork)u).GetAll(typeof(TEntity));
       return queryable;
     }
 

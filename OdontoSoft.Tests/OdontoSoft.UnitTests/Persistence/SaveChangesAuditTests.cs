@@ -1,9 +1,9 @@
-using System.Reflection;
+﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OdontoSoft.Application.Abstractions;
-using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.DAL;
 using OdontoSoft.Domain.Models;
 using Xunit;
 
@@ -12,9 +12,9 @@ namespace OdontoSoft.UnitTests.Persistence;
 /// <summary>
 /// Tests para el fix del bug en OdontosoftContext.SaveChangesAsync:
 ///
-/// Antes del fix, SaveChangesAsync NO aplicaba la auditoría (silenciosamente),
-/// mientras que SaveChanges() síncrono sí. Este test demuestra que el fix
-/// unificó el comportamiento: ambos métodos ahora aplican auditoría.
+/// Antes del fix, SaveChangesAsync NO aplicaba la auditorÃ­a (silenciosamente),
+/// mientras que SaveChanges() sÃ­ncrono sÃ­. Este test demuestra que el fix
+/// unificÃ³ el comportamiento: ambos mÃ©todos ahora aplican auditorÃ­a.
 ///
 /// </summary>
 public class SaveChangesAuditTests
@@ -34,11 +34,11 @@ public class SaveChangesAuditTests
     var entity = new Paciente
     {
       Nombre = "Juan",
-      Apellido = "Pérez",
+      Apellido = "PÃ©rez",
       Dni = "12345678",
     };
 
-    // Forzamos ObjectState=Added porque InMemory no dispara change tracking automático.
+    // Forzamos ObjectState=Added porque InMemory no dispara change tracking automÃ¡tico.
     SetObjectStateAdded(entity);
     ctx.Paciente.Add(entity);
 
@@ -65,13 +65,13 @@ public class SaveChangesAuditTests
       NullLogger<OdontosoftContext>.Instance,
       fakeUser);
 
-    var entity = new Paciente { Nombre = "Ana", Apellido = "Gómez", Dni = "99999999" };
+    var entity = new Paciente { Nombre = "Ana", Apellido = "GÃ³mez", Dni = "99999999" };
     SetObjectStateAdded(entity);
     ctx.Paciente.Add(entity);
     await ctx.SaveChangesAsync();
 
     // Modificamos la entidad
-    entity.Nombre = "Ana María";
+    entity.Nombre = "Ana MarÃ­a";
     SetObjectStateModified(entity);
 
     // Act
@@ -82,12 +82,12 @@ public class SaveChangesAuditTests
     updatedUserId.Should().Be(99, "UpdatedUserId debe tomar el id del usuario autenticado.");
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   /// <summary>
   /// ObjectState es una propiedad [NotMapped] de AuditedEntity que viene de
   /// Mauro.RepositoryPattern.Infrastructure. No queremos acoplar el test a
-  /// esa DLL legacy, así que lo seteamos por reflection buscando la enum
+  /// esa DLL legacy, asÃ­ que lo seteamos por reflection buscando la enum
   /// por nombre dentro del assembly cargado.
   /// </summary>
   private static void SetObjectStateAdded(object entity)
@@ -102,11 +102,11 @@ public class SaveChangesAuditTests
       BindingFlags.Public | BindingFlags.Instance);
     prop.Should().NotBeNull($"ObjectState debe existir en {entity.GetType().Name} (hereda de AuditedEntity).");
 
-    // La enum vive en algún assembly cargado. Buscamos por nombre completo.
+    // La enum vive en algÃºn assembly cargado. Buscamos por nombre completo.
     var enumType = AppDomain.CurrentDomain.GetAssemblies()
       .SelectMany(a => { try { return a.GetTypes(); } catch { return Array.Empty<Type>(); } })
       .FirstOrDefault(t => t.Name == "ObjectState" && t.IsEnum);
-    enumType.Should().NotBeNull("ObjectState enum debe estar disponible en algún assembly cargado.");
+    enumType.Should().NotBeNull("ObjectState enum debe estar disponible en algÃºn assembly cargado.");
 
     var stateValue = Enum.Parse(enumType!, stateName);
     prop!.SetValue(entity, stateValue);
@@ -129,7 +129,7 @@ public class SaveChangesAuditTests
   }
 
   /// <summary>
-  /// Stub mínimo de ICurrentUser para no depender del JWT pipeline.
+  /// Stub mÃ­nimo de ICurrentUser para no depender del JWT pipeline.
   /// </summary>
   private sealed class FakeAuthenticatedUser : ICurrentUser
   {

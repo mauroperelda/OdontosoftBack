@@ -1,6 +1,6 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Contracts.Common;
 using Xunit;
 
@@ -8,7 +8,7 @@ namespace OdontoSoft.UnitTests.Helpers;
 
 /// <summary>
 /// Tests del extension method <see cref="QueryableExtensions.ToPagedResultAsync{T}"/>.
-/// Garantiza que el contrato de paginación (total, page, pageSize, items)
+/// Garantiza que el contrato de paginaciÃ³n (total, page, pageSize, items)
 /// se mantenga estable en los 4 controllers que lo consumen.
 ///
 /// Usa un <see cref="TestDbContext"/> con EF InMemory porque
@@ -62,7 +62,7 @@ public class QueryableExtensionsTests
 
     var page = await ctx.Numbers.ToPagedResultAsync(new PaginationParams { Page = 3, PageSize = 10 });
 
-    page.Items.Should().HaveCount(5, "sobran 5 elementos después de 2 páginas completas de 10.");
+    page.Items.Should().HaveCount(5, "sobran 5 elementos despuÃ©s de 2 pÃ¡ginas completas de 10.");
     page.Items.Select(n => n.Value).Should().Equal(Enumerable.Range(21, 5));
     page.TotalPages.Should().Be(3);
   }
@@ -89,7 +89,7 @@ public class QueryableExtensionsTests
     var page = await ctx.Numbers.ToPagedResultAsync(new PaginationParams { Page = 99, PageSize = 10 });
 
     page.Items.Should().BeEmpty();
-    page.Total.Should().Be(5, "el total debe reflejar el universo, no la página.");
+    page.Total.Should().Be(5, "el total debe reflejar el universo, no la pÃ¡gina.");
   }
 
   [Fact]
@@ -123,7 +123,7 @@ public class QueryableExtensionsTests
   }
 
   /// <summary>
-  /// DbContext mínimo con un único <see cref="DbSet{T}"/> de entity.
+  /// DbContext mÃ­nimo con un Ãºnico <see cref="DbSet{T}"/> de entity.
   /// Suficiente para ejercitar el paginador sin levantar todo el
   /// modelo de dominio.
   /// </summary>

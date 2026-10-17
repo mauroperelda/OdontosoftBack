@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+Ôªøusing Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
@@ -45,7 +45,7 @@ namespace OdontoSoft.API.Controllers
     }
 
     // POST api/presupuesto
-    // ValidaciÛn de shape delegada a PresupuestoDtoValidator.
+    // Validaci√≥n de shape delegada a PresupuestoDtoValidator.
     [HttpPost("Create")]
     public ActionResult<Presupuesto> Create([FromBody] PresupuestoDto vm)
     {
@@ -189,7 +189,8 @@ namespace OdontoSoft.API.Controllers
     {
       var fieldErrors = result.FieldErrors?
         .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
-      return ApiErrorResponse.BadRequest(result.Error ?? "OperaciÛn inv·lida.", fieldErrors);
+      return ApiErrorResponse.BadRequest(result.Error ?? "Operaci√≥n inv√°lida.", fieldErrors);
     }
   }
 }
+

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Web", "OdontoSof
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Domain", "OdontoSoft.Domain\OdontoSoft.Domain.csproj", "{3F93137C-28C0-4D09-8ED7-19BA45D63077}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Infrastructure.Data", "OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj", "{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdontoSoft.API", "OdontoSoft.API\OdontoSoft.API.csproj", "{DE831E52-03EC-4FBA-A47D-FB57D2201B0D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdontoSoft.Contracts", "OdontoSoft.Contracts\OdontoSoft.Contracts.csproj", "{C0FFEE00-0000-0000-0000-000000000001}"
@@ -20,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdontoSoft.UnitTests", "OdontoSoft.Tests\OdontoSoft.UnitTests\OdontoSoft.UnitTests.csproj", "{D0530CE4-FFEB-4F6E-B586-4ED4BA7EDE4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdontoSoft.ArchitectureTests", "OdontoSoft.Tests\OdontoSoft.ArchitectureTests\OdontoSoft.ArchitectureTests.csproj", "{24864140-1751-4B16-A7F3-066A3A056FCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdontoSoft.Infrastructure", "OdontoSoft.Infrastructure\OdontoSoft.Infrastructure.csproj", "{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,18 +55,6 @@ Global
 		{3F93137C-28C0-4D09-8ED7-19BA45D63077}.Release|x64.Build.0 = Release|Any CPU
 		{3F93137C-28C0-4D09-8ED7-19BA45D63077}.Release|x86.ActiveCfg = Release|Any CPU
 		{3F93137C-28C0-4D09-8ED7-19BA45D63077}.Release|x86.Build.0 = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|x64.Build.0 = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Debug|x86.Build.0 = Debug|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|x64.ActiveCfg = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|x64.Build.0 = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|x86.ActiveCfg = Release|Any CPU
-		{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}.Release|x86.Build.0 = Release|Any CPU
 		{DE831E52-03EC-4FBA-A47D-FB57D2201B0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE831E52-03EC-4FBA-A47D-FB57D2201B0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE831E52-03EC-4FBA-A47D-FB57D2201B0D}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -127,6 +115,18 @@ Global
 		{24864140-1751-4B16-A7F3-066A3A056FCC}.Release|x64.Build.0 = Release|Any CPU
 		{24864140-1751-4B16-A7F3-066A3A056FCC}.Release|x86.ActiveCfg = Release|Any CPU
 		{24864140-1751-4B16-A7F3-066A3A056FCC}.Release|x86.Build.0 = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|x64.Build.0 = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Debug|x86.Build.0 = Debug|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|x64.ActiveCfg = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|x64.Build.0 = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|x86.ActiveCfg = Release|Any CPU
+		{5F6BFC2D-36D6-4067-A1E5-2F943BAB4C17}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

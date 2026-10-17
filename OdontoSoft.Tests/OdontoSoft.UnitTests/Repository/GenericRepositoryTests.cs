@@ -1,10 +1,10 @@
-using System.Reflection;
+﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OdontoSoft.Application.Abstractions;
-using OdontoSoft.Infrastructure.Data.DAL;
-using OdontoSoft.Infrastructure.Data.Repository;
+using OdontoSoft.Infrastructure.DAL;
+using OdontoSoft.Infrastructure.Repository;
 using OdontoSoft.Domain.Models;
 using Xunit;
 
@@ -12,9 +12,9 @@ namespace OdontoSoft.UnitTests.Repository;
 
 /// <summary>
 /// Smoke tests del GenericRepository&lt;T&gt;. Cubre las operaciones CRUD
-/// básicas que usan los controllers hoy, sin depender de Postgres real.
+/// bÃ¡sicas que usan los controllers hoy, sin depender de Postgres real.
 ///
-/// Importante: no reemplaza a tests de integración con Postgres. Estos tests
+/// Importante: no reemplaza a tests de integraciÃ³n con Postgres. Estos tests
 /// solo verifican que el GenericRepository se comporte como esperamos antes de
 /// refactorizarlo en Fase 3.
 /// </summary>
@@ -36,7 +36,7 @@ public class GenericRepositoryTests
     using var ctx = CreateContext(nameof(Add_PersistsEntity_WhenSaveChangesCalled));
     var repo = new GenericRepository<Paciente>(ctx, NullLogger<GenericRepository<Paciente>>.Instance, new FakeUser());
 
-    var entity = new Paciente { Nombre = "Lucía", Apellido = "Fernández", Dni = "11111111" };
+    var entity = new Paciente { Nombre = "LucÃ­a", Apellido = "FernÃ¡ndez", Dni = "11111111" };
     SetObjectState(entity, "Added");
     repo.Add(entity);
 
@@ -44,7 +44,7 @@ public class GenericRepositoryTests
 
     var loaded = await ctx.Paciente.FindAsync(entity.Id);
     loaded.Should().NotBeNull();
-    loaded!.Nombre.Should().Be("Lucía");
+    loaded!.Nombre.Should().Be("LucÃ­a");
   }
 
   [Fact]
@@ -70,19 +70,19 @@ public class GenericRepositoryTests
     using var ctx = CreateContext(nameof(Upsert_UpdatesExistingEntity));
     var repo = new GenericRepository<Paciente>(ctx, NullLogger<GenericRepository<Paciente>>.Instance, new FakeUser());
 
-    var entity = new Paciente { Nombre = "Ana", Apellido = "López", Dni = "33333333" };
+    var entity = new Paciente { Nombre = "Ana", Apellido = "LÃ³pez", Dni = "33333333" };
     SetObjectState(entity, "Added");
     repo.Add(entity);
     await ctx.SaveChangesAsync();
 
     // Modificamos y hacemos Upsert
-    entity.Nombre = "Ana María";
+    entity.Nombre = "Ana MarÃ­a";
     SetObjectState(entity, "Modified");
     repo.Upsert(entity);
     await ctx.SaveChangesAsync();
 
     var loaded = repo.GetById(entity.Id);
-    loaded!.Nombre.Should().Be("Ana María");
+    loaded!.Nombre.Should().Be("Ana MarÃ­a");
   }
 
   [Fact]
@@ -91,7 +91,7 @@ public class GenericRepositoryTests
     using var ctx = CreateContext(nameof(Delete_RemovesEntity));
     var repo = new GenericRepository<Paciente>(ctx, NullLogger<GenericRepository<Paciente>>.Instance, new FakeUser());
 
-    var entity = new Paciente { Nombre = "Pepe", Apellido = "Gómez", Dni = "44444444" };
+    var entity = new Paciente { Nombre = "Pepe", Apellido = "GÃ³mez", Dni = "44444444" };
     SetObjectState(entity, "Added");
     repo.Add(entity);
     await ctx.SaveChangesAsync();
@@ -140,7 +140,7 @@ public class GenericRepositoryTests
     visible.Should().NotContain(p => p.Nombre == "Inactivo");
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────
+  // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   private static void SetObjectState(object entity, string stateName)
   {

@@ -1,4 +1,4 @@
-/* ************************************************************************************************************************************* */
+﻿/* ************************************************************************************************************************************* */
 /* En este archivo solo se debe modificar el constructor en caso de ser necesario. No se debe agregar ninguna otra funcionalidad */
 /* ************************************************************************************************************************************* */
 using OdontoSoft.Application.Abstractions.Persistence;
@@ -11,7 +11,7 @@ using OdontoSoft.Web.Browser;
 using OdontoSoft.Web.Controllers;
 using OdontoSoft.Application.Services;
 using OdontoSoft.Application.Abstractions.Persistence;
-using OdontoSoft.Infrastructure.Data.Repository;
+using OdontoSoft.Infrastructure.Repository;
 
 namespace OdontoSoft.Web.Controllers
 {

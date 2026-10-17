@@ -1,9 +1,9 @@
-namespace OdontoSoft.Application.Abstractions;
+﻿namespace OdontoSoft.Application.Abstractions;
 
 /// <summary>
-/// Usuario actual resuelto desde el HttpContext. La implementación vive
-/// en OdontoSoft.Infrastructure.Data (AuthenticatedUser). El dominio y
-/// Application solo conocen esta abstracción.
+/// Usuario actual resuelto desde el HttpContext. La implementaciÃ³n vive
+/// en OdontoSoft.Infrastructure (AuthenticatedUser). El dominio y
+/// Application solo conocen esta abstracciÃ³n.
 /// </summary>
 public interface ICurrentUser
 {

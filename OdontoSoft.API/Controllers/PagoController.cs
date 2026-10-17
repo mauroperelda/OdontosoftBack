@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
+ï»¿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
@@ -25,7 +25,7 @@ namespace OdontoSoft.API.Controllers
     [HttpGet("GetAll")]
     public async Task<ActionResult<PagedResult<PagoHistorialItem>>> GetAll([FromQuery] PaginationParams pagination)
     {
-      // Proyectamos a un DTO liviano con el nombre del paciente, así
+      // Proyectamos a un DTO liviano con el nombre del paciente, asÃ­
       // el front no tiene que hacer N+1 llamadas a presupuesto/GetById.
       var query = _unitOfWork.PagoRepository
         .GetAllEnabled()
@@ -94,7 +94,7 @@ namespace OdontoSoft.API.Controllers
   }
 
   // DTO liviano para el historial de pagos. Lo que el front necesita
-  // para mostrar la tabla: id, fecha, monto, método, estado del
+  // para mostrar la tabla: id, fecha, monto, mÃ©todo, estado del
   // presupuesto y nombre del paciente (evitamos N+1 contra presupuesto).
   public class PagoHistorialItem
   {
@@ -108,3 +108,4 @@ namespace OdontoSoft.API.Controllers
     public string? PacienteNombre { get; set; }
   }
 }
+

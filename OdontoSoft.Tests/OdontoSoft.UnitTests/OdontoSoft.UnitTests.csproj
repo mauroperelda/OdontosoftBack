@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -24,7 +24,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\OdontoSoft.API\OdontoSoft.API.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
-		<ProjectReference Include="..\..\OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Infrastructure\OdontoSoft.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Application\OdontoSoft.Application.csproj" />
 		<Reference Include="Mauro.Entities">

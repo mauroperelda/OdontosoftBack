@@ -1,11 +1,11 @@
-using OdontoSoft.Application.Abstractions.Persistence;
+﻿using OdontoSoft.Application.Abstractions.Persistence;
 
 namespace OdontoSoft.Application.Abstractions.Persistence;
 
 /// <summary>
-/// Unit of Work con acceso a todos los repositorios. La implementación
-/// concreta vive en OdontoSoft.Infrastructure.Data. Los nombres de las
-/// propiedades están en español para preservar diff mínima con el código
+/// Unit of Work con acceso a todos los repositorios. La implementaciÃ³n
+/// concreta vive en OdontoSoft.Infrastructure. Los nombres de las
+/// propiedades estÃ¡n en espaÃ±ol para preservar diff mÃ­nima con el cÃ³digo
 /// existente (los Services ya hacen _unitOfWork.PacienteRepository, etc.).
 /// </summary>
 public interface IUnitOfWork

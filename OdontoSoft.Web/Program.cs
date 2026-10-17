@@ -1,6 +1,6 @@
-using OdontoSoft.Web.Helpers.Application;
+﻿using OdontoSoft.Web.Helpers.Application;
 using OdontoSoft.Application.Abstractions;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Infrastructure.Authentication;
 using OdontoSoft.Application.Abstractions.Persistence;
 //using ExtraCore.Data.Authentication;
 //using ExtraCore.Data.Helpers;
@@ -24,13 +24,13 @@ using System.Reflection;
 using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Web.IServices;
 using OdontoSoft.Web.Services;
-using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.DAL;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Web.Startup;
 
 // Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
 // con Kind=Utc/Unspecified/Local en columnas "timestamp without time zone" sin
-// lanzar excepción. Debe setearse ANTES de cualquier llamada a Npgsql.
+// lanzar excepciÃ³n. Debe setearse ANTES de cualquier llamada a Npgsql.
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +39,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<OdontosoftContext>(options =>
 {
-  // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
+  // ConvenciÃ³n de naming: "Paciente" â†’ tabla "paciente", "CreatedUserId" â†’ "created_user_id".
   options.UseSnakeCaseNamingConvention();
   options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
 });
@@ -71,7 +71,7 @@ builder.Services.AddControllers()
       options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     });
 
-builder.Services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork, OdontoSoft.Infrastructure.Data.Repository.UOW.UnitOfWork>();
+builder.Services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork, OdontoSoft.Infrastructure.Repository.UOW.UnitOfWork>();
 //builder.Services.AddScoped<LogFilter>();
 
 

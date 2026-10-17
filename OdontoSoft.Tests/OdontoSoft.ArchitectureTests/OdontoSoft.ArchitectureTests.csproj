@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
@@ -15,12 +15,12 @@
 	</ItemGroup>
 
 	<!--
-		NetArchTest inspecciona los assemblies vía reflexión, así que solo necesita
+		NetArchTest inspecciona los assemblies vÃ­a reflexiÃ³n, asÃ­ que solo necesita
 		referenciar los proyectos a inspeccionar, no usarlos.
 	-->
 	<ItemGroup>
 		<ProjectReference Include="..\..\OdontoSoft.API\OdontoSoft.API.csproj" />
-		<ProjectReference Include="..\..\OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Infrastructure\OdontoSoft.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Domain\OdontoSoft.Domain.csproj">
 			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
 			<OutputItemType>DoNotCopyToOutput</OutputItemType>

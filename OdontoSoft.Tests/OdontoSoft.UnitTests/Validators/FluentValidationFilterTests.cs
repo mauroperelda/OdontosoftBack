@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using OdontoSoft.API.Filters;
-using OdontoSoft.API.Validators;
+using OdontoSoft.Infrastructure.Filters;
+using OdontoSoft.Application.Validation;
 using OdontoSoft.Contracts.Dtos;
 using Xunit;
 

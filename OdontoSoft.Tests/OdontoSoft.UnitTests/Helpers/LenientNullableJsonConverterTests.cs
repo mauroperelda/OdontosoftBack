@@ -1,14 +1,14 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using FluentAssertions;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Helpers;
 
 /// <summary>
-/// Tests del LenientNullableJsonConverter — la pieza que evita que
+/// Tests del LenientNullableJsonConverter â€” la pieza que evita que
 /// `$.DomicilioNumero: The JSON value could not be converted...` explote
-/// cuando el front manda un campo vacío.
+/// cuando el front manda un campo vacÃ­o.
 /// </summary>
 public class LenientNullableJsonConverterTests
 {
@@ -74,7 +74,7 @@ public class LenientNullableJsonConverterTests
     var act = () => JsonSerializer.Deserialize<DtoInt>(json, Options);
 
     act.Should().Throw<JsonException>()
-      .WithMessage($"*no es un número entero válido*");
+      .WithMessage($"*no es un nÃºmero entero vÃ¡lido*");
   }
 
   [Fact]
@@ -90,7 +90,7 @@ public class LenientNullableJsonConverterTests
   [Fact]
   public void ValidDecimalString_ForNullableDecimal_ParsesWithInvariantCulture()
   {
-    // El "." debe parsearse como decimal aunque el servidor esté en es-AR.
+    // El "." debe parsearse como decimal aunque el servidor estÃ© en es-AR.
     var json = "{\"Value\":\"1234.56\"}";
 
     var dto = JsonSerializer.Deserialize<DtoDecimal>(json, Options);
@@ -153,7 +153,7 @@ public class LenientNullableJsonConverterTests
   {
     var converter = new LenientNullableJsonConverter();
 
-    // Enum no está en la lista de soportados.
+    // Enum no estÃ¡ en la lista de soportados.
     converter.CanConvert(typeof(DayOfWeek?)).Should().BeFalse();
   }
 }

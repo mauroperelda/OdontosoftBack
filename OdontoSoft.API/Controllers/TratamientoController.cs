@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
@@ -107,7 +107,7 @@ namespace OdontoSoft.API.Controllers
     {
       var fieldErrors = result.FieldErrors?
         .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
-      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inv�lida.", fieldErrors);
+      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inválida.", fieldErrors);
     }
   }
 
@@ -118,3 +118,4 @@ namespace OdontoSoft.API.Controllers
     public decimal Precio { get; set; }
   }
 }
+

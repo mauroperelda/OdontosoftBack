@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
+Ôªøusing Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
@@ -18,7 +18,7 @@ namespace OdontoSoft.API.Controllers
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<ImagenPacienteController> _logger;
 
-    // LÌmite duro: lo suaviza FormOptions pero igual validamos ac· por las dudas.
+    // L√≠mite duro: lo suaviza FormOptions pero igual validamos ac√° por las dudas.
     private const long MaxFileSize = 10 * 1024 * 1024;
 
     // MIME permitidos para evitar que suban PDF, .exe, etc.
@@ -65,28 +65,28 @@ namespace OdontoSoft.API.Controllers
     public async Task<ActionResult<ImagenPacienteDto>> Upload(int historiaClinicaId, IFormFile archivo, [FromForm] string? descripcion)
     {
       if (archivo == null || archivo.Length == 0)
-        return ApiErrorResponse.BadRequest("No se recibiÛ ning˙n archivo.");
+        return ApiErrorResponse.BadRequest("No se recibi√≥ ning√∫n archivo.");
 
       if (archivo.Length > MaxFileSize)
-        return ApiErrorResponse.BadRequest($"El archivo supera el m·ximo permitido de {MaxFileSize / 1024 / 1024} MB.");
+        return ApiErrorResponse.BadRequest($"El archivo supera el m√°ximo permitido de {MaxFileSize / 1024 / 1024} MB.");
 
       // Algunos navegadores mandan application/octet-stream en vez del MIME real,
-      // asÌ que tambiÈn validamos por extensiÛn.
+      // as√≠ que tambi√©n validamos por extensi√≥n.
       var mime = (archivo.ContentType ?? "").ToLowerInvariant();
       var ext = Path.GetExtension(archivo.FileName)?.ToLowerInvariant() ?? "";
       var allowedExt = new[] { ".jpg", ".jpeg", ".png", ".webp" };
       if (!AllowedMimeTypes.Contains(mime) && !allowedExt.Contains(ext))
-        return ApiErrorResponse.BadRequest("Tipo de archivo no permitido. Solo se aceptan im·genes JPG, PNG o WEBP.");
+        return ApiErrorResponse.BadRequest("Tipo de archivo no permitido. Solo se aceptan im√°genes JPG, PNG o WEBP.");
 
-      // Construir ruta fÌsica: wwwroot/uploads/pacientes/{hcId}/{guid}.{ext}
+      // Construir ruta f√≠sica: wwwroot/uploads/pacientes/{hcId}/{guid}.{ext}
       // TODO(roadmap): migrar a IFileStorage abstraction (S3 / R2 / Supabase Storage).
-      //   Hoy escribe a wwwroot que es EFÕMERO en Render (los archivos se
+      //   Hoy escribe a wwwroot que es EF√çMERO en Render (los archivos se
       //   pierden en cada redeploy porque el FS de Render no persiste).
       //   Pasos sugeridos cuando se haga:
       //     1. Crear OdontoSoft.Data/Storage/IFileStorage.cs con
       //        Task<string> SaveAsync(Stream content, string path, string contentType, CancellationToken ct).
-      //     2. Implementar LocalFileStorage (hoy) y S3FileStorage (despuÈs).
-      //     3. Registrar IFileStorage en DI seg˙n la config (Storage:Provider = "local"|"s3").
+      //     2. Implementar LocalFileStorage (hoy) y S3FileStorage (despu√©s).
+      //     3. Registrar IFileStorage en DI seg√∫n la config (Storage:Provider = "local"|"s3").
       //     4. Cambiar este controller para que inyecte IFileStorage en vez
       //        de tocar _env.WebRootPath.
       //     5. Agregar migration que mueva la columna RutaArchivo a una URL
@@ -122,7 +122,7 @@ namespace OdontoSoft.API.Controllers
     }
 
     // PUT api/imagenpaciente/5
-    // Solo edita la descripciÛn (no permitimos re-subir el archivo binario).
+    // Solo edita la descripci√≥n (no permitimos re-subir el archivo binario).
     [HttpPut("Update/{id}")]
     public ActionResult<ImagenPacienteDto> Update(int id, [FromBody] ImagenPacienteDto vm)
     {
@@ -143,7 +143,7 @@ namespace OdontoSoft.API.Controllers
       var entity = _unitOfWork.ImagenPacienteRepository.GetById(id);
       if (entity == null) return ApiErrorResponse.NotFound("Imagen no encontrada.");
 
-      // Borra el archivo fÌsico si existe. Si no existe, sigue con la baja lÛgica.
+      // Borra el archivo f√≠sico si existe. Si no existe, sigue con la baja l√≥gica.
       string? physical = null;
       try
       {
@@ -153,8 +153,8 @@ namespace OdontoSoft.API.Controllers
       }
       catch (Exception fileEx)
       {
-        // No abortamos la operaciÛn si falla el delete del archivo: el registro igual se va.
-        _logger.LogError(fileEx, "No se pudo borrar el archivo fÌsico {Path}", physical);
+        // No abortamos la operaci√≥n si falla el delete del archivo: el registro igual se va.
+        _logger.LogError(fileEx, "No se pudo borrar el archivo f√≠sico {Path}", physical);
       }
 
       _unitOfWork.ImagenPacienteRepository.Delete(entity.Id);
@@ -163,7 +163,7 @@ namespace OdontoSoft.API.Controllers
     }
 
     // GET api/imagenpaciente/Download/5
-    // Devuelve el binario. No usamos app.UseStaticFiles() (no est· configurado),
+    // Devuelve el binario. No usamos app.UseStaticFiles() (no est√° configurado),
     // por eso el controller sirve el archivo directamente.
     [HttpGet("Download/{id}")]
     public IActionResult Download(int id)
@@ -173,10 +173,11 @@ namespace OdontoSoft.API.Controllers
 
       var physical = Path.Combine(_env.WebRootPath, entity.RutaArchivo.Replace('/', Path.DirectorySeparatorChar));
       if (!System.IO.File.Exists(physical))
-        return ApiErrorResponse.NotFound("Archivo fÌsico no encontrado en disco.");
+        return ApiErrorResponse.NotFound("Archivo f√≠sico no encontrado en disco.");
 
       var stream = new FileStream(physical, FileMode.Open, FileAccess.Read);
       return File(stream, string.IsNullOrWhiteSpace(entity.MimeType) ? "application/octet-stream" : entity.MimeType, entity.NombreArchivo);
     }
   }
 }
+

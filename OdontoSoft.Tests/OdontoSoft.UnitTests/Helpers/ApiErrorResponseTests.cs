@@ -1,6 +1,6 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Helpers;
@@ -10,13 +10,13 @@ public class ApiErrorResponseTests
   [Fact]
   public void BadRequest_WithMessageOnly_ReturnsShapeWithoutFieldErrors()
   {
-    var result = ApiErrorResponse.BadRequest("Algo salió mal.");
+    var result = ApiErrorResponse.BadRequest("Algo saliÃ³ mal.");
 
     result.Should().BeOfType<BadRequestObjectResult>();
     result.StatusCode.Should().Be(400);
 
     var shape = ShapeOf(result.Value!);
-    shape["error"].Should().Be("Algo salió mal.");
+    shape["error"].Should().Be("Algo saliÃ³ mal.");
     shape["errors"].Should().BeOfType<Dictionary<string, string[]>>()
       .Which.Should().BeEmpty();
   }
@@ -27,18 +27,18 @@ public class ApiErrorResponseTests
     var fieldErrors = new Dictionary<string, string[]>
     {
       ["Nombre"] = new[] { "El nombre es obligatorio." },
-      ["Dni"] = new[] { "El DNI es obligatorio.", "Formato inválido." },
+      ["Dni"] = new[] { "El DNI es obligatorio.", "Formato invÃ¡lido." },
     };
 
-    var result = ApiErrorResponse.BadRequest("Revisá los campos.", fieldErrors);
+    var result = ApiErrorResponse.BadRequest("RevisÃ¡ los campos.", fieldErrors);
 
     result.StatusCode.Should().Be(400);
 
     var shape = ShapeOf(result.Value!);
-    shape["error"].Should().Be("Revisá los campos.");
+    shape["error"].Should().Be("RevisÃ¡ los campos.");
     var errors = shape["errors"].Should().BeOfType<Dictionary<string, string[]>>().Subject;
     errors["Nombre"].Should().BeEquivalentTo(new[] { "El nombre es obligatorio." });
-    errors["Dni"].Should().BeEquivalentTo(new[] { "El DNI es obligatorio.", "Formato inválido." });
+    errors["Dni"].Should().BeEquivalentTo(new[] { "El DNI es obligatorio.", "Formato invÃ¡lido." });
   }
 
   [Fact]
@@ -60,7 +60,7 @@ public class ApiErrorResponseTests
   {
     var fieldErrors = new Dictionary<string, string[]>
     {
-      ["Dni"] = new[] { "Este DNI ya está registrado." },
+      ["Dni"] = new[] { "Este DNI ya estÃ¡ registrado." },
     };
 
     var result = ApiErrorResponse.Conflict("Conflicto.", fieldErrors);
@@ -95,11 +95,11 @@ public class ApiErrorResponseTests
     result.Should().BeOfType<BadRequestObjectResult>();
     var shape = ShapeOf(((ObjectResult)result).Value);
     var errorMsg = (string)shape["error"]!;
-    errorMsg.Should().Be("Ocurrió un error al procesar la solicitud.");
+    errorMsg.Should().Be("OcurriÃ³ un error al procesar la solicitud.");
     errorMsg.Should().NotContain("datos sensibles");
   }
 
-  // ── Helper ─────────────────────────────────────────────────────────────
+  // â”€â”€ Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   private static Dictionary<string, object?> ShapeOf(object? anonObj)
   {
     anonObj.Should().NotBeNull();

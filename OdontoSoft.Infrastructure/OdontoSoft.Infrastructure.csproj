@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>OdontoSoft.Infrastructure</RootNamespace>
+    <AssemblyName>OdontoSoft.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <!-- AuthenticatedUser implementa ICurrentUser leyendo claims del HttpContext.
+       El FrameworkReference a AspNetCore.App nos da acceso a tipos MVC
+       (IActionFilter, BadRequestObjectResult) sin necesidad de referenciar
+       paquetes NuGet individuales ni usar el SDK Web (que asumiría que el
+       proyecto es un host con su propio Program.cs). -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Mauro.Entities">
+      <HintPath>..\lib\Mauro.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="MedveCore.Common">
+      <HintPath>..\lib\MedveCore.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Mauro.RepositoryPattern">
+      <HintPath>..\lib\Mauro.RepositoryPattern.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Application\OdontoSoft.Application.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

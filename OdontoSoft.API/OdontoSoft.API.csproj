@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,9 +13,9 @@
     <PackageReference Include="FluentValidation" Version="11.10.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
-    <!-- Legacy: LocalidadController.BulkInsertLocalidades usa SqlBulkCopy (código SQL Server
+    <!-- Legacy: LocalidadController.BulkInsertLocalidades usa SqlBulkCopy (cÃ³digo SQL Server
          que ya no aplica porque la DB es PostgreSQL). Pendiente de remover en una fase futura;
-         mientras tanto el paquete se referencia explícitamente para que el controller compile. -->
+         mientras tanto el paquete se referencia explÃ­citamente para que el controller compile. -->
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
-    <ProjectReference Include="..\OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Infrastructure\OdontoSoft.Infrastructure.csproj" />
     <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
     <ProjectReference Include="..\OdontoSoft.Application\OdontoSoft.Application.csproj" />
   </ItemGroup>

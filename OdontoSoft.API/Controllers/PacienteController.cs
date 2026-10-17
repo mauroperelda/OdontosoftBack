@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OdontoSoft.API.Helpers;
+using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
@@ -56,8 +56,8 @@ namespace OdontoSoft.API.Controllers
     }
 
     // POST api/paciente/Create
-    // Validación de shape delegada a PacienteDtoValidator (FluentValidation).
-    // Validación de unicidad de DNI delegada a IPacienteServices.
+    // ValidaciÃ³n de shape delegada a PacienteDtoValidator (FluentValidation).
+    // ValidaciÃ³n de unicidad de DNI delegada a IPacienteServices.
     [HttpPost("Create")]
     public async Task<ActionResult<PacienteDto>> Create([FromBody] PacienteDto vm)
     {
@@ -118,7 +118,8 @@ namespace OdontoSoft.API.Controllers
     {
       var fieldErrors = result.FieldErrors?
         .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
-      return ApiErrorResponse.BadRequest(result.Error ?? "Operación inválida.", fieldErrors);
+      return ApiErrorResponse.BadRequest(result.Error ?? "OperaciÃ³n invÃ¡lida.", fieldErrors);
     }
   }
 }
+

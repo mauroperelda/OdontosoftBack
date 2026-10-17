@@ -1,14 +1,14 @@
-using OdontoSoft.Application.Abstractions.Persistence;
+﻿using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 
 namespace OdontoSoft.Application.Abstractions.Persistence;
 
-// Repos específicos. Firmas alineadas con GenericRepository<T> de
+// Repos especÃ­ficos. Firmas alineadas con GenericRepository<T> de
 // Mauro.RepositoryPattern.Infrastructure (Add/Upsert devuelven bool,
 // Delete devuelve Task<bool>, "GetAll" se llama "All", no hay Update).
-// Los Services usan estas interfaces sin conocer EF. La implementación
-// en OdontoSoft.Infrastructure.Data hereda de GenericRepository<T> y
-// solo agrega los métodos custom abajo.
+// Los Services usan estas interfaces sin conocer EF. La implementaciÃ³n
+// en OdontoSoft.Infrastructure hereda de GenericRepository<T> y
+// solo agrega los mÃ©todos custom abajo.
 
 public interface IPacienteRepository
 {
@@ -117,15 +117,15 @@ public interface IPeriodontogramaRepository
   bool Add(Periodontograma entity);
   bool Upsert(Periodontograma entity);
   Task<bool> Delete(int id);
-  /// <summary>Devuelve el último periodontograma (por FechaRegistro) de una HC, con piezas cargadas.</summary>
+  /// <summary>Devuelve el Ãºltimo periodontograma (por FechaRegistro) de una HC, con piezas cargadas.</summary>
   Periodontograma GetLastByHistoriaClinicaId(int historiaClinicaId);
   /// <summary>Devuelve todos los periodontogramas de una HC ordenados desc por fecha.</summary>
   IQueryable<Periodontograma> GetByHistoriaClinicaId(int historiaClinicaId);
-  /// <summary>Devuelve un periodontograma con sus piezas cargadas explícitamente.</summary>
+  /// <summary>Devuelve un periodontograma con sus piezas cargadas explÃ­citamente.</summary>
   Periodontograma GetWithPiezasById(int id);
-  /// <summary>Agrega una pieza al DbSet (no guarda cambios). Llamar Save() después.</summary>
+  /// <summary>Agrega una pieza al DbSet (no guarda cambios). Llamar Save() despuÃ©s.</summary>
   void AddPieza(PeriodontogramaPieza pieza);
-  /// <summary>Borra todas las piezas de un periodontograma (no guarda cambios). Llamar Save() después.</summary>
+  /// <summary>Borra todas las piezas de un periodontograma (no guarda cambios). Llamar Save() despuÃ©s.</summary>
   void DeletePiezas(int periodontogramaId);
 }
 
