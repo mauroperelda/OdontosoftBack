@@ -18,7 +18,6 @@ using Newtonsoft.Json.Serialization;
 using System.Globalization;
 using System.Net;
 using System.Reflection;
-using ExtraCore.Web.Helpers.Authentication;
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Web.IServices;
 using OdontoSoft.Web.Services;
@@ -37,9 +36,9 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<OdontosoftContext>(options =>
 {
-    // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
-    options.UseSnakeCaseNamingConvention();
-    options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
+  // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
+  options.UseSnakeCaseNamingConvention();
+  options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
 });
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -47,8 +46,8 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddRazorPages()
     .AddMvcOptions(options =>
     {
-        options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
-            _ => "El dato es requerido");
+      options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
+          _ => "El dato es requerido");
     });
 
 builder.Services.AddTransient<ICurrentApplication, CurrentApplication>();
@@ -65,8 +64,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
-        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+      options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+      options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -77,9 +76,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromHours(8);//We set Time here 
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+  options.IdleTimeout = TimeSpan.FromHours(8);//We set Time here 
+  options.Cookie.HttpOnly = true;
+  options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddMvc();
@@ -90,10 +89,10 @@ builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
     {
-        option.Cookie.Name = "OdontoSoftCookie";
-        option.LoginPath = "/Account/Login";
-        option.ExpireTimeSpan = TimeSpan.FromHours(8);
-        option.SlidingExpiration = true;
+      option.Cookie.Name = "OdontoSoftCookie";
+      option.LoginPath = "/Account/Login";
+      option.ExpireTimeSpan = TimeSpan.FromHours(8);
+      option.SlidingExpiration = true;
     });
 
 RegisterServices.Register(builder.Services);
@@ -105,9 +104,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+  app.UseExceptionHandler("/Home/Error");
+  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
 }
 
 

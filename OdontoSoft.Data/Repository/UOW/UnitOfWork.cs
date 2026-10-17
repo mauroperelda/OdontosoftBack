@@ -1,4 +1,4 @@
-﻿using OdontoSoft.Data.Authentication;
+using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.DAL;
 //using OdontoSoft.Data.Helpers;
 using OdontoSoft.Data.Repository.Generic;
@@ -12,69 +12,67 @@ using System.Reflection;
 
 namespace OdontoSoft.Data.Repository.UOW
 {
-    public partial class UnitOfWork : IUnitOfWork, IDisposable
+  public partial class UnitOfWork : IUnitOfWork, IDisposable
+  {
+    private readonly OdontosoftContext _context;
+
+    private readonly ILogger _logger;
+
+    private readonly IAuthenticatedUser _authenticatedUser;
+
+    public IStoredProcedureRepository StoredProcedureRepository { get; private set; }
+
+
+    public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, IAuthenticatedUser authenticatedUser)
     {
-        private readonly OdontosoftContext _context;
+      _context = context;
+      _logger = logger;
+      _authenticatedUser = authenticatedUser;
 
-        private readonly ILogger _logger;
-
-        private readonly IAuthenticatedUser _authenticatedUser;
-
-        public IStoredProcedureRepository StoredProcedureRepository { get; private set; }
-
-
-        public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, IAuthenticatedUser authenticatedUser)
-        {
-            _context = context;
-            _logger = logger;
-            _authenticatedUser = authenticatedUser;
-            _logger.LogInformation("Creando...info");
-            _logger.LogWarning("Creando...warn");
-
-            InstanceRepos();
-            StoredProcedureRepository = new StoredProcedureRepository(_context, _logger);
-
-        }
-
-        public int Save()
-        {
-            return _context.SaveChanges();
-        }
-        public async Task SaveAsync()
-        {
-            _context.SaveChanges();
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
-
-        public IQueryable<BaseEntity> GetAll(Type type)
-        {
-
-            PropertyInfo[] props = this.GetType().GetProperties().ToArray();
-
-            foreach (var item in props)
-            {
-                var b = item.GetValue(this, null) as IBrowseable;
-                if (b != null)
-                {
-                    foreach (var interf in ((System.Type[])((System.Reflection.TypeInfo)(b).GetType()).ImplementedInterfaces))
-                    {
-                        if (interf.Name == "IGenericRepository`1")
-                        {
-                            if (interf.GenericTypeArguments[0].Name == type.Name)
-                            {
-                                return ((IBrowseable)item.GetValue(this, null)).GetBrowser();
-                            }
-                        }
-                    }
-                }
-
-            }
-            return null;
-
-        }
+      InstanceRepos();
+      StoredProcedureRepository = new StoredProcedureRepository(_context, _logger);
     }
+
+    public int Save()
+    {
+      return _context.SaveChanges();
+    }
+
+    public async Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+      await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public void Dispose()
+    {
+      _context.Dispose();
+    }
+
+    public IQueryable<BaseEntity> GetAll(Type type)
+    {
+
+      PropertyInfo[] props = this.GetType().GetProperties().ToArray();
+
+      foreach (var item in props)
+      {
+        var b = item.GetValue(this, null) as IBrowseable;
+        if (b != null)
+        {
+          foreach (var interf in ((System.Type[])((System.Reflection.TypeInfo)(b).GetType()).ImplementedInterfaces))
+          {
+            if (interf.Name == "IGenericRepository`1")
+            {
+              if (interf.GenericTypeArguments[0].Name == type.Name)
+              {
+                return ((IBrowseable)item.GetValue(this, null)).GetBrowser();
+              }
+            }
+          }
+        }
+
+      }
+      return null;
+
+    }
+  }
 }

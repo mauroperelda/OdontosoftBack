@@ -4,19 +4,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OdontoSoft.Data.Migrations
 {
-    /// <summary>
-    /// Reemplaza la stored procedure de SQL Server `SP_GetPacientesForTurno` por una
-    /// PL/pgSQL function de PostgreSQL. La firma es la misma: recibe un string de
-    /// búsqueda y devuelve los pacientes activos cuyo nombre, apellido o DNI matcheen.
-    ///
-    /// Se invoca desde C# con `FromSqlRaw("SELECT * FROM get_pacientes_for_turno({0})", busqueda)`.
-    /// </summary>
-    public partial class CreateGetPacientesForTurnoFunction : Migration
+  /// <summary>
+  /// Reemplaza la stored procedure de SQL Server `SP_GetPacientesForTurno` por una
+  /// PL/pgSQL function de PostgreSQL. La firma es la misma: recibe un string de
+  /// búsqueda y devuelve los pacientes activos cuyo nombre, apellido o DNI matcheen.
+  ///
+  /// Se invoca desde C# con `FromSqlRaw("SELECT * FROM get_pacientes_for_turno({0})", busqueda)`.
+  /// </summary>
+  public partial class CreateGetPacientesForTurnoFunction : Migration
+  {
+    /// <inheritdoc />
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.Sql(@"
+      migrationBuilder.Sql(@"
                 CREATE OR REPLACE FUNCTION get_pacientes_for_turno(busqueda TEXT)
                 RETURNS TABLE(
                     id INT,
@@ -39,12 +39,12 @@ namespace OdontoSoft.Data.Migrations
                 END;
                 $$ LANGUAGE plpgsql;
             ");
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.Sql("DROP FUNCTION IF EXISTS get_pacientes_for_turno(TEXT);");
-        }
     }
+
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+      migrationBuilder.Sql("DROP FUNCTION IF EXISTS get_pacientes_for_turno(TEXT);");
+    }
+  }
 }

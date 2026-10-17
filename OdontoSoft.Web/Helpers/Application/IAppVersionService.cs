@@ -1,7 +1,7 @@
-﻿namespace OdontoSoft.Web.Helpers.Application
+namespace OdontoSoft.Web.Helpers.Application
 {
-    public interface IAppVersionService
-    {
-        string Version { get; }
-    }
+  public interface IAppVersionService
+  {
+    string Version { get; }
+  }
 }

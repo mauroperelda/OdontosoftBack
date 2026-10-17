@@ -12,34 +12,34 @@ using OdontoSoft.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using OdontoSoft.Entities.Models;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.ViewModels;
+using OdontoSoft.Contracts.Dtos;
 
 namespace OdontoSoft.Web.Controllers
 {
-    [Authorize]
-    public class HomeController : AppBaseController
+  [Authorize]
+  public class HomeController : AppBaseController
+  {
+    private readonly ILogger<HomeController> _logger;
+
+    public HomeController(ILogger<HomeController> logger)
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-        //[ExtraCoreAuthenticated]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+      _logger = logger;
     }
+    //[ExtraCoreAuthenticated]
+    public IActionResult Index()
+    {
+      return View();
+    }
+
+    public IActionResult Privacy()
+    {
+      return View();
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+  }
 }

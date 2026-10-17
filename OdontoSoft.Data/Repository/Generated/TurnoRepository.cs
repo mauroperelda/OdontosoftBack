@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace OdontoSoft.Data.Repository
 {
-    public partial class TurnoRepository : GenericRepository<Turno>, ITurnoRepository
+  public partial class TurnoRepository : GenericRepository<Turno>, ITurnoRepository
+  {
+    public TurnoRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
     {
-        public TurnoRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
-        {
-        }
     }
+  }
 }
 

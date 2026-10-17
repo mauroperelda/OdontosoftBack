@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  
@@ -26,17 +26,17 @@
 	  <PackageReference Include="AutoMapper" Version="16.1.1" />
 	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
 	  <PackageReference Include="DevExtreme.AspNet.Data" Version="5.1.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+	  <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
@@ -182,9 +182,10 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
     <ProjectReference Include="..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
     <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
-    <ProjectReference Include="..\Odontosoft.Services\Odontosoft.Services.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Services\OdontoSoft.Services.csproj" />
   </ItemGroup>
 	
 	<ItemGroup>

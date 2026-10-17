@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" Version="6.12.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="NetArchTest.Rules" Version="1.3.2" />
+		<PackageReference Include="xunit" Version="2.9.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+	</ItemGroup>
+
+	<!--
+		NetArchTest inspecciona los assemblies vía reflexión, así que solo necesita
+		referenciar los proyectos a inspeccionar, no usarlos.
+	-->
+	<ItemGroup>
+		<ProjectReference Include="..\..\OdontoSoft.API\OdontoSoft.API.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Entities\OdontoSoft.Entities.csproj">
+			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+			<OutputItemType>DoNotCopyToOutput</OutputItemType>
+		</ProjectReference>
+		<ProjectReference Include="..\..\OdontoSoft.Services\OdontoSoft.Services.csproj">
+			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+			<OutputItemType>DoNotCopyToOutput</OutputItemType>
+		</ProjectReference>
+	</ItemGroup>
+
+</Project>

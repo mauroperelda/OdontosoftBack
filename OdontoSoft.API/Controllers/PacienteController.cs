@@ -1,201 +1,124 @@
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
+using OdontoSoft.Contracts.Common;
 using OdontoSoft.Data.Repository.UOW;
 using OdontoSoft.Entities.Models;
-using OdontoSoft.Entities.ViewModels;
+using OdontoSoft.Contracts.Dtos;
+using OdontoSoft.Services;
+using OdontoSoft.Services.Common;
 
 namespace OdontoSoft.API.Controllers
 {
-	[ApiController]
-	[Authorize]
-	[Route("api/[controller]")]
-	public class PacienteController : ControllerBase
-	{
-		private readonly IUnitOfWork _unitOfWork;
+  [ApiController]
+  [Authorize]
+  [Route("api/[controller]")]
+  public class PacienteController : ControllerBase
+  {
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+    private readonly IPacienteServices _pacienteServices;
 
-		public PacienteController(IUnitOfWork unitOfWork)
-		{
-			_unitOfWork = unitOfWork;
-		}
+    public PacienteController(IUnitOfWork unitOfWork, IMapper mapper, IPacienteServices pacienteServices)
+    {
+      _unitOfWork = unitOfWork;
+      _mapper = mapper;
+      _pacienteServices = pacienteServices;
+    }
 
-		// GET api/paciente/GetAll?page=1&pageSize=50
-		[HttpGet("GetAll")]
-		public IActionResult GetAll([FromQuery] PaginationParams pagination)
-		{
-			try
-			{
-				var query = _unitOfWork.PacienteRepository.GetAllEnabled();
-				var total = query.Count();
-				var items = query
-					.Skip((pagination.Page - 1) * pagination.PageSize)
-					.Take(pagination.PageSize)
-					.ToList();
-				return Ok(new PagedResult<Paciente>
-				{
-					Items = items,
-					Total = total,
-					Page = pagination.Page,
-					PageSize = pagination.PageSize,
-				});
-			}
-			catch (Exception ex)
-			{
-				return ApiErrorResponse.FromException(ex);
-			}
-		}
+    // GET api/paciente/GetAll?page=1&pageSize=50
+    [HttpGet("GetAll")]
+    public async Task<ActionResult<PagedResult<PacienteDto>>> GetAll([FromQuery] PaginationParams pagination)
+    {
+      var result = await _unitOfWork.PacienteRepository
+        .GetAllEnabled()
+        .ToPagedResultAsync(pagination);
+      // Proyectamos a VM para que el front reciba DTOs consistentes con
+      // los que recibe en POST/PUT (sin auditar campos como CreatedDate).
+      var vms = _mapper.Map<List<PacienteDto>>(result.Items);
+      return Ok(new PagedResult<PacienteDto>
+      {
+        Items = vms,
+        Total = result.Total,
+        Page = result.Page,
+        PageSize = result.PageSize,
+      });
+    }
 
-		// GET api/paciente/GetById/5
-		[HttpGet("GetById/{id}")]
-		public IActionResult GetById(int id)
-		{
-			try
-			{
-				var paciente = _unitOfWork.PacienteRepository.GetById(id);
-				if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
-				return Ok(paciente);
-			}
-			catch (Exception ex)
-			{
-				return ApiErrorResponse.FromException(ex);
-			}
-		}
+    // GET api/paciente/GetById/5
+    [HttpGet("GetById/{id}")]
+    public ActionResult<PacienteDto> GetById(int id)
+    {
+      var paciente = _unitOfWork.PacienteRepository.GetById(id);
+      if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
+      return Ok(_mapper.Map<PacienteDto>(paciente));
+    }
 
-		// POST api/paciente/Create
-		[HttpPost("Create")]
-		public IActionResult Create([FromBody] PacienteViewModel vm)
-		{
-			try
-			{
-				// ── Validación de negocio ────────────────────────────────────
-				// Los errores van al ModelState para que
-				// InvalidModelStateResponseFactory los serialice con el
-				// formato { error, errors: { Campo: ["..."] } }.
-				var fieldErrors = new Dictionary<string, string>();
-				if (string.IsNullOrWhiteSpace(vm.Nombre))
-					fieldErrors["Nombre"] = "El nombre es obligatorio.";
-				if (string.IsNullOrWhiteSpace(vm.Apellido))
-					fieldErrors["Apellido"] = "El apellido es obligatorio.";
-				if (string.IsNullOrWhiteSpace(vm.Dni))
-					fieldErrors["Dni"] = "El DNI es obligatorio.";
-				if (vm.FechaNacimiento is null)
-					fieldErrors["FechaNacimiento"] = "La fecha de nacimiento es obligatoria.";
+    // POST api/paciente/Create
+    // Validación de shape delegada a PacienteDtoValidator (FluentValidation).
+    // Validación de unicidad de DNI delegada a IPacienteServices.
+    [HttpPost("Create")]
+    public async Task<ActionResult<PacienteDto>> Create([FromBody] PacienteDto vm)
+    {
+      var dniCheck = await _pacienteServices.ValidarDniUnicoAsync(vm.Dni);
+      if (!dniCheck.IsSuccess) return BadRequest(dniCheck);
 
-				if (fieldErrors.Count > 0)
-				{
-					return ApiErrorResponse.BadRequest(
-						"Revisá los campos marcados.",
-						fieldErrors.ToDictionary(
-							kv => kv.Key,
-							kv => new[] { kv.Value }));
-				}
+      var paciente = _mapper.Map<Paciente>(vm);
+      _unitOfWork.PacienteRepository.Add(paciente);
+      _unitOfWork.Save();
+      return CreatedAtAction(nameof(GetById), new { id = paciente.Id }, _mapper.Map<PacienteDto>(paciente));
+    }
 
-				// ── Persistencia ─────────────────────────────────────────────
-				var paciente = new Paciente();
-				vm.MapViewModelToPaciente(paciente);
-				paciente.DomicilioNumero = vm.DomicilioNumero;
-				paciente.Telefono = vm.Telefono;
-				_unitOfWork.PacienteRepository.Add(paciente);
-				_unitOfWork.Save();
-				return CreatedAtAction(nameof(GetById), new { id = paciente.Id }, paciente);
-			}
-			catch (Exception ex)
-			{
-				// FromException traduce DbUpdateException (DNI duplicado,
-				// FK violation, NULL en columna obligatoria, etc.) a
-				// mensajes amigables en español.
-				return ApiErrorResponse.FromException(ex, "Paciente");
-			}
-		}
+    // PUT api/paciente/Update/5
+    [HttpPut("Update/{id}")]
+    public async Task<ActionResult<PacienteDto>> Update(int id, [FromBody] PacienteDto vm)
+    {
+      var paciente = _unitOfWork.PacienteRepository.GetById(id);
+      if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
 
-		// PUT api/paciente/Update/5
-		[HttpPut("Update/{id}")]
-		public IActionResult Update(int id, [FromBody] PacienteViewModel vm)
-		{
-			try
-			{
-				var fieldErrors = new Dictionary<string, string>();
-				if (string.IsNullOrWhiteSpace(vm.Nombre))
-					fieldErrors["Nombre"] = "El nombre es obligatorio.";
-				if (string.IsNullOrWhiteSpace(vm.Apellido))
-					fieldErrors["Apellido"] = "El apellido es obligatorio.";
-				if (string.IsNullOrWhiteSpace(vm.Dni))
-					fieldErrors["Dni"] = "El DNI es obligatorio.";
+      var dniCheck = await _pacienteServices.ValidarDniUnicoAsync(vm.Dni, excludePacienteId: id);
+      if (!dniCheck.IsSuccess) return BadRequest(dniCheck);
 
-				if (fieldErrors.Count > 0)
-				{
-					return ApiErrorResponse.BadRequest(
-						"Revisá los campos marcados.",
-						fieldErrors.ToDictionary(
-							kv => kv.Key,
-							kv => new[] { kv.Value }));
-				}
+      vm.Id = id;
+      _mapper.Map(vm, paciente);
+      _unitOfWork.PacienteRepository.Upsert(paciente);
+      _unitOfWork.Save();
+      return Ok(_mapper.Map<PacienteDto>(paciente));
+    }
 
-				var paciente = _unitOfWork.PacienteRepository.GetById(id);
-				if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
+    // DELETE api/paciente/Delete/5
+    [HttpDelete("Delete/{id}")]
+    public IActionResult Delete(int id)
+    {
+      _unitOfWork.PacienteRepository.Delete(id);
+      _unitOfWork.Save();
+      return NoContent();
+    }
 
-				vm.Id = id;
-				vm.MapViewModelToPaciente(paciente);
-				paciente.DomicilioNumero = vm.DomicilioNumero;
-				paciente.Telefono = vm.Telefono;
-				_unitOfWork.PacienteRepository.Upsert(paciente);
-				_unitOfWork.Save();
-				return Ok(paciente);
-			}
-			catch (Exception ex)
-			{
-				return ApiErrorResponse.FromException(ex, "Paciente");
-			}
-		}
+    // GET api/paciente/GetAllByNombreDni?searchText=juan
+    [HttpGet("GetAllByNombreDni")]
+    public ActionResult<IEnumerable<object>> GetAllByNombreDni([FromQuery] string searchText)
+    {
+      var lista = _unitOfWork.StoredProcedureRepository.GetPacienteForTurno(searchText).ToList();
+      return Ok(lista);
+    }
 
-		// DELETE api/paciente/Delete/5
-		[HttpDelete("Delete/{id}")]
-		public IActionResult Delete(int id)
-		{
-			try
-			{
-				_unitOfWork.PacienteRepository.Delete(id);
-				_unitOfWork.Save();
-				return NoContent();
-			}
-			catch (Exception ex)
-			{
-				// Si el paciente tiene turnos / pagos / historias clínicas
-				// asociadas, FromException devuelve
-				// "No se puede eliminar el registro porque tiene datos asociados."
-				return ApiErrorResponse.FromException(ex, "Paciente");
-			}
-		}
+    // GET api/paciente/GetNombreById/5
+    [HttpGet("GetNombreById/{id}")]
+    public ActionResult<object> GetNombreById(int id)
+    {
+      var paciente = _unitOfWork.PacienteRepository.GetById(id);
+      if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
+      return Ok(new { NombreCompleto = paciente.Apellido + ", " + paciente.Nombre });
+    }
 
-		// GET api/paciente/GetAllByNombreDni?searchText=juan
-		[HttpGet("GetAllByNombreDni")]
-		public IActionResult GetAllByNombreDni([FromQuery] string searchText)
-		{
-			try
-			{
-				var lista = _unitOfWork.StoredProcedureRepository.GetPacienteForTurno(searchText).ToList();
-				return Ok(lista);
-			}
-			catch (Exception ex)
-			{
-				return ApiErrorResponse.FromException(ex);
-			}
-		}
-
-		// GET api/paciente/GetNombreById/5
-		[HttpGet("GetNombreById/{id}")]
-		public IActionResult GetNombreById(int id)
-		{
-			try
-			{
-				var paciente = _unitOfWork.PacienteRepository.GetById(id);
-				if (paciente == null) return ApiErrorResponse.NotFound("Paciente no encontrado.");
-				return Ok(new { NombreCompleto = paciente.Apellido + ", " + paciente.Nombre });
-			}
-			catch (Exception ex)
-			{
-				return ApiErrorResponse.FromException(ex);
-			}
-		}
-	}
+    // Traduce un ServiceResult fallido a IActionResult 400 con field-keyed errors.
+    private ActionResult BadRequest(ServiceResult result)
+    {
+      var fieldErrors = result.FieldErrors?
+        .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
+      return ApiErrorResponse.BadRequest(result.Error ?? "Operación inválida.", fieldErrors);
+    }
+  }
 }

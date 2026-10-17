@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace OdontoSoft.Data.Repository
 {
-    public partial class LocalidadRepository : GenericRepository<Localidad>, ILocalidadRepository
+  public partial class LocalidadRepository : GenericRepository<Localidad>, ILocalidadRepository
+  {
+    public LocalidadRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
     {
-        public LocalidadRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
-        {
-        }
     }
+  }
 }
 

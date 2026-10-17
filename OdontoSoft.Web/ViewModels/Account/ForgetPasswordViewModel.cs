@@ -1,11 +1,11 @@
-﻿namespace OdontoSoft.Web.ViewModels.Account
+namespace OdontoSoft.Web.ViewModels.Account
 {
 
 
-    public class ForgetPasswordViewModel
-    {
-        public string Email { get; set; }
+  public class ForgetPasswordViewModel
+  {
+    public string Email { get; set; }
 
-    }
+  }
 
 }

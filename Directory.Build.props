@@ -1,0 +1,40 @@
+<Project>
+	<!--
+		Directory.Build.props — defaults compartidos por todos los proyectos .NET de OdontoSoft.
+		Cada .csproj puede override cualquier valor si necesita algo distinto.
+		Documentado en el plan Fase 0.
+	-->
+
+	<PropertyGroup>
+		<!-- C# 14 es el default de net10.0; latest respeta la SDK actual. -->
+		<LangVersion>latest</LangVersion>
+
+		<!-- No forzamos Nullable/ImplicitUsings aquí porque hay proyectos con
+		     valores distintos hoy (API tiene Nullable=disable). Cada csproj
+		     lo setea localmente. -->
+
+		<!-- Análisis: desactivado en Fase 0 para no introducir 400+ warnings
+		     (CA1305, CA1848, etc.) sobre código existente. Se irá activando
+		     por fases a medida que limpiemos los archivos más críticos. -->
+		<AnalysisLevel>None</AnalysisLevel>
+		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+
+		<!-- No activamos TreatWarningsAsErrors todavía: hay warnings históricos
+		     en el código legacy. Se activará en una fase posterior cuando los
+		     limpiemos. -->
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+
+		<!-- Genera un archivo de documentación XML (útil para Swagger, IDEs) -->
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+		<!-- Versionado centralizado: cambia aquí y se propaga. -->
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<Company>OdontoSoft</Company>
+		<Product>OdontoSoft Backend</Product>
+		<Copyright>Copyright (c) OdontoSoft</Copyright>
+		<NeutralLanguage>es-AR</NeutralLanguage>
+	</PropertyGroup>
+</Project>

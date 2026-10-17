@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>OdontoSoft.Contracts</RootNamespace>
+    <AssemblyName>OdontoSoft.Contracts</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Mauro.Entities"><HintPath>..\lib\Mauro.Entities.dll</HintPath></Reference>
+    <Reference Include="MedveCore.Common"><HintPath>..\lib\MedveCore.Common.dll</HintPath></Reference>
+    <Reference Include="Mauro.RepositoryPattern"><HintPath>..\lib\Mauro.RepositoryPattern.dll</HintPath></Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-﻿//using MedveCore.Entities.Base;
+//using MedveCore.Entities.Base;
 using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;
 using System;
@@ -11,51 +11,51 @@ using System.Threading.Tasks;
 
 namespace OdontoSoft.Entities.Base
 {
-    public abstract class AuditedEntity : AuditedBaseEntity, IObjectState
+  public abstract class AuditedEntity : AuditedBaseEntity, IObjectState
+  {
+    [NotMapped]
+    public ObjectState ObjectState { get; set; }
+
+    [NotMapped]
+    public string EntityName
     {
-        [NotMapped]
-        public ObjectState ObjectState { get; set; }
-
-        [NotMapped]
-        public string EntityName
+      get
+      {
+        if (this.GetType().Module != null && this.GetType().Module.ScopeName == "EntityProxyModule")
         {
-            get
-            {
-                if (this.GetType().Module != null && this.GetType().Module.ScopeName == "EntityProxyModule")
-                {
-                    return this.GetType().BaseType.Name;
-                }
-                else
-                {
-                    return this.GetType().Name;
-                }
-
-
-            }
+          return this.GetType().BaseType.Name;
         }
-
-        [NotMapped]
-        public String GetString
+        else
         {
-            get
-            {
-                return this.ToString();
-            }
-        }
-
-        public void ToUpper()
-        {
-            foreach (var property in this.GetType().GetProperties())
-            {
-                var value = property.GetValue(this, null);
-                if (value is string)
-                {
-                    property.SetValue(this, value.ToString().ToUpper());
-                }
-            }
+          return this.GetType().Name;
         }
 
 
+      }
     }
+
+    [NotMapped]
+    public String GetString
+    {
+      get
+      {
+        return this.ToString();
+      }
+    }
+
+    public void ToUpper()
+    {
+      foreach (var property in this.GetType().GetProperties())
+      {
+        var value = property.GetValue(this, null);
+        if (value is string)
+        {
+          property.SetValue(this, value.ToString().ToUpper());
+        }
+      }
+    }
+
+
+  }
 
 }

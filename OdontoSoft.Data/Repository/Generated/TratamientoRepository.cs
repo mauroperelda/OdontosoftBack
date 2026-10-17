@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace OdontoSoft.Data.Repository
 {
-    public partial class TratamientoRepository : GenericRepository<Tratamiento>, ITratamientoRepository
+  public partial class TratamientoRepository : GenericRepository<Tratamiento>, ITratamientoRepository
+  {
+    public TratamientoRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
     {
-        public TratamientoRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser) : base(context, logger, authenticatedUser)
-        {
-        }
     }
+  }
 }
 

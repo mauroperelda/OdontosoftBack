@@ -1,8 +1,8 @@
-﻿namespace OdontoSoft.Web.Helpers.Menu
+namespace OdontoSoft.Web.Helpers.Menu
 {
-    public class LeftSideMenu
-    {
-        public Modulo? Modulo { get; set; }
-        public List<MenuCategory>? MenuCategories { get; set; }
-    }
+  public class LeftSideMenu
+  {
+    public Modulo? Modulo { get; set; }
+    public List<MenuCategory>? MenuCategories { get; set; }
+  }
 }

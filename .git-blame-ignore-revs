@@ -1,0 +1,9 @@
+# Archivo de commits que se ignoran en `git blame`.
+# Configurá con:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Útil para commits de reformat masivo donde el 100% del diff es whitespace.
+
+# Reformat total a 2 espacios (Fase 6.1.b — 276 archivos .cs)
+# El SHA se completa cuando se hace el commit; dejar este placeholder mientras tanto.
+# 20660db2288c76bc99d013606c163c19fd22d1ba  HEAD antes del reformat

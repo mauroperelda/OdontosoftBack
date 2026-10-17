@@ -1,7 +1,7 @@
 # Dockerfile para Render
 # Build context: RAÍZ del repo (`Root Directory` en Render = `.`, no `OdontoSoft.API/`).
 # Esto es necesario porque la API referencia proyectos hermanos
-# (OdontoSoft.Data, OdontoSoft.Entities, OdontoSoft.Web, Odontosoft.Services)
+# (OdontoSoft.Data, OdontoSoft.Entities, OdontoSoft.Services)
 # y DLLs legacy en lib/, y Docker no puede hacer COPY fuera del contexto.
 #
 # Multi-stage build: SDK para compilar, ASP.NET runtime para ejecutar (imagen final liviana).
@@ -17,8 +17,7 @@ WORKDIR /src
 COPY ["OdontoSoft.API/OdontoSoft.API.csproj",                       "OdontoSoft.API/"]
 COPY ["OdontoSoft.Data/OdontoSoft.Data.csproj",                     "OdontoSoft.Data/"]
 COPY ["OdontoSoft.Entities/OdontoSoft.Entities.csproj",             "OdontoSoft.Entities/"]
-COPY ["Odontosoft.Services/Odontosoft.Services.csproj",             "Odontosoft.Services/"]
-COPY ["OdontoSoft.Web/OdontoSoft.Web.csproj",                       "OdontoSoft.Web/"]
+COPY ["OdontoSoft.Services/OdontoSoft.Services.csproj",             "OdontoSoft.Services/"]
 # Las DLLs legacy (Mauro.Entities, MedveCore.Common, Mauro.RepositoryPattern)
 # se referencian con HintPath relativo a `lib/`, así que la restore las necesita
 # presentes en disco. Sin esto, dotnet restore no las encuentra.

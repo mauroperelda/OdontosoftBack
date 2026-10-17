@@ -1,0 +1,59 @@
+name: CI
+
+on:
+	push:
+		branches: [main]
+	pull_request:
+		branches: [main]
+
+env:
+	DOTNET_NOLOGO: 'true'
+	DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+	DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+	# Permite que tests de EF Core con InMemory db no chille por falta de provider.
+	# Documentado: https://learn.microsoft.com/ef/core/testing/in-memory
+	DOTNET_ROLL_FORWARD: 'LatestMajor'
+
+jobs:
+	build-and-test:
+		runs-on: ubuntu-latest
+		timeout-minutes: 20
+
+		steps:
+			- name: Checkout
+				uses: actions/checkout@v4
+
+			# .NET 10 SDK — instalado por setup-dotnet usando global.json.
+			# Si el repo no tuviera global.json, hardcodear la version acá.
+			- name: Setup .NET SDK
+				uses: actions/setup-dotnet@v4
+				with:
+					globaljson-file: global.json
+
+			# Cache de NuGet packages para acelerar builds subsecuentes.
+			- name: Cache NuGet packages
+				uses: actions/cache@v4
+				with:
+					path: ~/.nuget/packages
+					key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+					restore-keys: |
+						${{ runner.os }}-nuget-
+
+			- name: Restore
+				run: dotnet restore OdontoSoft.sln
+
+			- name: Build (Release)
+				run: dotnet build OdontoSoft.sln -c Release --no-restore
+
+			- name: Test
+				run: dotnet test OdontoSoft.sln -c Release --no-build --verbosity normal --logger 'trx;LogFileName=test-results.trx'
+				continue-on-error: false
+
+			# Sube los resultados como artefacto para inspección desde la UI de GitHub.
+			- name: Upload test results
+				if: always()
+				uses: actions/upload-artifact@v4
+				with:
+					name: test-results
+					path: '**/TestResults/*.trx'
+					if-no-files-found: ignore

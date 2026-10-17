@@ -1,9 +1,9 @@
-﻿namespace OdontoSoft.Web.Exceptions
+namespace OdontoSoft.Web.Exceptions
 {
-    public class UsuarioContraseniaException : Exception
+  public class UsuarioContraseniaException : Exception
+  {
+    public UsuarioContraseniaException(string message) : base(message)
     {
-        public UsuarioContraseniaException(string message) : base(message)
-        {
-        }
     }
+  }
 }
