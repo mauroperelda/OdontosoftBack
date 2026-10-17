@@ -1,6 +1,6 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   /// <summary>
   /// Imagen asociada a la historia clínica de un paciente

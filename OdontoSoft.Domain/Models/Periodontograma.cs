@@ -1,6 +1,6 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   /// <summary>
   /// Cabecera de una evaluación periodontal de un paciente.

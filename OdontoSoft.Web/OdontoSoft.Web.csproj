@@ -184,7 +184,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
     <ProjectReference Include="..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
-    <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
     <ProjectReference Include="..\OdontoSoft.Services\OdontoSoft.Services.csproj" />
   </ItemGroup>
 	

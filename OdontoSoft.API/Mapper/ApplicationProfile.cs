@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
 namespace OdontoSoft.API.Mapper;

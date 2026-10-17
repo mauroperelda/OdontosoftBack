@@ -5,7 +5,7 @@ VisualStudioVersion = 18.5.11723.231
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Web", "OdontoSoft.Web\OdontoSoft.Web.csproj", "{84095EA9-FDCF-40AC-A788-FAF76503C9B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Entities", "OdontoSoft.Entities\OdontoSoft.Entities.csproj", "{3F93137C-28C0-4D09-8ED7-19BA45D63077}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Domain", "OdontoSoft.Domain\OdontoSoft.Domain.csproj", "{3F93137C-28C0-4D09-8ED7-19BA45D63077}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdontoSoft.Data", "OdontoSoft.Data\OdontoSoft.Data.csproj", "{F6AB53D6-243F-4CD6-9C2E-9FE5F54B9E22}"
 EndProject

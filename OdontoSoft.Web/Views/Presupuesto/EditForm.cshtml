@@ -1,4 +1,4 @@
-@model OdontoSoft.Entities.Models.Presupuesto
+@model OdontoSoft.Domain.Models.Presupuesto
 @using OdontoSoft.Web.Helpers
 
 @{
@@ -71,14 +71,14 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             @Html.LabelFor(x => x.Detalles)
-                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.PresupuestoDetalle] -*@ @Html.TextBoxFor(x => x.Detalles, new { @class = "form-control" })
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Domain.Models.PresupuestoDetalle] -*@ @Html.TextBoxFor(x => x.Detalles, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Detalles)
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             @Html.LabelFor(x => x.Pagos)
-                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.Pago] -*@ @Html.TextBoxFor(x => x.Pagos, new { @class = "form-control" })
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Domain.Models.Pago] -*@ @Html.TextBoxFor(x => x.Pagos, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.Pagos)
                         </div>
                     </div>

@@ -64,7 +64,7 @@ public class TratamientoServicesTests
   public void UpsertPrecio_TratamientoNoExiste_RetornaFail()
   {
     var t = new Mock<ITratamientoRepository>();
-    t.Setup(r => r.GetById(99)).Returns((OdontoSoft.Entities.Models.Tratamiento?)null);
+    t.Setup(r => r.GetById(99)).Returns((OdontoSoft.Domain.Models.Tratamiento?)null);
     var u = new Mock<IUbicacionRepository>();
     var p = new Mock<ITratamientoPrecioRepository>();
     var service = CreateService(t, u, p);
@@ -79,9 +79,9 @@ public class TratamientoServicesTests
   public void UpsertPrecio_UbicacionNoExiste_RetornaFail()
   {
     var t = new Mock<ITratamientoRepository>();
-    t.Setup(r => r.GetById(1)).Returns(new OdontoSoft.Entities.Models.Tratamiento { Id = 1 });
+    t.Setup(r => r.GetById(1)).Returns(new OdontoSoft.Domain.Models.Tratamiento { Id = 1 });
     var u = new Mock<IUbicacionRepository>();
-    u.Setup(r => r.GetById(99)).Returns((OdontoSoft.Entities.Models.Ubicacion?)null);
+    u.Setup(r => r.GetById(99)).Returns((OdontoSoft.Domain.Models.Ubicacion?)null);
     var p = new Mock<ITratamientoPrecioRepository>();
     var service = CreateService(t, u, p);
 

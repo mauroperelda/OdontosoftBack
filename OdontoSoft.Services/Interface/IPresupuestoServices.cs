@@ -1,4 +1,4 @@
-﻿using OdontoSoft.Entities.Models;
+﻿using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 using OdontoSoft.Services.Common;
 

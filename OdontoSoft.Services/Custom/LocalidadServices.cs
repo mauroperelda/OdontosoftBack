@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.Contracts.Dtos;
 using System.Text.Json;
 using Newtonsoft.Json;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 
 namespace OdontoSoft.Services
 {

@@ -4,7 +4,7 @@ using Moq;
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.Repository.Interfaces;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Services;
 using Xunit;
 

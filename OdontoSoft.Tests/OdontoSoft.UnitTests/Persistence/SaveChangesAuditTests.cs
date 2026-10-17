@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.DAL;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Persistence;

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Repository;

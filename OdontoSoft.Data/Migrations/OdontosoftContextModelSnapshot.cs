@@ -22,7 +22,7 @@ namespace OdontoSoft.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.EstadoTurno", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.EstadoTurno", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("estado_turno", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.FichaTratamiento", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.FichaTratamiento", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,7 +131,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("ficha_tratamiento", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.HistoriaClinica", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.HistoriaClinica", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +197,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("historia_clinica", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.ImagenPaciente", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.ImagenPaciente", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -274,7 +274,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("imagen_paciente", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Localidad", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Localidad", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -305,7 +305,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("localidad", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.OdontogramaPieza", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.OdontogramaPieza", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -367,7 +367,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("odontograma_pieza", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Paciente", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Paciente", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -463,7 +463,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("paciente", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Pago", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Pago", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -530,7 +530,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("pago", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Periodontograma", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Periodontograma", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -588,7 +588,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("periodontograma", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.PeriodontogramaPieza", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.PeriodontogramaPieza", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -670,7 +670,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("periodontograma_pieza", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Presupuesto", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Presupuesto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -744,7 +744,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("presupuesto", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.PresupuestoDetalle", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.PresupuestoDetalle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -817,7 +817,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("presupuesto_detalle", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Profesional", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Profesional", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -906,7 +906,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("profesional", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Provincia", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Provincia", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -930,7 +930,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("provincia", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Tratamiento", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Tratamiento", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -961,7 +961,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("tratamiento", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.TratamientoPrecio", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.TratamientoPrecio", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1022,7 +1022,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("tratamiento_precio", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Turno", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Turno", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1116,7 +1116,7 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("turno", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Ubicacion", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Ubicacion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1190,23 +1190,23 @@ namespace OdontoSoft.Data.Migrations
                     b.ToTable("ubicacion", (string)null);
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.FichaTratamiento", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.FichaTratamiento", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.HistoriaClinica", "HistoriaClinica")
+                    b.HasOne("OdontoSoft.Domain.Models.HistoriaClinica", "HistoriaClinica")
                         .WithMany("FichasTratamiento")
                         .HasForeignKey("HistoriaClinicaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_ficha_tratamiento_historia_clinica_historia_clinica_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Tratamiento", "Tratamiento")
+                    b.HasOne("OdontoSoft.Domain.Models.Tratamiento", "Tratamiento")
                         .WithMany()
                         .HasForeignKey("TratamientoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_ficha_tratamiento_tratamiento_tratamiento_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Turno", "Turno")
+                    b.HasOne("OdontoSoft.Domain.Models.Turno", "Turno")
                         .WithMany()
                         .HasForeignKey("TurnoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1219,9 +1219,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Turno");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.HistoriaClinica", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.HistoriaClinica", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Paciente", "Paciente")
+                    b.HasOne("OdontoSoft.Domain.Models.Paciente", "Paciente")
                         .WithMany()
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1231,9 +1231,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Paciente");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.ImagenPaciente", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.ImagenPaciente", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.HistoriaClinica", "HistoriaClinica")
+                    b.HasOne("OdontoSoft.Domain.Models.HistoriaClinica", "HistoriaClinica")
                         .WithMany("ImagenesPaciente")
                         .HasForeignKey("HistoriaClinicaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1243,9 +1243,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("HistoriaClinica");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Localidad", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Localidad", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Provincia", "Provincia")
+                    b.HasOne("OdontoSoft.Domain.Models.Provincia", "Provincia")
                         .WithMany()
                         .HasForeignKey("ProvinciaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1255,9 +1255,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Provincia");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.OdontogramaPieza", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.OdontogramaPieza", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.HistoriaClinica", "HistoriaClinica")
+                    b.HasOne("OdontoSoft.Domain.Models.HistoriaClinica", "HistoriaClinica")
                         .WithMany("OdontogramaPiezas")
                         .HasForeignKey("HistoriaClinicaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1267,15 +1267,15 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("HistoriaClinica");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Paciente", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Paciente", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Localidad", "Localidad")
+                    b.HasOne("OdontoSoft.Domain.Models.Localidad", "Localidad")
                         .WithMany()
                         .HasForeignKey("LocalidadId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_paciente_localidad_localidad_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Provincia", "Provincia")
+                    b.HasOne("OdontoSoft.Domain.Models.Provincia", "Provincia")
                         .WithMany()
                         .HasForeignKey("ProvinciaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1286,9 +1286,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Provincia");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Pago", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Pago", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Presupuesto", "Presupuesto")
+                    b.HasOne("OdontoSoft.Domain.Models.Presupuesto", "Presupuesto")
                         .WithMany("Pagos")
                         .HasForeignKey("PresupuestoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1298,9 +1298,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Presupuesto");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Periodontograma", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Periodontograma", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.HistoriaClinica", "HistoriaClinica")
+                    b.HasOne("OdontoSoft.Domain.Models.HistoriaClinica", "HistoriaClinica")
                         .WithMany("Periodontogramas")
                         .HasForeignKey("HistoriaClinicaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1310,9 +1310,9 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("HistoriaClinica");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.PeriodontogramaPieza", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.PeriodontogramaPieza", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Periodontograma", "Periodontograma")
+                    b.HasOne("OdontoSoft.Domain.Models.Periodontograma", "Periodontograma")
                         .WithMany("Piezas")
                         .HasForeignKey("PeriodontogramaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1322,16 +1322,16 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Periodontograma");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Presupuesto", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Presupuesto", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Paciente", "Paciente")
+                    b.HasOne("OdontoSoft.Domain.Models.Paciente", "Paciente")
                         .WithMany()
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_presupuesto_paciente_paciente_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Profesional", "Profesional")
+                    b.HasOne("OdontoSoft.Domain.Models.Profesional", "Profesional")
                         .WithMany()
                         .HasForeignKey("ProfesionalId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1342,16 +1342,16 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Profesional");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.PresupuestoDetalle", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.PresupuestoDetalle", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Presupuesto", "Presupuesto")
+                    b.HasOne("OdontoSoft.Domain.Models.Presupuesto", "Presupuesto")
                         .WithMany("Detalles")
                         .HasForeignKey("PresupuestoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_presupuesto_detalle_presupuesto_presupuesto_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Tratamiento", "Tratamiento")
+                    b.HasOne("OdontoSoft.Domain.Models.Tratamiento", "Tratamiento")
                         .WithMany()
                         .HasForeignKey("TratamientoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1363,15 +1363,15 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Tratamiento");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Profesional", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Profesional", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Localidad", "Localidad")
+                    b.HasOne("OdontoSoft.Domain.Models.Localidad", "Localidad")
                         .WithMany()
                         .HasForeignKey("LocalidadId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_profesional_localidad_localidad_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Provincia", "Provincia")
+                    b.HasOne("OdontoSoft.Domain.Models.Provincia", "Provincia")
                         .WithMany()
                         .HasForeignKey("ProvinciaId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1382,16 +1382,16 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Provincia");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.TratamientoPrecio", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.TratamientoPrecio", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.Tratamiento", "Tratamiento")
+                    b.HasOne("OdontoSoft.Domain.Models.Tratamiento", "Tratamiento")
                         .WithMany("Precios")
                         .HasForeignKey("TratamientoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_tratamiento_precio_tratamiento_tratamiento_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Ubicacion", "Ubicacion")
+                    b.HasOne("OdontoSoft.Domain.Models.Ubicacion", "Ubicacion")
                         .WithMany("Precios")
                         .HasForeignKey("UbicacionId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1403,35 +1403,35 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Ubicacion");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Turno", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Turno", b =>
                 {
-                    b.HasOne("OdontoSoft.Entities.Models.EstadoTurno", "EstadoTurno")
+                    b.HasOne("OdontoSoft.Domain.Models.EstadoTurno", "EstadoTurno")
                         .WithMany()
                         .HasForeignKey("EstadoTurnoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_turno_estado_turno_estado_turno_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Paciente", "Paciente")
+                    b.HasOne("OdontoSoft.Domain.Models.Paciente", "Paciente")
                         .WithMany()
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_turno_paciente_paciente_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Profesional", "Profesional")
+                    b.HasOne("OdontoSoft.Domain.Models.Profesional", "Profesional")
                         .WithMany()
                         .HasForeignKey("ProfesionalId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_turno_profesional_profesional_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Tratamiento", "Tratamiento")
+                    b.HasOne("OdontoSoft.Domain.Models.Tratamiento", "Tratamiento")
                         .WithMany()
                         .HasForeignKey("TratamientoId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_turno_tratamiento_tratamiento_id");
 
-                    b.HasOne("OdontoSoft.Entities.Models.Ubicacion", "Ubicacion")
+                    b.HasOne("OdontoSoft.Domain.Models.Ubicacion", "Ubicacion")
                         .WithMany()
                         .HasForeignKey("UbicacionId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1448,7 +1448,7 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Ubicacion");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.HistoriaClinica", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.HistoriaClinica", b =>
                 {
                     b.Navigation("FichasTratamiento");
 
@@ -1459,24 +1459,24 @@ namespace OdontoSoft.Data.Migrations
                     b.Navigation("Periodontogramas");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Periodontograma", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Periodontograma", b =>
                 {
                     b.Navigation("Piezas");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Presupuesto", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Presupuesto", b =>
                 {
                     b.Navigation("Detalles");
 
                     b.Navigation("Pagos");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Tratamiento", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Tratamiento", b =>
                 {
                     b.Navigation("Precios");
                 });
 
-            modelBuilder.Entity("OdontoSoft.Entities.Models.Ubicacion", b =>
+            modelBuilder.Entity("OdontoSoft.Domain.Models.Ubicacion", b =>
                 {
                     b.Navigation("Precios");
                 });

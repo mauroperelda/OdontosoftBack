@@ -1,4 +1,4 @@
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 
 namespace OdontoSoft.Contracts.Dtos
 {

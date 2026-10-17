@@ -2,7 +2,7 @@
 using Mauro.Entities.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OdontoSoft.Entities.Base
+namespace OdontoSoft.Domain.Base
 {
   [NotMapped]
   public class EntityCodedValue : BaseEntity

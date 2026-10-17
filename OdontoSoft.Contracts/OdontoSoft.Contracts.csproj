@@ -15,6 +15,6 @@
     <Reference Include="Mauro.RepositoryPattern"><HintPath>..\lib\Mauro.RepositoryPattern.dll</HintPath></Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
   </ItemGroup>
 </Project>

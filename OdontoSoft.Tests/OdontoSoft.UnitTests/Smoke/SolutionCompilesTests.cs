@@ -26,7 +26,7 @@ public class SolutionCompilesTests
   [Fact]
   public void CoreTypesAreExported()
   {
-    typeof(OdontoSoft.Entities.Models.Paciente).Should().NotBeNull();
+    typeof(OdontoSoft.Domain.Models.Paciente).Should().NotBeNull();
     typeof(OdontoSoft.Contracts.Common.PaginationParams).Should().NotBeNull();
   }
 }

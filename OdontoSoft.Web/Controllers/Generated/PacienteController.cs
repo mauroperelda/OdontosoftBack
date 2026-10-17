@@ -1,6 +1,6 @@
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Web.Helpers.Authentication;
 using OdontoSoft.Web.Browser;
 using Microsoft.AspNetCore.Mvc;

@@ -1,11 +1,11 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   public class Tratamiento : Entity
   {

@@ -15,7 +15,7 @@ public class LayeredArchitectureTests
   private const string ControllersNamespace = "OdontoSoft.API.Controllers";
   private const string ServicesNamespace = "Odontosoft.Services";
   private const string DataNamespace = "OdontoSoft.Data";
-  private const string EntitiesNamespace = "OdontoSoft.Entities";
+  private const string EntitiesNamespace = "OdontoSoft.Domain";
   private const string ApiNamespace = "OdontoSoft.API";
 
   [Fact]

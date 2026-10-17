@@ -1,7 +1,7 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 using System.Collections.Generic;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   // Representa un consultorio / sede de la práctica. Tiene una dirección,
   // contacto y un precio distinto para cada Tratamiento (servicio).

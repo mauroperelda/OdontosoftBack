@@ -4,7 +4,7 @@ using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository.Generic;
 using OdontoSoft.Data.Repository.Interfaces;
 using OdontoSoft.Data.Repository.StoredProcedure;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 //using MedveCore.Entities.Base;
 using Mauro.Entities.Base;
 using Microsoft.Extensions.Logging;

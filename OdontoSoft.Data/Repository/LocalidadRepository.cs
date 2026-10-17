@@ -1,6 +1,6 @@
 using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository.Interfaces;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

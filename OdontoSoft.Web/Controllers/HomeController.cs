@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using System.Globalization;
 using OdontoSoft.Data.DAL;
 using Microsoft.EntityFrameworkCore;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Data.Repository.UOW;
 using OdontoSoft.Contracts.Dtos;
 

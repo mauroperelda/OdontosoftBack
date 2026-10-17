@@ -1,11 +1,17 @@
 //using MedveCore.Entities.Base;
 using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace OdontoSoft.Entities.Base
+
+namespace OdontoSoft.Domain.Base
 {
-  public abstract class Entity : BaseEntity, IObjectState
+  public abstract class AuditedEntity : AuditedBaseEntity, IObjectState
   {
     [NotMapped]
     public ObjectState ObjectState { get; set; }
@@ -42,12 +48,14 @@ namespace OdontoSoft.Entities.Base
       foreach (var property in this.GetType().GetProperties())
       {
         var value = property.GetValue(this, null);
-        if (value is string && property.SetMethod != null)
+        if (value is string)
         {
           property.SetValue(this, value.ToString().ToUpper());
         }
       }
     }
+
+
   }
 
 }

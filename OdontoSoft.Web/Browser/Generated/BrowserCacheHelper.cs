@@ -1,6 +1,6 @@
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Web.Controllers;
 using Microsoft.Extensions.Caching.Memory;
 using OdontoSoft.Web.Browser;

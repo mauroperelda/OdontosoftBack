@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 using OdontoSoft.Services.Common;
 using Odontosoft.Services;

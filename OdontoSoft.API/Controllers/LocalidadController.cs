@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using Mauro.RepositoryPattern.Infrastructure;
 using OdontoSoft.API.Helpers;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Services;
 using OdontoSoft.Contracts.Dtos;
 using System.Data;

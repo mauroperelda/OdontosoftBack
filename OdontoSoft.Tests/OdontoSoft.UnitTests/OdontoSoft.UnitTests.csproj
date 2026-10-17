@@ -25,7 +25,7 @@
 		<ProjectReference Include="..\..\OdontoSoft.API\OdontoSoft.API.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Data\OdontoSoft.Data.csproj" />
-		<ProjectReference Include="..\..\OdontoSoft.Entities\OdontoSoft.Entities.csproj" />
+		<ProjectReference Include="..\..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
 		<ProjectReference Include="..\..\OdontoSoft.Services\OdontoSoft.Services.csproj" />
 		<Reference Include="Mauro.Entities">
 			<HintPath>..\..\lib\Mauro.Entities.dll</HintPath>

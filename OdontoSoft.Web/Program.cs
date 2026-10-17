@@ -3,7 +3,7 @@ using OdontoSoft.Web.Helpers.Application;
 //using ExtraCore.Data.Helpers;
 //using ExtraCore.Data.Repository;
 //using ExtraCore.Data.Repository.UOW;
-//using OdontoSoft.Entities.Models;
+//using OdontoSoft.Domain.Models;
 using OdontoSoft.Web.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;

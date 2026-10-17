@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using OdontoSoft.API.Mapper;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 using Xunit;
 

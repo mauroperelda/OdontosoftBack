@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OdontoSoft.API.Helpers;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Data.Repository.UOW;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
 namespace OdontoSoft.API.Controllers

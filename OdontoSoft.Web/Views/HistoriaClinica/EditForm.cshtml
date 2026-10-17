@@ -1,4 +1,4 @@
-@model OdontoSoft.Entities.Models.HistoriaClinica
+@model OdontoSoft.Domain.Models.HistoriaClinica
 @using OdontoSoft.Web.Helpers
 
 @{
@@ -64,14 +64,14 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             @Html.LabelFor(x => x.FichasTratamiento)
-                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.FichaTratamiento] -*@ @Html.TextBoxFor(x => x.FichasTratamiento, new { @class = "form-control" })
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Domain.Models.FichaTratamiento] -*@ @Html.TextBoxFor(x => x.FichasTratamiento, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.FichasTratamiento)
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             @Html.LabelFor(x => x.OdontogramaPiezas)
-                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Entities.Models.OdontogramaPieza] -*@ @Html.TextBoxFor(x => x.OdontogramaPiezas, new { @class = "form-control" })
+                            @*TIPO NO DEFINIDO - System.Collections.Generic.ICollection`1[OdontoSoft.Domain.Models.OdontogramaPieza] -*@ @Html.TextBoxFor(x => x.OdontogramaPiezas, new { @class = "form-control" })
                             @Html.ValidationMessageFor(model => model.OdontogramaPiezas)
                         </div>
                     </div>

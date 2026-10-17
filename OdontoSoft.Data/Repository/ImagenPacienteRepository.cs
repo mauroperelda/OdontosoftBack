@@ -1,7 +1,7 @@
 using OdontoSoft.Data.Authentication;
 using OdontoSoft.Data.DAL;
 using OdontoSoft.Data.Repository.Interfaces;
-using OdontoSoft.Entities.Models;
+using OdontoSoft.Domain.Models;
 using Microsoft.Extensions.Logging;
 
 namespace OdontoSoft.Data.Repository

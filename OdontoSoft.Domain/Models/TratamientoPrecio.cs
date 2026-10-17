@@ -1,6 +1,6 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   // Tabla intermedia que ata un Tratamiento (servicio) con una Ubicación
   // y le asigna un Precio. Permite que el mismo servicio cueste distinto

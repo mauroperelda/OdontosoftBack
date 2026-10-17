@@ -1,6 +1,6 @@
-using OdontoSoft.Entities.Base;
+using OdontoSoft.Domain.Base;
 
-namespace OdontoSoft.Entities.Models
+namespace OdontoSoft.Domain.Models
 {
   /// <summary>
   /// Detalle por pieza de una evaluación periodontal.
