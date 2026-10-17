@@ -62,6 +62,15 @@ public static class ServiceCollectionExtensions
     services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork,
                       OdontoSoft.Infrastructure.Repository.UOW.UnitOfWork>();
 
+    // ── Stored Procedure Queries (V4 del refactor Clean) ───────
+    // V4: GetPacienteForTurno se movió a IStoredProcedureQueries en
+    // Infrastructure, separado del IUnitOfWork que vive en Application.
+    // La motivación: el stored procedure devuelve un shape específico
+    // de la base (PacienteSummary, no PacienteDto) para que esta capa
+    // no conozca los DTOs de Contracts.
+    services.AddScoped<OdontoSoft.Infrastructure.Repository.StoredProcedure.IStoredProcedureQueries,
+                      OdontoSoft.Infrastructure.Repository.StoredProcedure.StoredProcedureRepository>();
+
     // ── Usuario autenticado ─────────────────────────────────────
     // ICurrentUser vive en Application; la implementación lee los
     // claims del HttpContext (de ahí que viva en Infrastructure, que

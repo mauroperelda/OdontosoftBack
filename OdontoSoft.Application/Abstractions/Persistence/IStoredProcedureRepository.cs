@@ -221,8 +221,3 @@ public interface IUbicacionRepository
   bool Upsert(Ubicacion entity);
   Task<bool> Delete(int id);
 }
-
-public interface IStoredProcedureRepository
-{
-  IList<OdontoSoft.Contracts.Dtos.PacienteDto> GetPacienteForTurno(string searchText);
-}

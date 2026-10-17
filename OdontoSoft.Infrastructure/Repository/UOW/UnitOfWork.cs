@@ -20,7 +20,7 @@ namespace OdontoSoft.Infrastructure.Repository.UOW
 
     private readonly ICurrentUser _authenticatedUser;
 
-    public IStoredProcedureRepository StoredProcedureRepository { get; private set; }
+    public IStoredProcedureQueries StoredProcedureQueries { get; private set; }
 
 
     public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, ICurrentUser authenticatedUser)
@@ -30,7 +30,7 @@ namespace OdontoSoft.Infrastructure.Repository.UOW
       _authenticatedUser = authenticatedUser;
 
       InstanceRepos();
-      StoredProcedureRepository = new StoredProcedureRepository(_context, _logger);
+      StoredProcedureQueries = new StoredProcedureRepository(_context, _logger);
     }
 
     public int Save()

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
+using OdontoSoft.Infrastructure.Repository.StoredProcedure;
 
 namespace OdontoSoft.Infrastructure.Mapping;
 
@@ -62,5 +63,11 @@ public class ApplicationProfile : Profile
 
     // ── Ubicacion ────────────────────────────────────────────
     CreateMap<UbicacionDto, Ubicacion>();
+
+    // ── PacienteSummary (record interno de Infrastructure) ────
+    // Mapeo de la salida del stored procedure `get_pacientes_for_turno`
+    // al DTO que consume el front. Mismo shape de columnas que el
+    // SELECT directo que hacía el SP antes (Id, Nombre, Apellido, Dni).
+    CreateMap<PacienteSummary, PacienteDto>();
   }
 }

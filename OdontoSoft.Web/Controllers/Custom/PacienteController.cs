@@ -117,7 +117,18 @@ namespace OdontoSoft.Web.Controllers
     {
       try
       {
-        List<PacienteDto> lista = _unitOfWork.StoredProcedureRepository.GetPacienteForTurno(searchText).ToList();
+        // GetPacienteForTurno devuelve PacienteSummary (record interno de
+        // Infrastructure). El controller Web es legacy y devuelve el shape
+        // crudo porque el front legacy espera el viejo orden de columnas.
+        List<PacienteDto> lista = _storedProcedureQueries.GetPacienteForTurno(searchText)
+          .Select(s => new PacienteDto
+          {
+            Id = s.Id,
+            Nombre = s.Nombre,
+            Apellido = s.Apellido,
+            Dni = s.Dni
+          })
+          .ToList();
 
         return Json(lista);
       }

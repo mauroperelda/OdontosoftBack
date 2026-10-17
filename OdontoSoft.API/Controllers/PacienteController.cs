@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.Infrastructure.Http;
+using OdontoSoft.Infrastructure.Repository.StoredProcedure;
 using OdontoSoft.Contracts.Common;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
@@ -19,12 +20,18 @@ namespace OdontoSoft.API.Controllers
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IPacienteServices _pacienteServices;
+    private readonly IStoredProcedureQueries _storedProcedureQueries;
 
-    public PacienteController(IUnitOfWork unitOfWork, IMapper mapper, IPacienteServices pacienteServices)
+    public PacienteController(
+      IUnitOfWork unitOfWork,
+      IMapper mapper,
+      IPacienteServices pacienteServices,
+      IStoredProcedureQueries storedProcedureQueries)
     {
       _unitOfWork = unitOfWork;
       _mapper = mapper;
       _pacienteServices = pacienteServices;
+      _storedProcedureQueries = storedProcedureQueries;
     }
 
     // GET api/paciente/GetAll?page=1&pageSize=50
@@ -98,10 +105,14 @@ namespace OdontoSoft.API.Controllers
 
     // GET api/paciente/GetAllByNombreDni?searchText=juan
     [HttpGet("GetAllByNombreDni")]
-    public ActionResult<IEnumerable<object>> GetAllByNombreDni([FromQuery] string searchText)
+    public ActionResult<IEnumerable<PacienteDto>> GetAllByNombreDni([FromQuery] string searchText)
     {
-      var lista = _unitOfWork.StoredProcedureRepository.GetPacienteForTurno(searchText).ToList();
-      return Ok(lista);
+      // GetPacienteForTurno devuelve PacienteSummary (record interno de
+      // Infrastructure) — el controller lo mapea a PacienteDto con
+      // AutoMapper para que el front siga recibiendo el shape estable.
+      var summaries = _storedProcedureQueries.GetPacienteForTurno(searchText).ToList();
+      var dtos = _mapper.Map<List<PacienteDto>>(summaries);
+      return Ok(dtos);
     }
 
     // GET api/paciente/GetNombreById/5

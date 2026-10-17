@@ -27,7 +27,6 @@ public interface IUnitOfWork
   IFichaTratamientoRepository FichaTratamientoRepository { get; }
   IEstadoTurnoRepository EstadoTurnoRepository { get; }
   IUbicacionRepository UbicacionRepository { get; }
-  IStoredProcedureRepository StoredProcedureRepository { get; }
   int Save();
   Task SaveAsync(CancellationToken cancellationToken = default);
 }

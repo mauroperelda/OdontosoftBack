@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Infrastructure.Repository.StoredProcedure;
 
 namespace OdontoSoft.Web.Controllers
 {
@@ -14,10 +15,12 @@ namespace OdontoSoft.Web.Controllers
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
     private readonly ICurrentUser _authenticatedUser;
+    private readonly IStoredProcedureQueries _storedProcedureQueries;
 
     public PacienteController(ILogger<PacienteController> logger, IUnitOfWork unitOfWork,
         IHttpContextAccessor accessor, LinkGenerator generator, IHostEnvironment hostEnvironment,
-        IMemoryCache memoryCache, ICurrentUser authenticatedUser) : base("Paciente")
+        IMemoryCache memoryCache, ICurrentUser authenticatedUser,
+        IStoredProcedureQueries storedProcedureQueries) : base("Paciente")
     {
       _logger = logger;
       _unitOfWork = unitOfWork;
@@ -26,6 +29,7 @@ namespace OdontoSoft.Web.Controllers
       _hostEnvironment = hostEnvironment;
       _memoryCache = memoryCache;
       _authenticatedUser = authenticatedUser;
+      _storedProcedureQueries = storedProcedureQueries;
     }
   }
 }
