@@ -1,4 +1,4 @@
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 
 namespace OdontoSoft.Infrastructure.Data.Repository.UOW
 {

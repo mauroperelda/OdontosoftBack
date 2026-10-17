@@ -1,7 +1,7 @@
-﻿@using OdontoSoft.Infrastructure.Data.Authentication
+@using OdontoSoft.Application.Abstractions
 @using OdontoSoft.Web.Browser
 @using Microsoft.AspNetCore.Html
-@inject IAuthenticatedUser AuthenticatedUser
+@inject ICurrentUser AuthenticatedUser
 @model BrowserModel
 @{
     //Layout = "_DevExtremeLayout";

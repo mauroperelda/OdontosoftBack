@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
@@ -64,9 +64,9 @@ namespace OdontoSoft.Web.Controllers
     public IActionResult Edit(PresupuestoDto vm)
     {
       if (vm.PacienteId == 0)
-        ModelState.AddModelError(string.Empty, "El campo paciente no puede estar vacío.");
+        ModelState.AddModelError(string.Empty, "El campo paciente no puede estar vac�o.");
       if (vm.ProfesionalId == 0)
-        ModelState.AddModelError(string.Empty, "El campo profesional no puede estar vacío.");
+        ModelState.AddModelError(string.Empty, "El campo profesional no puede estar vac�o.");
 
       CargarViewBags(vm);
 
@@ -106,7 +106,7 @@ namespace OdontoSoft.Web.Controllers
       return RedirectToAction("Edit", new { pacienteId = id });
     }
 
-    // ── DETALLES ─────────────────────────────────────────────
+    // -- DETALLES ---------------------------------------------
 
     [HttpPost]
     public JsonResult GuardarDetalle([FromBody] PresupuestoDetalleDto vm)
@@ -173,7 +173,7 @@ namespace OdontoSoft.Web.Controllers
       }
     }
 
-    // ── PAGOS ─────────────────────────────────────────────────
+    // -- PAGOS -------------------------------------------------
 
     [HttpPost]
     public JsonResult GuardarPago([FromBody] PagoDto vm)
@@ -202,7 +202,7 @@ namespace OdontoSoft.Web.Controllers
 
         _unitOfWork.Save();
 
-        // Actualizar estado del presupuesto si está completamente pagado
+        // Actualizar estado del presupuesto si est� completamente pagado
         totalPagado += vm.Monto;
         if (totalPagado >= presupuesto.Total)
         {
@@ -299,7 +299,7 @@ namespace OdontoSoft.Web.Controllers
       }
     }
 
-    // ── HELPERS ───────────────────────────────────────────────
+    // -- HELPERS -----------------------------------------------
 
     private void RecalcularTotal(int presupuestoId)
     {

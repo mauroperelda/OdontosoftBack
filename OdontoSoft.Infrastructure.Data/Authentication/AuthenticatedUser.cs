@@ -1,15 +1,16 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using OdontoSoft.Application.Abstractions;
 
 namespace OdontoSoft.Infrastructure.Data.Authentication;
 
 /// <summary>
-/// Implementación de <see cref="IAuthenticatedUser"/> que extrae los claims
-/// del <see cref="HttpContext"/> actual. Vive en OdontoSoft.Data para que
-/// tanto OdontoSoft.API (JWT) como OdontoSoft.Web (cookies) puedan
+/// Implementación de <see cref="ICurrentUser"/> que extrae los claims
+/// del <see cref="HttpContext"/> actual. Vive en OdontoSoft.Infrastructure.Data
+/// para que tanto OdontoSoft.API (JWT) como OdontoSoft.Web (cookies) puedan
 /// registrarla en su DI sin acoplarse entre sí.
 /// </summary>
-public class AuthenticatedUser : IAuthenticatedUser
+public class AuthenticatedUser : ICurrentUser
 {
   private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -43,20 +44,23 @@ public class AuthenticatedUser : IAuthenticatedUser
     return s == "1" || s == "TRUE";
   }
 
-  public int GetId()
+  public int Id
   {
-    var raw = GetClaimValue("Id");
-    return int.TryParse(raw, out var id) ? id : 0;
+    get
+    {
+      var raw = GetClaimValue("Id");
+      return int.TryParse(raw, out var id) ? id : 0;
+    }
   }
 
-  public string? GetUserName() => GetClaimValue(ClaimTypes.Name);
+  public string? UserName => GetClaimValue(ClaimTypes.Name);
 
-  public string? GetEmail() => GetClaimValue(ClaimTypes.Email);
+  public string? Email => GetClaimValue(ClaimTypes.Email);
 
-  public bool GetAdministrador() =>
+  public bool IsAdministrator =>
       GetClaimValueAsBoolean(PermissionCodes.ADMINISTRATOR_CODE);
 
-  public bool GetSuperUsuario() =>
+  public bool IsSuperUser =>
       GetClaimValueAsBoolean(PermissionCodes.SUPERUSER_CODE);
 
   public bool HasPermission(string permissionCode) => GetClaimRole(permissionCode);

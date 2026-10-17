@@ -1,16 +1,16 @@
 /* ************************************************************************************************************************************* */
 /* En este archivo solo se debe modificar el constructor en caso de ser necesario. No se debe agregar ninguna otra funcionalidad */
 /* ************************************************************************************************************************************* */
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Web.Browser;
 using OdontoSoft.Web.Controllers;
-using OdontoSoft.Services;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Services;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Infrastructure.Data.Repository;
 
 namespace OdontoSoft.Web.Controllers
@@ -23,14 +23,14 @@ namespace OdontoSoft.Web.Controllers
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
     private readonly ILocalidadServices _localidadServices;
     private readonly IConfiguration _configuration;
 
     public LocalidadController(ILogger<LocalidadController> logger, IUnitOfWork unitOfWork,
         IHttpContextAccessor accessor, LinkGenerator generator,
         IHostEnvironment hostEnvironment, IMemoryCache memoryCache,
-        IAuthenticatedUser authenticatedUser, ILocalidadServices localidadServices, IConfiguration configuration) : base("Localidad")
+        ICurrentUser authenticatedUser, ILocalidadServices localidadServices, IConfiguration configuration) : base("Localidad")
     {
       _logger = logger;
       _unitOfWork = unitOfWork;

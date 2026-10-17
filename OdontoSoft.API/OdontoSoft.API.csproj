@@ -32,7 +32,7 @@
     <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
     <ProjectReference Include="..\OdontoSoft.Infrastructure.Data\OdontoSoft.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
-    <ProjectReference Include="..\OdontoSoft.Services\OdontoSoft.Services.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Application\OdontoSoft.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

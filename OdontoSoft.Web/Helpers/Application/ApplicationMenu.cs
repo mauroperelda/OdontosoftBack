@@ -1,11 +1,11 @@
-//using OdontoSoft.Infrastructure.Data.Authentication;
+//using OdontoSoft.Application.Abstractions;
 //using ExtraCore.Data.Repository.UOW;
 //using ExtraCore.Web.Helpers.Constants;
 using OdontoSoft.Web.Helpers.Menu;
 //using ExtraCore.Web.Medve.Browser;
 using Microsoft.Extensions.Caching.Memory;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Web.Browser;
 using OdontoSoft.Web.Helpers.Constants;
 
@@ -19,13 +19,13 @@ namespace OdontoSoft.Web.Helpers.Application
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
     private readonly BrowserCacheHelper _browserCacheHelper;
 
     public ApplicationMenu(ILogger<ApplicationMenu> logger, IUnitOfWork unitOfWork,
         IHttpContextAccessor accessor, LinkGenerator generator,
         IHostEnvironment hostEnvironment, IMemoryCache memoryCache,
-        IAuthenticatedUser authenticatedUser)
+        ICurrentUser authenticatedUser)
     {
 
       _logger = logger;

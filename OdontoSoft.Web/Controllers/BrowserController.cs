@@ -1,5 +1,5 @@
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
 //using OdontoSoft.Web.Attributes;
 using OdontoSoft.Web.Controllers;
 using OdontoSoft.Web.Browser;
@@ -23,13 +23,13 @@ namespace OdontoSoft.Web.Controllers
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
     private readonly BrowserCacheHelper _browserCacheHelper;
 
     public BrowserController(ILogger<BrowserController> logger, IUnitOfWork unitOfWork
         , IHttpContextAccessor accessor, LinkGenerator generator
         , IHostEnvironment hostEnvironment, IMemoryCache memoryCache
-        , IAuthenticatedUser authenticatedUser)
+        , ICurrentUser authenticatedUser)
     {
       _logger = logger;
       _unitOfWork = unitOfWork;

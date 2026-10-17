@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using System;
 using System.Collections.Generic;

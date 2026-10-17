@@ -1,4 +1,4 @@
-using OdontoSoft.Services;
+using OdontoSoft.Application.Services;
 
 namespace OdontoSoft.Web.Startup
 {

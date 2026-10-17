@@ -1,6 +1,6 @@
-﻿using OdontoSoft.Infrastructure.Data.DAL;
+using OdontoSoft.Infrastructure.Data.DAL;
 //using OdontoSoft.Infrastructure.Data.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 //using OdontoSoft.Contracts.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -41,7 +41,7 @@ namespace OdontoSoft.Infrastructure.Data.Repository.StoredProcedure
       //
       // La PL/pgSQL function `get_pacientes_for_turno` igual existe (ver migration
       // CreateGetPacientesForTurnoFunction) por si en el futuro queremos exponerla
-      // a otros clientes (psql, un ETL, el front directo). No la usamos desde acá
+      // a otros clientes (psql, un ETL, el front directo). No la usamos desde ac�
       // porque EF Core 9 no soporta `Database.SqlQueryRaw<T>` para tipos complejos
       // (eso es EF Core 10).
       var query = _context.Paciente.AsNoTracking();

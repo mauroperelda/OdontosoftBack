@@ -1,4 +1,4 @@
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 using Mauro.Entities.Base;
 
 namespace OdontoSoft.Infrastructure.Data.Repository.UOW

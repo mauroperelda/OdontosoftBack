@@ -13,8 +13,8 @@ using System.Reflection.Metadata;
 using System.Security.Claims;
 using OdontoSoft.Web.Helpers.Authentication.DTO;
 using Microsoft.AspNetCore.Authorization;
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
 
 namespace ExtraCore.Web.Controllers
 {
@@ -27,7 +27,7 @@ namespace ExtraCore.Web.Controllers
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
     //private readonly IMailSender _mailSender;
     private readonly IAccountService _accountService;
 
@@ -35,7 +35,7 @@ namespace ExtraCore.Web.Controllers
     public AccountController(ILogger<AccountController> logger,
         IHttpContextAccessor accessor, LinkGenerator generator,
         IHostEnvironment hostEnvironment, IMemoryCache memoryCache,
-        IAccountService accountService, IAuthenticatedUser authenticatedUser, IUnitOfWork unitOfWork)
+        IAccountService accountService, ICurrentUser authenticatedUser, IUnitOfWork unitOfWork)
     {
       _logger = logger;
       _unitOfWork = unitOfWork;

@@ -2,7 +2,7 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL;
 using OdontoSoft.Infrastructure.Data.Repository;
 using OdontoSoft.Domain.Models;
@@ -157,13 +157,13 @@ public class GenericRepositoryTests
     prop!.SetValue(entity, stateValue);
   }
 
-  private sealed class FakeUser : IAuthenticatedUser
+  private sealed class FakeUser : ICurrentUser
   {
-    public int GetId() => 1;
-    public string GetUserName() => "test";
-    public bool GetAdministrador() => false;
-    public bool GetSuperUsuario() => false;
-    public string GetEmail() => "";
+    public int Id => 1;
+    public string UserName => "test";
+    public string Email => "";
+    public bool IsAdministrator => false;
+    public bool IsSuperUser => false;
     public bool HasPermission(string permissionCode) => false;
   }
 }

@@ -2,7 +2,7 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL;
 using OdontoSoft.Domain.Models;
 using Xunit;
@@ -129,17 +129,15 @@ public class SaveChangesAuditTests
   }
 
   /// <summary>
-  /// Stub mínimo de IAuthenticatedUser para no depender del JWT pipeline.
+  /// Stub mínimo de ICurrentUser para no depender del JWT pipeline.
   /// </summary>
-  private sealed class FakeAuthenticatedUser : IAuthenticatedUser
+  private sealed class FakeAuthenticatedUser : ICurrentUser
   {
     public int Id { get; init; }
     public string UserName { get; init; } = "";
-    public int GetId() => Id;
-    public string GetUserName() => UserName;
-    public bool GetAdministrador() => false;
-    public bool GetSuperUsuario() => false;
-    public string GetEmail() => "";
+    public string Email { get; init; } = "";
+    public bool IsAdministrator { get; init; }
+    public bool IsSuperUser { get; init; }
     public bool HasPermission(string permissionCode) => false;
   }
 }

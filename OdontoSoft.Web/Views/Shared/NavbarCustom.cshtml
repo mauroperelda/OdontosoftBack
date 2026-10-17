@@ -1,5 +1,5 @@
-﻿@using OdontoSoft.Infrastructure.Data.Authentication;
-@inject IAuthenticatedUser _authenticatedUser
+@using OdontoSoft.Application.Abstractions;
+@inject ICurrentUser _authenticatedUser
 
 
 <div class="navbar-custom">
@@ -23,8 +23,8 @@
                     <img src="@(Url.Content("~/images/users/icons8-user-96.png"))" alt="user-image" class="rounded-circle">
                 </span>
                 <span>
-                    <span class="account-user-name text-capitalize">@_authenticatedUser.GetUserName()</span>
-                    <span class="account-position">@_authenticatedUser.GetEmail()</span>
+                    <span class="account-user-name text-capitalize">@_authenticatedUser.UserName</span>
+                    <span class="account-position">@_authenticatedUser.Email</span>
                 </span>
             </a>
             @*Combo al tocar el Usuario*@
@@ -36,7 +36,7 @@
 
                 <a asp-controller="account" asp-action="changepassword" class="dropdown-item notify-item">
                     <i class="mdi mdi-lock-reset me-1"></i>
-                    <span>Cambiar contraseña</span>
+                    <span>Cambiar contrase�a</span>
                 </a>
 
                 <a asp-controller="account" asp-action="logout" class="dropdown-item notify-item">

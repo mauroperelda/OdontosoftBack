@@ -1,5 +1,5 @@
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Web.Helpers.Authentication;
 using OdontoSoft.Web.Browser;

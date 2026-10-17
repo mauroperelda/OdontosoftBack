@@ -1,4 +1,4 @@
-ï»¿using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -125,18 +125,18 @@ namespace OdontoSoft.Web.Controllers
                 ObjectState = ObjectState.Added
               });
 
-              // TambiÃ©n la agrego al HashSet para evitar duplicados dentro del mismo JSON
+              // También la agrego al HashSet para evitar duplicados dentro del mismo JSON
               localidadesExistentesSet.Add(key);
             }
           }
           else
           {
-            // PodÃ©s loguear las que no encontrÃ³
+            // Podés loguear las que no encontró
             Console.WriteLine($"Provincia no encontrada: {loc.provincia.nombre}");
           }
         }
 
-        // ðŸ‘‰ Ahora hacemos el bulk insert con SqlBulkCopy
+        // ?? Ahora hacemos el bulk insert con SqlBulkCopy
         if (localidadesAInsertar.Any())
         {
           var connectionString = _configuration.GetConnectionString("DefaultConnection");

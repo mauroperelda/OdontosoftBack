@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
-using OdontoSoft.Services;
-using OdontoSoft.Services.Common;
+using OdontoSoft.Application.Services;
+using OdontoSoft.Application.Common;
 
 namespace OdontoSoft.API.Controllers
 {
@@ -107,7 +107,7 @@ namespace OdontoSoft.API.Controllers
     {
       var fieldErrors = result.FieldErrors?
         .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
-      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inválida.", fieldErrors);
+      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inv�lida.", fieldErrors);
     }
   }
 

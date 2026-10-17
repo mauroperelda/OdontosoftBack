@@ -1,8 +1,8 @@
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL;
 //using OdontoSoft.Infrastructure.Data.Helpers;
 using OdontoSoft.Infrastructure.Data.Repository.Generic;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Infrastructure.Data.Repository.StoredProcedure;
 using OdontoSoft.Domain.Models;
 //using MedveCore.Entities.Base;
@@ -18,12 +18,12 @@ namespace OdontoSoft.Infrastructure.Data.Repository.UOW
 
     private readonly ILogger _logger;
 
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
 
     public IStoredProcedureRepository StoredProcedureRepository { get; private set; }
 
 
-    public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, IAuthenticatedUser authenticatedUser)
+    public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, ICurrentUser authenticatedUser)
     {
       _context = context;
       _logger = logger;

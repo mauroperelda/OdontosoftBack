@@ -6,7 +6,7 @@ using Mauro.RepositoryPattern.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL.Generic;
 
 namespace OdontoSoft.Infrastructure.Data.DAL
@@ -14,9 +14,9 @@ namespace OdontoSoft.Infrastructure.Data.DAL
   public partial class OdontosoftContext : DbContext
   {
     protected readonly ILogger _logger;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
 
-    public OdontosoftContext(DbContextOptions<OdontosoftContext> options, ILogger<OdontosoftContext> logger, IAuthenticatedUser authenticatedUser)
+    public OdontosoftContext(DbContextOptions<OdontosoftContext> options, ILogger<OdontosoftContext> logger, ICurrentUser authenticatedUser)
         : base(options)
     {
       _logger = logger;
@@ -86,8 +86,8 @@ namespace OdontoSoft.Infrastructure.Data.DAL
       var changeSet = ChangeTracker.Entries<IAuditable>().ToList();
       if (changeSet.Count == 0) return;
 
-      int userId = _authenticatedUser.GetId();
-      string userName = _authenticatedUser.GetUserName();
+      int userId = _authenticatedUser.Id;
+      string userName = _authenticatedUser.UserName ?? string.Empty;
       DateTime auditDate = DateTime.Now;
 
       foreach (var dbEntityEntry in changeSet)

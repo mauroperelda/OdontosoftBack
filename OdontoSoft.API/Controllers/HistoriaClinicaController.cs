@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
-using OdontoSoft.Services;
-using OdontoSoft.Services.Common;
+using OdontoSoft.Application.Services;
+using OdontoSoft.Application.Common;
 
 namespace OdontoSoft.API.Controllers
 {
@@ -38,7 +38,7 @@ namespace OdontoSoft.API.Controllers
     public ActionResult<HistoriaClinica> GetById(int id)
     {
       var hc = _unitOfWork.HistoriaClinicaRepository.GetHistoriaClinicaById(id);
-      if (hc == null) return ApiErrorResponse.NotFound("Historia clínica no encontrada.");
+      if (hc == null) return ApiErrorResponse.NotFound("Historia cl�nica no encontrada.");
       return Ok(hc);
     }
 
@@ -47,12 +47,12 @@ namespace OdontoSoft.API.Controllers
     public ActionResult<HistoriaClinica> GetByPaciente(int pacienteId)
     {
       var hc = _unitOfWork.HistoriaClinicaRepository.GetFullByPacienteId(pacienteId);
-      if (hc == null) return ApiErrorResponse.NotFound("El paciente no tiene historia clínica.");
+      if (hc == null) return ApiErrorResponse.NotFound("El paciente no tiene historia cl�nica.");
       return Ok(hc);
     }
 
     // POST api/historiaclinica
-    // Validación de shape delegada a HistoriaClinicaDtoValidator.
+    // Validaci�n de shape delegada a HistoriaClinicaDtoValidator.
     [HttpPost("Create")]
     public ActionResult<HistoriaClinica> Create([FromBody] HistoriaClinicaDto vm)
     {
@@ -70,7 +70,7 @@ namespace OdontoSoft.API.Controllers
       var result = _historiaClinicaServices.Update(id, vm);
       if (!result.IsSuccess)
       {
-        if (result.Error == "Historia clínica no encontrada.")
+        if (result.Error == "Historia cl�nica no encontrada.")
           return ApiErrorResponse.NotFound(result.Error);
         return BadRequest(result);
       }
@@ -87,7 +87,7 @@ namespace OdontoSoft.API.Controllers
       return NoContent();
     }
 
-    // ── ODONTOGRAMA ────────────────────────────────────────────────────────────
+    // -- ODONTOGRAMA ------------------------------------------------------------
 
     // POST api/historiaclinica/pieza
     [HttpPost("GuardarPieza")]
@@ -98,7 +98,7 @@ namespace OdontoSoft.API.Controllers
       return Ok(new { mensaje = "Pieza guardada correctamente" });
     }
 
-    // ── FICHAS DE TRATAMIENTO ─────────────────────────────────────────────────
+    // -- FICHAS DE TRATAMIENTO -------------------------------------------------
 
     // POST api/historiaclinica/ficha
     [HttpPost("GuardarFicha")]
@@ -146,7 +146,7 @@ namespace OdontoSoft.API.Controllers
     {
       var fieldErrors = result.FieldErrors?
         .ToDictionary(kv => kv.Key, kv => new[] { kv.Value });
-      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inválida.", fieldErrors);
+      return ApiErrorResponse.BadRequest(result.Error ?? "Solicitud inv�lida.", fieldErrors);
     }
   }
 }

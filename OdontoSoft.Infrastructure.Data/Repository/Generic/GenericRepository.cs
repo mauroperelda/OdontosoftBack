@@ -3,7 +3,7 @@ using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL;
 using OdontoSoft.Infrastructure.Data.Repository.Generic;
 using System;
@@ -19,9 +19,9 @@ namespace OdontoSoft.Infrastructure.Data.Repository
     protected OdontosoftContext _context;
     protected DbSet<T> _dbSet;
     protected readonly ILogger _logger;
-    protected readonly IAuthenticatedUser _authenticatedUser;
+    protected readonly ICurrentUser _authenticatedUser;
 
-    public GenericRepository(OdontosoftContext context, ILogger logger, IAuthenticatedUser authenticatedUser)
+    public GenericRepository(OdontosoftContext context, ILogger logger, ICurrentUser authenticatedUser)
     {
       _context = context;
       _logger = logger;

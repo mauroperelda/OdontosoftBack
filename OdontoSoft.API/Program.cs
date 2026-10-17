@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
@@ -11,24 +11,26 @@ using OdontoSoft.API.Filters;
 using OdontoSoft.API.Helpers;
 using OdontoSoft.API.Mapper;
 using OdontoSoft.API.Validators;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using Serilog;
 using Serilog.Formatting.Compact;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using OdontoSoft.Infrastructure.Data.DAL;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
-using OdontoSoft.Services;
+
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Services;
 
 // Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
 // con Kind=Utc/Unspecified/Local en columnas "timestamp without time zone" sin
-// lanzar excepción. Sin esto, los SaveChanges que usan DateTime.UtcNow (auditoría)
+// lanzar excepci�n. Sin esto, los SaveChanges que usan DateTime.UtcNow (auditor�a)
 // fallan al hacer INSERT contra columnas de tipo timestamp. Debe setearse ANTES
 // de cualquier llamada a Npgsql.
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-// ── Serilog (configurado ANTES del WebApplicationBuilder para que capture
-//    cualquier log emitido durante el startup) ───────────────────────────────
+// -- Serilog (configurado ANTES del WebApplicationBuilder para que capture
+//    cualquier log emitido durante el startup) -------------------------------
 Log.Logger = new LoggerConfiguration()
   .ReadFrom.Configuration(new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -45,18 +47,18 @@ try
   var builder = WebApplication.CreateBuilder(args);
   builder.Host.UseSerilog();
 
-  // ── Validación temprana de configuración crítica ─────────────────────────────
-  // Falla ruidosamente al arranque si Jwt:Key o la cadena de conexión están
-  // ausentes o son inválidas. Mejor un crash limpio que un HMAC con clave vacía
-  // (que pasa validación pero firma tokens inválidos).
+  // -- Validaci�n temprana de configuraci�n cr�tica -----------------------------
+  // Falla ruidosamente al arranque si Jwt:Key o la cadena de conexi�n est�n
+  // ausentes o son inv�lidas. Mejor un crash limpio que un HMAC con clave vac�a
+  // (que pasa validaci�n pero firma tokens inv�lidos).
   ValidateCriticalConfig(builder.Configuration);
 
-  // ── Base de Datos ─────────────────────────────────────────────────────────────
+  // -- Base de Datos -------------------------------------------------------------
   var connString = builder.Configuration.GetConnectionString("DefaultConnection");
   builder.Services.AddDbContext<OdontosoftContext>(options =>
   {
-    // Convención de naming: "Paciente" → tabla "paciente", "CreatedUserId" → "created_user_id".
-    // PostgreSQL es case-sensitive con identifiers quoted; snake_case lowercase es idiomático
+    // Convenci�n de naming: "Paciente" ? tabla "paciente", "CreatedUserId" ? "created_user_id".
+    // PostgreSQL es case-sensitive con identifiers quoted; snake_case lowercase es idiom�tico
     // y nos ahorra quoted identifiers en queries raw.
     options.UseSnakeCaseNamingConvention();
     // Las migrations viven en OdontoSoft.Data (no en OdontoSoft.Web) para que
@@ -64,10 +66,10 @@ try
     options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
   });
 
-  // ── Repositorio / UnitOfWork ───────────────────────────────────────────────────
-  builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+  // -- Repositorio / UnitOfWork ---------------------------------------------------
+  builder.Services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork, OdontoSoft.Infrastructure.Data.Repository.UOW.UnitOfWork>();
 
-  // ── Servicios de dominio ───────────────────────────────────────────────────────
+  // -- Servicios de dominio -------------------------------------------------------
   builder.Services.AddHttpClient<ILocalidadServices, LocalidadServices>();
   builder.Services.AddScoped<IPresupuestoServices, PresupuestoServices>();
   builder.Services.AddScoped<ITurnoServices, TurnoServices>();
@@ -78,7 +80,7 @@ try
   builder.Services.AddScoped<ITratamientoServices, TratamientoServices>();
   builder.Services.AddScoped<IPeriodontogramaServices, PeriodontogramaServices>();
 
-  // ── Auth JWT (comparte Key/Issuer/Audience con ApiGetToken) ──────────────────
+  // -- Auth JWT (comparte Key/Issuer/Audience con ApiGetToken) ------------------
   var jwtKey = builder.Configuration["Jwt:Key"]!;
   var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "https://localhost:7229";
   var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "https://localhost:7229";
@@ -96,13 +98,13 @@ try
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-        // 30s de skew para tolerar desincronización leve entre el emisor
+        // 30s de skew para tolerar desincronizaci�n leve entre el emisor
         // (ApiGetToken) y este servicio. Antes era 0, lo que provocaba
         // 401s espurios cuando el reloj se desviaba.
         ClockSkew = TimeSpan.FromSeconds(30),
       };
 
-      // Diagnóstico: a nivel Debug para no spammear en producción.
+      // Diagn�stico: a nivel Debug para no spammear en producci�n.
       options.IncludeErrorDetails = builder.Environment.IsDevelopment();
       options.Events = new JwtBearerEvents
       {
@@ -143,11 +145,11 @@ try
     });
   builder.Services.AddAuthorization();
 
-  // ── Controllers + JSON (camelCase, sin ciclos, ignora nulls al escribir) ─────
+  // -- Controllers + JSON (camelCase, sin ciclos, ignora nulls al escribir) -----
   // El FluentValidationFilter corre los IValidator<T> registrados en DI contra
-  // los argumentos de cada acción y vuelca los errores al ModelState. Después,
-  // el comportamiento automático de [ApiController] corta si ModelState es
-  // inválido y el InvalidModelStateResponseFactory los formatea.
+  // los argumentos de cada acci�n y vuelca los errores al ModelState. Despu�s,
+  // el comportamiento autom�tico de [ApiController] corta si ModelState es
+  // inv�lido y el InvalidModelStateResponseFactory los formatea.
   builder.Services.AddScoped<FluentValidationFilter>();
   builder.Services.AddControllers(options =>
     {
@@ -160,14 +162,14 @@ try
       options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
       options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
       // Acepta "" como null en int?, decimal?, DateTime?, etc. y devuelve
-      // mensajes en español cuando el valor es inválido.
+      // mensajes en espa�ol cuando el valor es inv�lido.
       options.JsonSerializerOptions.Converters.Add(new LenientNullableJsonConverter());
     });
 
   // Registra todos los IValidator<T> de este assembly (los 10 que viven en
-  // OdontoSoft.API/Validators/) como transient en DI. La primera línea ya
-  // escanea todo el assembly; las siguientes son explícitas para documentar
-  // qué VMs tienen validator y tener un grep-friendly listado.
+  // OdontoSoft.API/Validators/) como transient en DI. La primera l�nea ya
+  // escanea todo el assembly; las siguientes son expl�citas para documentar
+  // qu� VMs tienen validator y tener un grep-friendly listado.
   builder.Services.AddValidatorsFromAssemblyContaining<PacienteDtoValidator>();
   builder.Services.AddValidatorsFromAssemblyContaining<ProfesionalDtoValidator>();
   builder.Services.AddValidatorsFromAssemblyContaining<PresupuestoDtoValidator>();
@@ -183,8 +185,8 @@ try
   // y registra los mappings en un IMapper injectable.
   builder.Services.AddAutoMapper(typeof(ApplicationProfile));
 
-  // ── Formato uniforme de errores de validación ─────────────────────────────────
-  // Cuando [ApiController] detecta ModelState inválido, en vez del ProblemDetails
+  // -- Formato uniforme de errores de validaci�n ---------------------------------
+  // Cuando [ApiController] detecta ModelState inv�lido, en vez del ProblemDetails
   // por defecto, devolvemos { error, errors } que es lo que el front espera.
   builder.Services.Configure<ApiBehaviorOptions>(options =>
   {
@@ -194,7 +196,7 @@ try
       foreach (var (key, entry) in context.ModelState)
       {
         if (entry is null || entry.Errors.Count == 0) continue;
-        // Sacamos el prefijo "$.data." o el nombre del parámetro que
+        // Sacamos el prefijo "$.data." o el nombre del par�metro que
         // MVC agrega a las keys de ModelState para binding de body.
         var field = ModelStateKeys.Strip(key);
         var messages = entry.Errors
@@ -205,15 +207,15 @@ try
       }
 
       var summary = errors.Count == 0
-        ? "Los datos enviados no son válidos."
-        : "Revisá los campos marcados.";
+        ? "Los datos enviados no son v�lidos."
+        : "Revis� los campos marcados.";
 
       return new BadRequestObjectResult(new { error = summary, errors });
     };
   });
 
-  // ── CORS (lista blanca por ambiente) ─────────────────────────────────────────
-  // Origins permitidos vienen de configuración. En Development suele ser el front
+  // -- CORS (lista blanca por ambiente) -----------------------------------------
+  // Origins permitidos vienen de configuraci�n. En Development suele ser el front
   // local (Vite/React). En Production, el dominio del front deployado.
   var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? (builder.Environment.IsDevelopment()
@@ -226,7 +228,7 @@ try
     {
       if (allowedOrigins.Length == 0)
       {
-        // Fallback permisivo solo si no se configuró nada (no debería pasar).
+        // Fallback permisivo solo si no se configur� nada (no deber�a pasar).
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -241,16 +243,16 @@ try
     });
   });
 
-  // ── Form options (multipart upload de imágenes de pacientes) ───────────────────
+  // -- Form options (multipart upload de im�genes de pacientes) -------------------
   builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
   {
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10 MB
     options.ValueLengthLimit = 10 * 1024 * 1024;
   });
 
-  // ── OpenAPI nativo + Scalar UI ────────────────────────────────────────────────
-  // ── Swagger / OpenAPI ─────────────────────────────────────────────────────────
-  // Genera el documento OpenAPI en /swagger/v1/swagger.json y la UI clásica de
+  // -- OpenAPI nativo + Scalar UI ------------------------------------------------
+  // -- Swagger / OpenAPI ---------------------------------------------------------
+  // Genera el documento OpenAPI en /swagger/v1/swagger.json y la UI cl�sica de
   // Swagger en /swagger. Habilitado siempre (Development y Production) porque
   // las rutas no son sensibles y el equipo de front lo usa como referencia.
   builder.Services.AddEndpointsApiExplorer();
@@ -260,14 +262,14 @@ try
     {
       Title = "OdontoSoft API",
       Version = "v1",
-      Description = "API REST del consultorio odontológico. Todos los endpoints requieren JWT Bearer excepto /api/Account/Login.",
+      Description = "API REST del consultorio odontol�gico. Todos los endpoints requieren JWT Bearer excepto /api/Account/Login.",
     });
 
-    // Definición del esquema "Bearer" → habilita el botón "Authorize" en Swagger UI
-    // para pegar el JWT y que se envíe en cada request (header Authorization: Bearer …).
+    // Definici�n del esquema "Bearer" ? habilita el bot�n "Authorize" en Swagger UI
+    // para pegar el JWT y que se env�e en cada request (header Authorization: Bearer �).
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
-      Description = "JWT emitido por ApiGetToken. Pegá SOLO el token (sin el prefijo 'Bearer ').",
+      Description = "JWT emitido por ApiGetToken. Peg� SOLO el token (sin el prefijo 'Bearer ').",
       Name = "Authorization",
       In = Microsoft.OpenApi.Models.ParameterLocation.Header,
       Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
@@ -290,18 +292,18 @@ try
     });
   });
 
-  // ── Health checks (Fase 5.4) ──────────────────────────────────────────────────
-  // Liveness: ¿el proceso está vivo? (sin tocar DB)
-  // Readiness: ¿está listo para recibir tráfico? (incluye el ping a PostgreSQL)
+  // -- Health checks (Fase 5.4) --------------------------------------------------
+  // Liveness: �el proceso est� vivo? (sin tocar DB)
+  // Readiness: �est� listo para recibir tr�fico? (incluye el ping a PostgreSQL)
   builder.Services.AddHealthChecks()
     .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: new[] { "live" })
     .AddNpgSql(connString, tags: new[] { "ready" });
 
-  // ── Rate limiting nativo (Fase 5.5) ───────────────────────────────────────────
+  // -- Rate limiting nativo (Fase 5.5) -------------------------------------------
   // Ventana fija de 1 minuto, 100 requests por IP. Cubre el caso "alguien se
   // loguea 1000 veces por segundo tratando de adivinar credenciales" sin
   // agregar una dependencia externa. Endpoints sensibles (login, upload de
-  // imágenes) lo aplican con [EnableRateLimiting("api")].
+  // im�genes) lo aplican con [EnableRateLimiting("api")].
   builder.Services.AddRateLimiter(options =>
   {
     options.AddFixedWindowLimiter("api", opt =>
@@ -313,14 +315,14 @@ try
   });
 
   builder.Services.AddHttpContextAccessor();
-  builder.Services.AddScoped<IAuthenticatedUser, AuthenticatedUser>();
+  builder.Services.AddScoped<ICurrentUser, AuthenticatedUser>();
 
   var app = builder.Build();
 
-  // ── EF Migrations automáticas al iniciar ─────────────────────────────────────
+  // -- EF Migrations autom�ticas al iniciar -------------------------------------
   // Aplica las migrations pendientes en cada startup. Idempotente: si no hay
   // nada nuevo, no hace nada. Si falla (DB no accesible, migration corrupta),
-  // la API no arranca — Render detecta el crash y deja el deploy viejo
+  // la API no arranca � Render detecta el crash y deja el deploy viejo
   // sirviendo en lugar del nuevo.
   using (var scope = app.Services.CreateScope())
   {
@@ -335,14 +337,14 @@ try
     }
   }
 
-  // ── Pipeline HTTP ─────────────────────────────────────────────────────────────
+  // -- Pipeline HTTP -------------------------------------------------------------
   app.UseSwagger();
   app.UseSwaggerUI();
 
   //app.UseHttpsRedirection();
   app.UseCors("ReactFrontend");
 
-  // Diagnóstico de headers: solo en Development.
+  // Diagn�stico de headers: solo en Development.
   if (app.Environment.IsDevelopment())
   {
     app.Use(async (ctx, next) =>
@@ -368,14 +370,14 @@ try
   app.UseAuthorization();
   app.UseRateLimiter();
 
-  // Middleware global: traduce cualquier excepción no controlada a la shape
+  // Middleware global: traduce cualquier excepci�n no controlada a la shape
   // uniforme { error, errors } con el status code apropiado.
   app.UseMiddleware<GlobalExceptionMiddleware>();
 
-  // Captura errores de deserialización JSON y los reescribe como
+  // Captura errores de deserializaci�n JSON y los reescribe como
   // { error, errors: { Field: [...] } } que el front sabe interpretar.
-  // Se registra DESPUÉS del global para que las JsonException específicas
-  // no caigan en el fallback genérico.
+  // Se registra DESPU�S del global para que las JsonException espec�ficas
+  // no caigan en el fallback gen�rico.
   app.UseMiddleware<JsonExceptionMiddleware>();
 
   app.MapControllers();
@@ -393,24 +395,24 @@ try
 }
 catch (Exception ex)
 {
-  Log.Fatal(ex, "La aplicación falló al arrancar.");
+  Log.Fatal(ex, "La aplicaci�n fall� al arrancar.");
 }
 finally
 {
   Log.CloseAndFlush();
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// -- Helpers -------------------------------------------------------------------
 static void ValidateCriticalConfig(IConfiguration config)
 {
   var jwtKey = config["Jwt:Key"];
   if (string.IsNullOrWhiteSpace(jwtKey))
-    throw new InvalidOperationException("Falta Jwt:Key en la configuración.");
+    throw new InvalidOperationException("Falta Jwt:Key en la configuraci�n.");
   if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
     throw new InvalidOperationException(
       $"Jwt:Key debe tener al menos 32 bytes (256 bits) para HS256. Tiene {Encoding.UTF8.GetByteCount(jwtKey)}.");
 
   var connString = config.GetConnectionString("DefaultConnection");
   if (string.IsNullOrWhiteSpace(connString))
-    throw new InvalidOperationException("Falta ConnectionStrings:DefaultConnection en la configuración.");
+    throw new InvalidOperationException("Falta ConnectionStrings:DefaultConnection en la configuraci�n.");
 }

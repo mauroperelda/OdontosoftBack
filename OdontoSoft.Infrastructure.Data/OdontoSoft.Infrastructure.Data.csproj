@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -8,10 +8,10 @@
     <AssemblyName>OdontoSoft.Infrastructure.Data</AssemblyName>
   </PropertyGroup>
 
-  <!-- AuthenticatedUser implementa IAuthenticatedUser leyendo claims del HttpContext.
+  <!-- AuthenticatedUser implementa ICurrentUser leyendo claims del HttpContext.
        Esto requiere el shared framework de ASP.NET Core (lo expone cualquier host Web).
-       Se mantiene aquí (en lugar de en OdontoSoft.Web o en la API) para que ambos
-       consumidores puedan registrar la misma implementación en su DI. -->
+       Se mantiene aqu� (en lugar de en OdontoSoft.Web o en la API) para que ambos
+       consumidores puedan registrar la misma implementaci�n en su DI. -->
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
@@ -50,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Application\OdontoSoft.Application.csproj" />
     <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
     <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
   </ItemGroup>

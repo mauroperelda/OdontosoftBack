@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.Web.Models;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authentication;
@@ -11,7 +11,7 @@ using System.Globalization;
 using OdontoSoft.Infrastructure.Data.DAL;
 using Microsoft.EntityFrameworkCore;
 using OdontoSoft.Domain.Models;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Contracts.Dtos;
 
 namespace OdontoSoft.Web.Controllers

@@ -1,12 +1,12 @@
-Ôªøusing FluentAssertions;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
-using OdontoSoft.Services;
+using OdontoSoft.Application.Services;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Services;
@@ -14,7 +14,7 @@ namespace OdontoSoft.UnitTests.Services;
 /// <summary>
 /// Tests de HistoriaClinicaServices. Cubre la regla "una HC por paciente"
 /// (hoy la uniqueness la atrapa el handler de unique violation, pero
-/// agregar la validaci√≥n ac√° evita el round-trip al motor de DB).
+/// agregar la validaciÛn ac· evita el round-trip al motor de DB).
 /// </summary>
 public class HistoriaClinicaServicesTests
 {
@@ -25,7 +25,7 @@ public class HistoriaClinicaServicesTests
     return new HistoriaClinicaServices(
         NullLogger<HistoriaClinicaServices>.Instance,
         uow.Object,
-        new Mock<IAuthenticatedUser>().Object);
+        new Mock<ICurrentUser>().Object);
   }
 
   [Fact]
@@ -52,7 +52,7 @@ public class HistoriaClinicaServicesTests
     var result = service.Create(new HistoriaClinicaDto { PacienteId = 1 });
 
     result.IsSuccess.Should().BeFalse();
-    result.Error.Should().Contain("ya tiene una historia cl√≠nica");
+    result.Error.Should().Contain("ya tiene una historia clÌnica");
     result.FieldErrors.Should().ContainKey("PacienteId");
   }
 
@@ -66,6 +66,6 @@ public class HistoriaClinicaServicesTests
     var result = service.Update(99, new HistoriaClinicaDto { PacienteId = 1 });
 
     result.IsSuccess.Should().BeFalse();
-    result.Error.Should().Be("Historia cl√≠nica no encontrada.");
+    result.Error.Should().Be("Historia clÌnica no encontrada.");
   }
 }

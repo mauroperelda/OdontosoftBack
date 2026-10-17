@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
@@ -40,7 +40,7 @@ namespace OdontoSoft.API.Controllers
     }
 
     // POST api/profesional
-    // Validación de shape delegada a ProfesionalDtoValidator (FluentValidation).
+    // Validaci�n de shape delegada a ProfesionalDtoValidator (FluentValidation).
     [HttpPost("Create")]
     public ActionResult<ProfesionalDto> Create([FromBody] ProfesionalDto vm)
     {

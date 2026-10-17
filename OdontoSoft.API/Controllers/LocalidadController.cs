@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Mauro.RepositoryPattern.Infrastructure;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
-using OdontoSoft.Services;
+using OdontoSoft.Application.Services;
 using OdontoSoft.Contracts.Dtos;
 using System.Data;
 
@@ -91,7 +91,7 @@ namespace OdontoSoft.API.Controllers
       return Ok(new { mensaje = "Localidades sincronizadas correctamente." });
     }
 
-    // ── HELPERS ───────────────────────────────────────────────────────────────
+    // -- HELPERS ---------------------------------------------------------------
 
     private void BulkInsertLocalidades(GeorefResponseDto georefResponseDto)
     {

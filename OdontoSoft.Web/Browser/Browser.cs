@@ -1,4 +1,4 @@
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using Mauro.Entities.Base;
 using Mauro.RepositoryPattern.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ namespace OdontoSoft.Web.Browser
     private readonly IHttpContextAccessor _accessor;
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
 
 
     private string GetConfigFileName()
@@ -26,7 +26,7 @@ namespace OdontoSoft.Web.Browser
       return fileConfig;
     }
 
-    public Browser(IHttpContextAccessor accessor, LinkGenerator generator, IHostEnvironment hostEnvironment, IAuthenticatedUser authenticatedUser)
+    public Browser(IHttpContextAccessor accessor, LinkGenerator generator, IHostEnvironment hostEnvironment, ICurrentUser authenticatedUser)
     {
       _accessor = accessor;
       _generator = generator;

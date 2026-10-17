@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
 
 namespace OdontoSoft.Web.Controllers
 {
@@ -13,11 +13,11 @@ namespace OdontoSoft.Web.Controllers
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
 
     public PacienteController(ILogger<PacienteController> logger, IUnitOfWork unitOfWork,
         IHttpContextAccessor accessor, LinkGenerator generator, IHostEnvironment hostEnvironment,
-        IMemoryCache memoryCache, IAuthenticatedUser authenticatedUser) : base("Paciente")
+        IMemoryCache memoryCache, ICurrentUser authenticatedUser) : base("Paciente")
     {
       _logger = logger;
       _unitOfWork = unitOfWork;

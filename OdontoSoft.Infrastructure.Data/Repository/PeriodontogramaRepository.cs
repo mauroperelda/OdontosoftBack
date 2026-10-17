@@ -1,6 +1,6 @@
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Infrastructure.Data.DAL;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,7 +12,7 @@ namespace OdontoSoft.Infrastructure.Data.Repository
     public PeriodontogramaRepository(
       OdontosoftContext context,
       ILogger logger,
-      IAuthenticatedUser authenticatedUser)
+      ICurrentUser authenticatedUser)
       : base(context, logger, authenticatedUser)
     {
     }

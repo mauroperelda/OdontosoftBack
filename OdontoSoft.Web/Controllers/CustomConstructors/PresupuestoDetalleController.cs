@@ -1,9 +1,9 @@
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Web.Browser;
 
 namespace OdontoSoft.Web.Controllers
@@ -16,12 +16,12 @@ namespace OdontoSoft.Web.Controllers
     private readonly LinkGenerator _generator;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAuthenticatedUser _authenticatedUser;
+    private readonly ICurrentUser _authenticatedUser;
 
     public PresupuestoDetalleController(ILogger<PresupuestoDetalleController> logger, IUnitOfWork unitOfWork,
         IHttpContextAccessor accessor, LinkGenerator generator,
         IHostEnvironment hostEnvironment, IMemoryCache memoryCache,
-        IAuthenticatedUser authenticatedUser) : base("PresupuestoDetalle")
+        ICurrentUser authenticatedUser) : base("PresupuestoDetalle")
     {
       _logger = logger;
       _unitOfWork = unitOfWork;

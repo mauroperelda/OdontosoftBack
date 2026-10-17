@@ -1,19 +1,19 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
-using OdontoSoft.Services;
+using OdontoSoft.Application.Services;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Services;
 
 /// <summary>
 /// Tests de OdontogramaPiezaServices. Cubre la regla de upsert por
-/// (HC, NumeroPieza) — la misma que usa HistoriaClinicaController.GuardarPieza.
+/// (HC, NumeroPieza) � la misma que usa HistoriaClinicaController.GuardarPieza.
 /// </summary>
 public class OdontogramaPiezaServicesTests
 {
@@ -24,7 +24,7 @@ public class OdontogramaPiezaServicesTests
     return new OdontogramaPiezaServices(
         NullLogger<OdontogramaPiezaServices>.Instance,
         uow.Object,
-        new Mock<IAuthenticatedUser>().Object);
+        new Mock<ICurrentUser>().Object);
   }
 
   [Fact]

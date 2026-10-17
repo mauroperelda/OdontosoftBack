@@ -25,7 +25,7 @@
 			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
 			<OutputItemType>DoNotCopyToOutput</OutputItemType>
 		</ProjectReference>
-		<ProjectReference Include="..\..\OdontoSoft.Services\OdontoSoft.Services.csproj">
+		<ProjectReference Include="..\..\OdontoSoft.Application\OdontoSoft.Application.csproj">
 			<ReferenceOutputAssembly>true</ReferenceOutputAssembly>
 			<OutputItemType>DoNotCopyToOutput</OutputItemType>
 		</ProjectReference>

@@ -1,4 +1,7 @@
 using OdontoSoft.Web.Helpers.Application;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions.Persistence;
 //using ExtraCore.Data.Authentication;
 //using ExtraCore.Data.Helpers;
 //using ExtraCore.Data.Repository;
@@ -18,11 +21,11 @@ using Newtonsoft.Json.Serialization;
 using System.Globalization;
 using System.Net;
 using System.Reflection;
-using OdontoSoft.Infrastructure.Data.Authentication;
+using OdontoSoft.Application.Abstractions;
 using OdontoSoft.Web.IServices;
 using OdontoSoft.Web.Services;
 using OdontoSoft.Infrastructure.Data.DAL;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Web.Startup;
 
 // Restauramos el comportamiento legacy de Npgsql pre-6.0: permite escribir DateTime
@@ -52,7 +55,7 @@ builder.Services.AddRazorPages()
 
 builder.Services.AddTransient<ICurrentApplication, CurrentApplication>();
 builder.Services.AddTransient<ApplicationMenu, ApplicationMenu>();
-builder.Services.AddTransient<IAuthenticatedUser, AuthenticatedUser>();
+builder.Services.AddTransient<ICurrentUser, AuthenticatedUser>();
 //builder.Services.AddTransient<ILoggedUser, AuthenticatedUser>();
 builder.Services.AddHttpClient<IAccountService, AccountService>();
 
@@ -68,7 +71,7 @@ builder.Services.AddControllers()
       options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     });
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork, OdontoSoft.Infrastructure.Data.Repository.UOW.UnitOfWork>();
 //builder.Services.AddScoped<LogFilter>();
 
 

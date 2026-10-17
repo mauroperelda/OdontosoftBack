@@ -1,4 +1,4 @@
-Ôªøusing OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -58,9 +58,9 @@ namespace OdontoSoft.Web.Controllers
     public IActionResult Edit(EstadoTurnoDto vm)
     {
       if (string.IsNullOrEmpty(vm.Nombre))
-        ModelState.AddModelError(string.Empty, "El campo nombre no puede estar vac√≠o.");
+        ModelState.AddModelError(string.Empty, "El campo nombre no puede estar vacÌo.");
       if (string.IsNullOrEmpty(vm.ColorHex))
-        ModelState.AddModelError(string.Empty, "Seleccion√° un color.");
+        ModelState.AddModelError(string.Empty, "Seleccion· un color.");
 
       if (ModelState.IsValid)
       {

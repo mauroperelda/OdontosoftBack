@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
@@ -45,7 +45,7 @@ namespace OdontoSoft.Web.Controllers
 
       if (id != 0)
       {
-        // ✅ Primero intentar buscar por Id directo de HistoriaClinica
+        // ? Primero intentar buscar por Id directo de HistoriaClinica
         hc = _unitOfWork.HistoriaClinicaRepository.GetHistoriaClinicaById(id);
       }
       else if (pacienteId != 0)
@@ -70,7 +70,7 @@ namespace OdontoSoft.Web.Controllers
     public IActionResult Edit(HistoriaClinicaDto vm)
     {
       if (vm.PacienteId == 0)
-        ModelState.AddModelError(string.Empty, "El campo paciente no puede estar vacío.");
+        ModelState.AddModelError(string.Empty, "El campo paciente no puede estar vac�o.");
 
       CargarViewBags(vm);
 
@@ -88,7 +88,7 @@ namespace OdontoSoft.Web.Controllers
             var existente = _unitOfWork.HistoriaClinicaRepository.GetByPacienteId(vm.PacienteId);
             if (existente != null)
             {
-              ModelState.AddModelError(string.Empty, "El paciente ya tiene una historia clínica creada.");
+              ModelState.AddModelError(string.Empty, "El paciente ya tiene una historia cl�nica creada.");
               return View(vm);
             }
             hc = new HistoriaClinica();

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdontoSoft.API.Helpers;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
+using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Contracts.Dtos;
 
@@ -33,12 +33,12 @@ namespace OdontoSoft.API.Controllers
     public ActionResult<UbicacionDto> GetById(int id)
     {
       var u = _unitOfWork.UbicacionRepository.GetById(id);
-      if (u == null) return ApiErrorResponse.NotFound("Ubicación no encontrada.");
+      if (u == null) return ApiErrorResponse.NotFound("Ubicaci�n no encontrada.");
       return Ok(MapToDto(u));
     }
 
     // POST api/ubicacion/Create
-    // Validación de shape delegada a UbicacionDtoValidator.
+    // Validaci�n de shape delegada a UbicacionDtoValidator.
     [HttpPost("Create")]
     public ActionResult<UbicacionDto> Create([FromBody] UbicacionDto vm)
     {
@@ -53,7 +53,7 @@ namespace OdontoSoft.API.Controllers
     public ActionResult<UbicacionDto> Update(int id, [FromBody] UbicacionDto vm)
     {
       var existente = _unitOfWork.UbicacionRepository.GetById(id);
-      if (existente == null) return ApiErrorResponse.NotFound("Ubicación no encontrada.");
+      if (existente == null) return ApiErrorResponse.NotFound("Ubicaci�n no encontrada.");
 
       existente.Nombre = vm.Nombre;
       existente.Direccion = vm.Direccion;
@@ -77,7 +77,7 @@ namespace OdontoSoft.API.Controllers
       return NoContent();
     }
 
-    // ── Helpers ────────────────────────────────────────
+    // -- Helpers ----------------------------------------
 
     private static UbicacionDto MapToDto(Ubicacion u) => new()
     {

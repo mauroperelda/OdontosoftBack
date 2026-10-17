@@ -1,10 +1,10 @@
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using OdontoSoft.Infrastructure.Data.Authentication;
-using OdontoSoft.Infrastructure.Data.Repository.Interfaces;
-using OdontoSoft.Infrastructure.Data.Repository.UOW;
-using OdontoSoft.Services;
+using OdontoSoft.Application.Abstractions;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Abstractions.Persistence;
+using OdontoSoft.Application.Services;
 using Xunit;
 
 namespace OdontoSoft.UnitTests.Services;
@@ -27,7 +27,7 @@ public class TratamientoServicesTests
     return new TratamientoServices(
         NullLogger<TratamientoServices>.Instance,
         uow.Object,
-        new Mock<IAuthenticatedUser>().Object);
+        new Mock<ICurrentUser>().Object);
   }
 
   [Fact]

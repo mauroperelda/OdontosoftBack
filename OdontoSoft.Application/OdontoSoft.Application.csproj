@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>OdontoSoft.Application</RootNamespace>
+    <AssemblyName>OdontoSoft.Application</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Mauro.Entities">
+      <HintPath>..\lib\Mauro.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="MedveCore.Common">
+      <HintPath>..\lib\MedveCore.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Mauro.RepositoryPattern">
+      <HintPath>..\lib\Mauro.RepositoryPattern.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OdontoSoft.Contracts\OdontoSoft.Contracts.csproj" />
+    <ProjectReference Include="..\OdontoSoft.Domain\OdontoSoft.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
