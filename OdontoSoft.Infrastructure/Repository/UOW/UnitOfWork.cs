@@ -23,14 +23,17 @@ namespace OdontoSoft.Infrastructure.Repository.UOW
     public IStoredProcedureQueries StoredProcedureQueries { get; private set; }
 
 
-    public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, ICurrentUser authenticatedUser)
+    public UnitOfWork(OdontosoftContext context, ILogger<UnitOfWork> logger, ICurrentUser authenticatedUser, ILoggerFactory loggerFactory)
     {
       _context = context;
       _logger = logger;
       _authenticatedUser = authenticatedUser;
 
       InstanceRepos();
-      StoredProcedureQueries = new StoredProcedureRepository(_context, _logger);
+      // El repositorio de stored procedures pide ILogger<StoredProcedureRepository>
+      // (genérico) para que el contenedor lo pueda resolver; acá lo creamos
+      // con la factory para mantener la categoría correcta en los logs.
+      StoredProcedureQueries = new StoredProcedureRepository(_context, loggerFactory.CreateLogger<StoredProcedureRepository>());
     }
 
     public int Save()

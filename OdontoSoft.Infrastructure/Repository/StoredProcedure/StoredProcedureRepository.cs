@@ -21,9 +21,14 @@ namespace OdontoSoft.Infrastructure.Repository.StoredProcedure;
 public class StoredProcedureRepository : IStoredProcedureQueries
 {
   protected OdontosoftContext _context;
-  protected readonly ILogger _logger;
+  protected readonly ILogger<StoredProcedureRepository> _logger;
 
-  public StoredProcedureRepository(OdontosoftContext context, ILogger logger)
+  // ILogger<StoredProcedureRepository> (genérico) y no ILogger pelado: el
+  // contenedor de DI de ASP.NET Core registra ILogger<T> e ILoggerFactory,
+  // pero NUNCA el ILogger no-genérico. Pedir el no-genérico acá hacía que
+  // ValidateOnBuild (activo en Development) tirara al construir el provider
+  // y la API no levantaba el puerto.
+  public StoredProcedureRepository(OdontosoftContext context, ILogger<StoredProcedureRepository> logger)
   {
     _context = context;
     _logger = logger;

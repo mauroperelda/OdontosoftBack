@@ -92,8 +92,15 @@ public static class ServiceCollectionExtensions
   /// </summary>
   public static IServiceCollection AddOdontoSoftWeb(this IServiceCollection services)
   {
-    // ── AutoMapper: escanea el assembly buscando Profile. ──────────
-    services.AddAutoMapper(typeof(ApplicationProfile));
+    // ── AutoMapper ───────────────────────────────────────────────────
+    // AutoMapper 16 ya trae su propia extensión de DI dentro del paquete
+    // core (Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions).
+    // El paquete aparte "AutoMapper.Extensions.Microsoft.DependencyInjection"
+    // quedó en 12.x, compilado contra AutoMapper 12: llama al constructor
+    // MapperConfiguration(cfg) de 1 argumento que AutoMapper 16 eliminó
+    // (ahora exige ILoggerFactory) → MissingMethodException al resolver
+    // IMapper, que es un 400 genérico en todos los endpoints con mapping.
+    services.AddAutoMapper(cfg => cfg.AddProfile<ApplicationProfile>());
 
     // ── FluentValidation: todos los IValidator<T> del assembly de
     //    OdontoSoft.Application.Validation. ─────────────────────────

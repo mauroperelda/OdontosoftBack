@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Mauro.RepositoryPattern.Infrastructure;
 using OdontoSoft.Infrastructure.Http;
 using OdontoSoft.Application.Abstractions.Persistence;
 using OdontoSoft.Domain.Models;
 using OdontoSoft.Application.Services;
 using OdontoSoft.Contracts.Dtos;
-using System.Data;
 
 namespace OdontoSoft.API.Controllers
 {
@@ -18,13 +15,11 @@ namespace OdontoSoft.API.Controllers
   {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILocalidadServices _localidadServices;
-    private readonly IConfiguration _configuration;
 
-    public LocalidadController(IUnitOfWork unitOfWork, ILocalidadServices localidadServices, IConfiguration configuration)
+    public LocalidadController(IUnitOfWork unitOfWork, ILocalidadServices localidadServices)
     {
       _unitOfWork = unitOfWork;
       _localidadServices = localidadServices;
-      _configuration = configuration;
     }
 
     // GET api/localidad
@@ -82,85 +77,35 @@ namespace OdontoSoft.API.Controllers
       return NoContent();
     }
 
-    // GET api/localidad/sincronizar
-    [HttpGet("SincronizarLocalidades")]
-    public async Task<ActionResult<object>> SincronizarLocalidades()
+    /// <summary>
+    /// Importa el catálogo de localidades de la Argentina.
+    ///
+    /// Es una operación manual: sólo se ejecuta cuando alguien hace POST a
+    /// este endpoint (nunca sola, ni al arrancar la API). Toma el catálogo
+    /// de la API georef de datos.gob.ar —la misma fuente que usaba el
+    /// importador del proyecto Web legacy— y lo escribe en la tabla
+    /// 'localidad' de esta base de datos.
+    ///
+    /// Es idempotente: resuelve la provincia por nombre normalizado y
+    /// deduplica por (nombre, provincia), así que se puede volver a ejecutar
+    /// sin duplicar nada.
+    ///
+    /// Con <c>?preview=true</c> no escribe nada: devuelve los contadores de
+    /// lo que se insertaría, para revisar antes de escribir.
+    /// </summary>
+    // POST api/localidad/sincronizar
+    [HttpPost("SincronizarLocalidades")]
+    public async Task<ActionResult<LocalidadSyncResult>> SincronizarLocalidades([FromQuery] bool preview = false)
     {
-      var georefResponse = await _localidadServices.SincronizarLocalidades();
-      BulkInsertLocalidades(georefResponse);
-      return Ok(new { mensaje = "Localidades sincronizadas correctamente." });
-    }
-
-    // -- HELPERS ---------------------------------------------------------------
-
-    private void BulkInsertLocalidades(GeorefResponseDto georefResponseDto)
-    {
-      List<Provincia> provincias = _unitOfWork.ProvinciaRepository.GetAllEnabled().ToList();
-      var provinciasDict = provincias.ToDictionary(
-          p => NormalizeText(p.Descripcion),
-          p => p.Id
-      );
-
-      List<Localidad> localidadesExistentes = _unitOfWork.LocalidadRepository.GetAllEnabled().ToList();
-      var localidadesExistentesSet = new HashSet<string>(
-          localidadesExistentes.Select(l =>
-              NormalizeText(l.Descripcion) + "|" + l.ProvinciaId
-          )
-      );
-
-      List<Localidad> localidadesAInsertar = new List<Localidad>();
-
-      foreach (var loc in georefResponseDto.localidades)
+      try
       {
-        string provinciaNombreNormalizado = NormalizeText(loc.provincia.nombre);
-        if (provinciasDict.TryGetValue(provinciaNombreNormalizado, out int provinciaId))
-        {
-          string key = NormalizeText(loc.nombre) + "|" + provinciaId;
-          if (!localidadesExistentesSet.Contains(key))
-          {
-            localidadesAInsertar.Add(new Localidad
-            {
-              Descripcion = loc.nombre,
-              ProvinciaId = provinciaId,
-              Disabled = false,
-              ObjectState = ObjectState.Added
-            });
-            localidadesExistentesSet.Add(key);
-          }
-        }
+        LocalidadSyncResult resultado = await _localidadServices.SincronizarLocalidadesAsync(preview);
+        return Ok(resultado);
       }
-
-      if (localidadesAInsertar.Any())
+      catch (Exception ex)
       {
-        var connectionString = _configuration.GetConnectionString("DefaultConnection");
-        using var bulkCopy = new SqlBulkCopy(connectionString, SqlBulkCopyOptions.UseInternalTransaction);
-        bulkCopy.DestinationTableName = "dbo.Localidad";
-        bulkCopy.ColumnMappings.Add("Descripcion", "Descripcion");
-        bulkCopy.ColumnMappings.Add("ProvinciaId", "ProvinciaId");
-        bulkCopy.ColumnMappings.Add("Disabled", "Disabled");
-        var dataTable = ToDataTable(localidadesAInsertar);
-        bulkCopy.WriteToServer(dataTable);
+        return ApiErrorResponse.BadRequest("No se pudo sincronizar las localidades: " + ex.Message);
       }
-    }
-
-    private DataTable ToDataTable(List<Localidad> localidades)
-    {
-      var table = new DataTable();
-      table.Columns.Add("Descripcion", typeof(string));
-      table.Columns.Add("ProvinciaId", typeof(int));
-      table.Columns.Add("Disabled", typeof(bool));
-      foreach (var loc in localidades)
-        table.Rows.Add(loc.Descripcion, loc.ProvinciaId, loc.Disabled);
-      return table;
-    }
-
-    private static string NormalizeText(string text)
-    {
-      if (string.IsNullOrEmpty(text)) return text;
-      return text.Normalize(System.Text.NormalizationForm.FormD)
-          .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
-          .Aggregate(string.Empty, (s, c) => s + c)
-          .ToUpperInvariant();
     }
   }
 }

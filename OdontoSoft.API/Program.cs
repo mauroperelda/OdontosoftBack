@@ -299,6 +299,10 @@ try
 catch (Exception ex)
 {
   Log.Fatal(ex, "La aplicaciÃ³n fallÃ³ al arrancar.");
+  // Sin esto el proceso terminaba con cÃ³digo 0 y Visual Studio lo reportaba
+  // como "cerrado correctamente", ocultando que en realidad fue un crash
+  // (tÃ­pico: "Failed to bind to address ...: address already in use").
+  Environment.ExitCode = 1;
 }
 finally
 {

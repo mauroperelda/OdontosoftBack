@@ -140,9 +140,45 @@ public class ApplicationProfileTests
   [Fact]
   public void Mapper_ConfigurationIsValid_NoMissingMappings()
   {
-    // AutoMapper valida que todos los mappings registrados tengan campos
-    // compatibles. Si falta una ForMember o hay un type mismatch, esto falla.
-    var config = new MapperConfiguration(_ => { }, NullLoggerFactory.Instance);
-    config.AssertConfigurationIsValid();
+    // Este test validaba una MapperConfiguration VACÍA (un no-op que nunca
+    // podía fallar). Ahora verifica el perfil real: cada type map registrado
+    // tiene que existir y ser utilizable.
+    //
+    // NO usamos AssertConfigurationIsValid() porque además de type maps
+    // faltantes o incompatibles, exige que TODOS los members de destino
+    // estén mapeados, y hay varios que legítimamente no lo están:
+    //  - campos de auditoría (ObjectState, CreatedUserId, CreatedDate...):
+    //    los setea ApplyAudit() del DbContext en SaveChanges.
+    //  - navegaciones (Tratamiento, EstadoTurno, Presupuesto...): se
+    //    resuelven por FK, no se copian desde el DTO.
+    // Mapear cada par DTO → Entity detecta igual los type maps faltantes y
+    // los type mismatches (AutoMapper tira al construir el plan de mapeo).
+    var mapper = CreateMapper();
+
+    mapper.Map<Paciente>(new PacienteDto()).Should().NotBeNull();
+    mapper.Map<Profesional>(new ProfesionalDto()).Should().NotBeNull();
+    mapper.Map<Turno>(new TurnoDto()).Should().NotBeNull();
+    mapper.Map<Presupuesto>(new PresupuestoDto()).Should().NotBeNull();
+    mapper.Map<PresupuestoDetalle>(new PresupuestoDetalleDto()).Should().NotBeNull();
+    mapper.Map<Pago>(new PagoDto()).Should().NotBeNull();
+    mapper.Map<FichaTratamiento>(new FichaTratamientoDto()).Should().NotBeNull();
+    mapper.Map<HistoriaClinica>(new HistoriaClinicaDto()).Should().NotBeNull();
+    mapper.Map<OdontogramaPieza>(new OdontogramaPiezaDto()).Should().NotBeNull();
+    mapper.Map<Ubicacion>(new UbicacionDto()).Should().NotBeNull();
+  }
+
+  [Fact]
+  public void Paciente_ListToDtoList_MapsEmptyCollection()
+  {
+    // Reproduce el path exacto de GET /api/paciente/GetAll: el controller
+    // mapea la lista completa (aunque no haya un solo registro) con
+    // _mapper.Map<List<PacienteDto>>(result.Items). Si el perfil no puede
+    // mapear Paciente → PacienteDto, AutoMapper tira al construir el plan
+    // de mapeo y el request termina en 400 aunque la tabla esté vacía.
+    var mapper = CreateMapper();
+
+    var list = mapper.Map<List<PacienteDto>>(new List<Paciente>());
+
+    list.Should().BeEmpty();
   }
 }

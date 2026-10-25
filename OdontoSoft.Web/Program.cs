@@ -41,7 +41,7 @@ builder.Services.AddDbContext<OdontosoftContext>(options =>
 {
   // ConvenciÃ³n de naming: "Paciente" â†’ tabla "paciente", "CreatedUserId" â†’ "created_user_id".
   options.UseSnakeCaseNamingConvention();
-  options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Data"));
+  options.UseNpgsql(connString, b => b.MigrationsAssembly("OdontoSoft.Infrastructure"));
 });
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
@@ -62,6 +62,12 @@ builder.Services.AddHttpClient<IAccountService, AccountService>();
 
 //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 builder.Services.AddTransient<IAppVersionService, AppVersionService>();
+// PENDIENTE (OdontoSoft.Web): este proyecto todavía referencia el paquete
+// "AutoMapper.Extensions.Microsoft.DependencyInjection" 12.0.0, que es incompatible
+// con AutoMapper 16.1.1 (llama al constructor MapperConfiguration(cfg) de 1
+// argumento que AutoMapper 16 eliminó) → MissingMethodException al resolver IMapper.
+// Cuando se quite ese PackageReference del .csproj, esta línea debe cambiar a:
+//   builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers()
@@ -72,6 +78,12 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<OdontoSoft.Application.Abstractions.Persistence.IUnitOfWork, OdontoSoft.Infrastructure.Repository.UOW.UnitOfWork>();
+
+// IStoredProcedureQueries lo consume PacienteController (web) para el
+// autocomplete de pacientes. Sin este registro el controller no se puede
+// activar y toda request a /Paciente/* revienta con 500.
+builder.Services.AddScoped<OdontoSoft.Infrastructure.Repository.StoredProcedure.IStoredProcedureQueries,
+                           OdontoSoft.Infrastructure.Repository.StoredProcedure.StoredProcedureRepository>();
 //builder.Services.AddScoped<LogFilter>();
 
 
